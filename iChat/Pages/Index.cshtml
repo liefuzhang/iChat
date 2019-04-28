@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{channelID:int?}"
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -8,8 +8,12 @@
     <div id="sideBar">
         <h2>Channels</h2>
         @foreach (var channel in Model.Channels) {
+            var isActive = "";
+            if (channel.ID == Model.SelectedChannel.ID) {
+                isActive = "active-channel";
+            }
             <a asp-page="./Index" asp-route-channelID="@channel.ID">
-                <div class="channel-item" >
+                <div class="channel-item @isActive">
                     #&nbsp;
                     @Html.DisplayFor(model => channel.Name)
                 </div>
@@ -27,7 +31,18 @@
             </div>
         </div>
         <div class="message-container">
-            MessageContainer
+            <div class="message-scollable">
+                messages
+            </div>
+        </div>
+
+        <div class="footer">
+            <form method="post">
+                <input type="hidden" name="channelId" value="@Model.SelectedChannel.ID"/>
+                <div class="message-box">
+                    <input name="newMessage">
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -29,11 +29,9 @@ a {
             cursor: pointer;
             background: #259;
         }
-
-        a {
-            &:active {
-                color: #ddd;
-            }
+        
+        &.active-channel {
+            background: #259;
         }
     }
 }
@@ -41,9 +39,31 @@ a {
 #content {
     min-height: 100%;
     flex: 1 0 auto;
+    position: relative;
 }
 
 .content-header {
     height: 58px;
     border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.message-container{
+    position: relative;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    height: 40px;
+    margin-bottom: 20px;
+    width: 100%;
+
+    .message-box {
+        margin: 0 20px;
+        border: 2px solid #616061;
+
+        input {
+            width: 100%;
+        }
+    }
 }

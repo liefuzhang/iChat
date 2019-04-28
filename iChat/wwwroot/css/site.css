@@ -21,15 +21,31 @@ a {
     #sideBar .channel-item:hover {
       cursor: pointer;
       background: #259; }
-    #sideBar .channel-item a:active {
-      color: #ddd; }
+    #sideBar .channel-item.active-channel {
+      background: #259; }
 
 #content {
   min-height: 100%;
-  flex: 1 0 auto; }
+  flex: 1 0 auto;
+  position: relative; }
 
 .content-header {
   height: 58px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+
+.message-container {
+  position: relative; }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  height: 40px;
+  margin-bottom: 20px;
+  width: 100%; }
+  .footer .message-box {
+    margin: 0 20px;
+    border: 2px solid #616061; }
+    .footer .message-box input {
+      width: 100%; }
 
 /*# sourceMappingURL=site.css.map */

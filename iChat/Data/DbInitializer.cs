@@ -19,6 +19,16 @@ namespace iChat.Data {
             };
             context.Channels.AddRange(channels);
             context.SaveChanges();
+
+            var users = new User[] {
+                new User {
+                    DisplayName = "Liefu",
+                    Phone = "0223334444",
+                    Status = UserStatus.Active
+                }
+            };
+            context.Users.AddRange(users);
+            context.SaveChanges();
         }
     }
 }
