@@ -8,18 +8,23 @@
     <div id="sideBar">
         <h2>Channels</h2>
         @foreach (var channel in Model.Channels) {
-            @Html.DisplayNameFor(model => channel.Name) @::
-            @Html.DisplayFor(model => channel.Name)
-            <br />
-            @Html.DisplayNameFor(model => channel.Topic) @::
-            @Html.DisplayFor(model => channel.Topic)
-            <br />
+            <a asp-page="./Index" asp-route-channelID="@channel.ID">
+                <div class="channel-item" >
+                    #&nbsp;
+                    @Html.DisplayFor(model => channel.Name)
+                </div>
+            </a>
         }
     </div>
-    
+
     <div id="content">
         <div class="content-header">
-            Header
+            <div class="channel-name">
+                #@Model.SelectedChannel.Name
+            </div>
+            <div class="channel-topic">
+                @Model.SelectedChannel.Topic
+            </div>
         </div>
         <div class="message-container">
             MessageContainer

@@ -2,15 +2,27 @@ body {
   min-height: 100vh;
   margin: 0; }
 
+a {
+  text-decoration: none; }
+  a:active, a:visited {
+    color: inherit; }
+
 #container {
   display: flex;
   min-height: 100vh; }
 
 #sideBar {
   width: 220px;
-  background: #297fa3;
+  background: #206890;
   color: #ddd;
   min-height: 100%; }
+  #sideBar .channel-item {
+    height: 26px; }
+    #sideBar .channel-item:hover {
+      cursor: pointer;
+      background: #259; }
+    #sideBar .channel-item a:active {
+      color: #ddd; }
 
 #content {
   min-height: 100%;

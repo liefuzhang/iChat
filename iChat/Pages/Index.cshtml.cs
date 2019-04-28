@@ -19,10 +19,17 @@ namespace iChat.Pages
         }
 
         public IList<Channel> Channels { get; set; }
+        public Channel SelectedChannel { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? channelID)
         {
             Channels = await _context.Channels.AsNoTracking().ToListAsync();
+            if (channelID.HasValue) {
+                SelectedChannel = Channels.Single(c => c.ID == channelID.Value);
+            }
+            else {
+                SelectedChannel = Channels.First();
+            }
         }
     }
 }

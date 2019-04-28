@@ -3,6 +3,14 @@
     margin: 0;
 }
 
+a {
+    text-decoration: none;
+
+    &:active, &:visited {
+        color: inherit;
+    }
+}
+
 #container {
     display: flex;
     min-height: 100vh;
@@ -12,7 +20,22 @@
     width: 220px;
     background: #206890;
     color: #ddd;
-    min-height: 100%
+    min-height: 100%;
+
+    .channel-item {
+        height: 26px;
+
+        &:hover {
+            cursor: pointer;
+            background: #259;
+        }
+
+        a {
+            &:active {
+                color: #ddd;
+            }
+        }
+    }
 }
 
 #content {

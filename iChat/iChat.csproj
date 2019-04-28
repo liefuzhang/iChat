@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\css\site.css" />
+    <Content Remove="wwwroot\css\site.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Styles\site.css" />
     <Content Include="Styles\site.scss" />
   </ItemGroup>
