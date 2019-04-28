@@ -1,0 +1,26 @@
+﻿body {
+    min-height: 100vh;
+    margin: 0;
+}
+
+#container {
+    display: flex;
+    min-height: 100vh;
+}
+
+#sideBar {
+    width: 220px;
+    background: #206890;
+    color: #ddd;
+    min-height: 100%
+}
+
+#content {
+    min-height: 100%;
+    flex: 1 0 auto;
+}
+
+.content-header {
+    height: 58px;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}

@@ -4,16 +4,25 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome To iChat</h1>
-
-    <h2>Channels</h2>
-    @foreach (var channel in Model.Channels) {
-        @Html.DisplayNameFor(model => channel.Name) @::
-        @Html.DisplayFor(model => channel.Name)
-        <br />
-        @Html.DisplayNameFor(model => channel.Topic) @::
-        @Html.DisplayFor(model => channel.Topic)
-        <br />
-    }
+<div id="container">
+    <div id="sideBar">
+        <h2>Channels</h2>
+        @foreach (var channel in Model.Channels) {
+            @Html.DisplayNameFor(model => channel.Name) @::
+            @Html.DisplayFor(model => channel.Name)
+            <br />
+            @Html.DisplayNameFor(model => channel.Topic) @::
+            @Html.DisplayFor(model => channel.Topic)
+            <br />
+        }
+    </div>
+    
+    <div id="content">
+        <div class="content-header">
+            Header
+        </div>
+        <div class="message-container">
+            MessageContainer
+        </div>
+    </div>
 </div>
