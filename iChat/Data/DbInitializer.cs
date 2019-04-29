@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using iChat.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace iChat.Data {
     public static class DbInitializer {
@@ -20,15 +21,12 @@ namespace iChat.Data {
             context.Channels.AddRange(channels);
             context.SaveChanges();
 
-            var users = new User[] {
-                new User {
-                    DisplayName = "Liefu",
-                    Phone = "0223334444",
-                    Status = UserStatus.Active
-                }
-            };
-            context.Users.AddRange(users);
-            context.SaveChanges();
+            var addUsersScript =
+                $"SET IDENTITY_INSERT [dbo].[User] ON\r\n" +
+                $"INSERT INTO [dbo].[User] ([Id], [Status], [DisplayName], [AccessFailedCount], [ConcurrencyStamp], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [NormalizedEmail], [NormalizedUserName], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) VALUES (1, 0, NULL, 0, N\'e5767433-8e39-4525-94f7-ef8db488c0e0\', N\'liefu@test.com\', 0, 1, NULL, N\'LIEFU@TEST.COM\', N\'LIEFU@TEST.COM\', N\'AQAAAAEAACcQAAAAEOD1Vx3/76pCyWDtxxHcfzlLaEaTEJ9kBwc0lLteLBjzJFV8q9b/dJkbKomMJsA7PA==\', NULL, 0, N\'PPQJWV4KNQCFIY4NYZB4JRGKXYBWNLZY\', 0, N\'liefu@test.com\')\r\n" +
+                $"INSERT INTO [dbo].[User] ([Id], [Status], [DisplayName], [AccessFailedCount], [ConcurrencyStamp], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [NormalizedEmail], [NormalizedUserName], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) VALUES (2, 0, NULL, 0, N\'30f16c28-2873-469b-9be0-06ca12c81725\', N\'lina@test.com\', 0, 1, NULL, N\'LINA@TEST.COM\', N\'LINA@TEST.COM\', N\'AQAAAAEAACcQAAAAEPN7rGTRYxwI8P6ucQFLETRKbDrD/HbOdwti+DmgKgASU3Oxjy4JtGqWokTQh7tkKw==\', NULL, 0, N\'ZV6FV75VXWS55CQ7FDH7DMGVEJMOSHKS\', 0, N\'lina@test.com\')\r\n" +
+                $"SET IDENTITY_INSERT [dbo].[User] OFF\r\n";
+            context.Database.ExecuteSqlCommand(addUsersScript);
         }
     }
 }

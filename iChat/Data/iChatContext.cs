@@ -9,13 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace iChat.Data
 {
-    public class iChatContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
+    public class iChatContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public iChatContext(DbContextOptions<iChatContext> options) : base(options) {
         }
 
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Message> Messages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder) {

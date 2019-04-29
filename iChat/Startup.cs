@@ -44,8 +44,19 @@ namespace iChat
             services.AddDbContext<iChatContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
 
-            services.AddDefaultIdentity<IdentityUser<int>>()
+            services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<iChatContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Default Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+            });
 
             services.AddSignalR();
         }

@@ -37,6 +37,7 @@ namespace iChat.Pages {
                 .Where(m => m.ChannelID == SelectedChannel.ID)
                 .OrderBy(m => m.CreatedDate)
                 .ToListAsync();
+
             SelectedChannel.Messages = messages;
         }
 

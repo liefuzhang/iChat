@@ -10,6 +10,5 @@ namespace iChat.Models
     {
         public UserStatus Status { get; set; }
         public string DisplayName { get; set; }
-        public string Phone { get; set; }
     }
 }
