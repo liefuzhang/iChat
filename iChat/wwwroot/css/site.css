@@ -3,7 +3,8 @@ body {
   margin: 0; }
 
 a {
-  text-decoration: none; }
+  text-decoration: none;
+  color: inherit; }
   a:active, a:visited {
     color: inherit; }
 

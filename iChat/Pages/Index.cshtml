@@ -7,9 +7,11 @@
 <div id="container">
     <div id="sideBar">
         <h2>Channels</h2>
-        @foreach (var channel in Model.Channels) {
+        @foreach (var channel in Model.Channels)
+        {
             var isActive = "";
-            if (channel.ID == Model.SelectedChannel.ID) {
+            if (channel.ID == Model.SelectedChannel.ID)
+            {
                 isActive = "active-channel";
             }
             <a asp-page="./Index" asp-route-channelID="@channel.ID">
@@ -32,13 +34,25 @@
         </div>
         <div class="message-container">
             <div class="message-scollable">
-                messages
+                @foreach (var message in Model.SelectedChannel.Messages)
+                {
+                    <div class="message-item">
+                        <div class="message-title">
+                            @message.User.DisplayName
+                            &nbsp;
+                            @message.CreatedDate.ToShortTimeString()
+                        </div>
+                        <div class="message-content">
+                            @message.Content
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
         <div class="footer">
             <form method="post">
-                <input type="hidden" name="channelId" value="@Model.SelectedChannel.ID"/>
+                <input type="hidden" name="channelId" value="@Model.SelectedChannel.ID" />
                 <div class="message-box">
                     <input name="newMessage">
                 </div>
@@ -46,3 +60,10 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        app.channelID=@Model.SelectedChannel.ID ;
+    </script>
+}

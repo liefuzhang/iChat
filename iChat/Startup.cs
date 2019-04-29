@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using iChat.Hubs;
+using iChat.Services;
 
 namespace iChat
 {
@@ -33,11 +35,14 @@ namespace iChat
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddScoped<INotificationService, NotificationService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<iChatContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +62,10 @@ namespace iChat
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatHub");
+            });
 
             app.UseMvc();
         }
