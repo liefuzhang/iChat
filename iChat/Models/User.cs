@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace iChat.Models
 {
-    public class User
+    public class User : IdentityUser<int>
     {
-        public int ID { get; set; }
         public UserStatus Status { get; set; }
         public string DisplayName { get; set; }
         public string Phone { get; set; }

@@ -12,7 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using iChat.Hubs;
+using iChat.Models;
 using iChat.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace iChat
 {
@@ -42,6 +44,9 @@ namespace iChat
             services.AddDbContext<iChatContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
 
+            services.AddDefaultIdentity<IdentityUser<int>>()
+                .AddEntityFrameworkStores<iChatContext>();
+
             services.AddSignalR();
         }
 
@@ -61,6 +66,7 @@ namespace iChat
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseCookiePolicy();
             app.UseSignalR(routes =>
             {
