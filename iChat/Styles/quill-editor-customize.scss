@@ -1,0 +1,22 @@
+﻿@import "variable";
+
+.ql-container {
+    border: none !important;
+    height: auto;
+    font-size: 1rem !important;
+}
+
+.ql-toolbar {
+    display: none;
+}
+
+.ql-editor {
+    padding: 10px 15px !important;
+
+    &.ql-blank::before {
+        color: $placeholder-color;
+        font-style: normal;
+        font-size: 1rem;
+    }
+}
+

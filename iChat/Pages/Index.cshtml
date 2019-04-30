@@ -54,7 +54,8 @@
             <form method="post">
                 <input type="hidden" name="channelId" value="@Model.SelectedChannel.ID" />
                 <div class="message-box">
-                    <input name="newMessage">
+                    <div id="messageEditor">
+                    </div>
                 </div>
             </form>
         </div>
@@ -62,8 +63,14 @@
 </div>
 
 @section Scripts
-{
+    {
     <script>
-        app.channelID=@Model.SelectedChannel.ID ;
+        app.channelID = @Model.SelectedChannel.ID;
+
+        var quill = new Quill('#messageEditor',
+            {
+                theme: 'snow',
+                placeholder: 'Message @Model.SelectedChannel.Name'
+            });
     </script>
 }

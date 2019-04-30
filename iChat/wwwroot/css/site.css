@@ -32,7 +32,8 @@ body {
   margin: 0;
   color: #333;
   line-height: 1.5;
-  font-family: "Roboto",sans-serif; }
+  font-family: "Roboto",sans-serif;
+  font-size: 15px; }
 
 a {
   text-decoration: none;
@@ -122,13 +123,28 @@ input::placeholder {
 .footer {
   position: absolute;
   bottom: 0;
-  height: 40px;
+  min-height: 40px;
   margin-bottom: 20px;
   width: 100%; }
   .footer .message-box {
     margin: 0 20px;
-    border: 2px solid #616061; }
-    .footer .message-box input {
-      width: 100%; }
+    border: 2px solid #616061;
+    border-radius: 6px;
+    min-height: 40px; }
+
+.ql-container {
+  border: none !important;
+  height: auto;
+  font-size: 1rem !important; }
+
+.ql-toolbar {
+  display: none; }
+
+.ql-editor {
+  padding: 10px 15px !important; }
+  .ql-editor.ql-blank::before {
+    color: #aaa;
+    font-style: normal;
+    font-size: 1rem; }
 
 /*# sourceMappingURL=site.css.map */
