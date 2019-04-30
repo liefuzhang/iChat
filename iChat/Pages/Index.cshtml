@@ -43,7 +43,7 @@
                             @message.CreatedDate.ToShortTimeString()
                         </div>
                         <div class="message-content">
-                            @message.Content
+                            @Html.Raw(message.Content)
                         </div>
                     </div>
                 }
@@ -51,8 +51,9 @@
         </div>
 
         <div class="footer">
-            <form method="post">
+            <form id="messageForm" method="post">
                 <input type="hidden" name="channelId" value="@Model.SelectedChannel.ID" />
+                <input type="hidden" name="newMessage"/>
                 <div class="message-box">
                     <div id="messageEditor">
                     </div>
@@ -67,10 +68,33 @@
     <script>
         app.channelID = @Model.SelectedChannel.ID;
 
+        var bindings = {
+            list: {
+                key: 'enter',
+                shiftKey: false,
+                handler: function () {
+                    var message = quill.root.innerHTML;
+                    if (!message)
+                        return false;
+
+                    var form = document.querySelector('#messageForm');
+                    var messageInput = document.querySelector('input[name=newMessage]');
+                    messageInput.value = message;
+                    form.submit();
+                    return false;
+                }
+            }
+        };
+
         var quill = new Quill('#messageEditor',
             {
                 theme: 'snow',
-                placeholder: 'Message @Model.SelectedChannel.Name'
+                placeholder: 'Message @Model.SelectedChannel.Name',
+                modules: {
+                    keyboard: {
+                        bindings: bindings
+                    }
+                }
             });
     </script>
 }
