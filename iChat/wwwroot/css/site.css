@@ -5,18 +5,90 @@
   .login-page .login-container {
     margin: 0 auto;
     width: 640px;
-    height: 320px;
-    background: white; }
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 110px;
+    box-sizing: border-box; }
+    .login-page .login-container .login-form form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start; }
+      .login-page .login-container .login-form form .form-control {
+        width: 100%;
+        font-size: 1.2rem; }
+      .login-page .login-container .login-form form button[type="submit"] {
+        margin-top: 10px; }
+      .login-page .login-container .login-form form .forgot-password {
+        color: #8590a6;
+        margin-bottom: 40px;
+        margin-top: 15px; }
+        .login-page .login-container .login-form form .forgot-password a:hover {
+          text-decoration: underline; }
 
 body {
   min-height: 100vh;
-  margin: 0; }
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+  font-family: "Roboto",sans-serif; }
 
 a {
   text-decoration: none;
   color: inherit; }
   a:active, a:visited {
     color: inherit; }
+
+textarea, input {
+  border: 1px solid #e7eaf1;
+  border-radius: 3px;
+  padding: 6px 12px; }
+
+input[type="password"]:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+  outline: none;
+  border: 1px solid #206890;
+  box-shadow: 0 0 4px #206890;
+  -moz-box-shadow: 0 0 4px #206890;
+  -webkit-box-shadow: 0 0 4px #206890; }
+
+input::placeholder {
+  color: #aaa; }
+
+.btn {
+  border-radius: 2px;
+  background-color: #297fa3;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #fefefe;
+  padding: 0 30px;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 30px;
+  height: 30px;
+  border: none; }
+  .btn:hover {
+    background: #368bc1;
+    box-shadow: 0 0 2px #368bc1;
+    -moz-box-shadow: 0 0 2px #368bc1;
+    -webkit-box-shadow: 0 0 2px #368bc1;
+    text-decoration: none; }
+  .btn:active {
+    background-color: #277aac;
+    box-shadow: inset 0 0 10px #174a80;
+    -moz-box-shadow: inset 0 0 10px #174a80;
+    -webkit-box-shadow: inset 0 0 10px #174a80; }
+
+.panel {
+  background: #fff;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+
+.form-control {
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  height: 40px; }
 
 #container {
   display: flex;

@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Styles\site.css" />
-    <Content Include="Styles\site.scss" />
+    <Content Include="Styles\main.scss" />
   </ItemGroup>
 
 

@@ -6,15 +6,14 @@
 }
 
 <div class="login-page">
-    <div class="login-container">
+    <div class="login-container panel">
         <h1>@ViewData["Title"]</h1>
         <div class="login-form">
             <form id="account" method="post">
                 <div>Enter email address and password to log in.</div>
-                <div asp-validation-summary="All" class="error-text"></div>
-                <input asp-for="Input.Email" class="form-input" />
-                <input asp-for="Input.Password" class="form-input" />
-                <button type="submit" class="btn btn-primary">Log in</button>
+                <input asp-for="Input.Email" class="form-control" placeholder="Email" required/>
+                <input asp-for="Input.Password" class="form-control" placeholder="Password" required/>
+                <button type="submit" class="btn form-control">Log in</button>
                 <div class="remember-me">
                     <label asp-for="Input.RememberMe">
                         <input asp-for="Input.RememberMe" />
@@ -28,7 +27,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

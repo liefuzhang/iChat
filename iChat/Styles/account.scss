@@ -1,4 +1,6 @@
-﻿.login-page {
+﻿@import 'variable';
+
+.login-page {
     height: 100vh;
     background: #f3f3f3;
     padding-top: 150px;
@@ -6,7 +8,36 @@
     .login-container {
         margin: 0 auto;
         width: 640px;
-        height: 320px;
-        background: white;
+        border: 1px solid $border-color;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 110px;
+        box-sizing: border-box;
+
+        .login-form form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            .form-control {
+                width: 100%;
+                font-size: 1.2rem;
+            }
+
+            button[type="submit"] {
+                margin-top: 10px;
+            }
+
+            .forgot-password {
+                color: #8590a6;
+                margin-bottom: 40px;
+                margin-top: 15px;
+
+                a:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
     }
 }
