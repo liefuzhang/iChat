@@ -3,10 +3,19 @@ module.exports = function (grunt) {
     'use strict';
 
     var sass = require('node-sass');
-    
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
+        concat: {
+            dist: {
+                src: [
+                    'Styles/*.scss'
+                ],
+                dest: 'Styles/site.scss'
+            }
+        },
 
         // Sass
         sass: {
@@ -16,22 +25,20 @@ module.exports = function (grunt) {
                 //outputStyle: 'compressed' // Minify output
             },
             dist: {
-                files: [
-                    {
-                        expand: true, // Recursive
-                        cwd: "Styles", // The startup directory
-                        src: ["**/*.scss"], // Source files
-                        dest: "wwwroot/css", // Destination
-                        ext: ".css" // File extension
-                    }
-                ]
+                files: {
+                    'wwwroot/css/site.css': 'Styles/site.scss'
+                }
             }
-        }
+        },
+
+        clean: ['Styles/site.scss']
     });
 
     // Load the plugin
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     // Default task(s).
-    grunt.registerTask('default', ['sass']);
+    grunt.registerTask('default', ['concat', 'sass', 'clean']);
 };

@@ -1,3 +1,13 @@
+.login-page {
+  height: 100vh;
+  background: #f3f3f3;
+  padding-top: 150px; }
+  .login-page .login-container {
+    margin: 0 auto;
+    width: 640px;
+    height: 320px;
+    background: white; }
+
 body {
   min-height: 100vh;
   margin: 0; }
