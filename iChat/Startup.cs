@@ -38,6 +38,7 @@ namespace iChat
             });
 
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IMessageParsingService, MessageParsingService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
