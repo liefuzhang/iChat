@@ -17,6 +17,11 @@ namespace iChat.Services {
         }
 
         public string Parse(string input) {
+            if (string.IsNullOrEmpty(input))
+            {
+                return string.Empty;
+            }
+
             var markedChanges = new List<Token>();
             var stagedTokens = new List<Token>();
 
@@ -24,10 +29,10 @@ namespace iChat.Services {
                 var ch = input[i];
                 switch (ch) {
                     case '*':
-                        ParseChar(stagedTokens, ch, i, markedChanges, "<b>", "</b>");
+                        ParseChar(stagedTokens, input, i, markedChanges, "<b>", "</b>");
                         break;
                     case '_':
-                        ParseChar(stagedTokens, ch, i, markedChanges, "<i>", "</i>");
+                        ParseChar(stagedTokens, input, i, markedChanges, "<i>", "</i>");
                         break;
                     case ' ':
                         stagedTokens.Clear();
@@ -51,15 +56,33 @@ namespace iChat.Services {
             return result.ToString();
         }
 
-        private static void ParseChar(ICollection<Token> stagedTokens, char ch, int i, 
-            ICollection<Token> markedChanges, string openTag, string closeTag) {
+        private static void ParseChar(ICollection<Token> stagedTokens, string input, int i, 
+            ICollection<Token> markedChanges, string openTag, string closeTag)
+        {
+            var ch = input[i];
             if (stagedTokens.All(s => s.Tag != ch.ToString())) {
                 stagedTokens.Add(new Token(ch.ToString(), i));
             }
             else {
-                var stagedToken = stagedTokens.Single(s => s.Tag == ch.ToString());
-                stagedTokens.Remove(stagedToken);
-                markedChanges.Add(new Token(openTag, stagedToken.Index));
+                var matchedToken = stagedTokens.Single(s => s.Tag == ch.ToString());
+                stagedTokens.Remove(matchedToken);
+
+                if (matchedToken.Index == i - 1)
+                {
+                    // when **, simply skip
+                    return;
+                }
+
+                // we only allow double tags such as _*string*_
+                var tokenBefore = stagedTokens.SingleOrDefault(t => t.Index == matchedToken.Index - 1);
+
+                stagedTokens.Clear();
+                if (tokenBefore != null && i != input.Length - 1 && tokenBefore.Tag == input[i + 1].ToString())
+                {
+                    stagedTokens.Add(tokenBefore);
+                }
+
+                markedChanges.Add(new Token(openTag, matchedToken.Index));
                 markedChanges.Add(new Token(closeTag, i));
             }
         }
