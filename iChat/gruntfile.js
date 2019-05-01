@@ -9,7 +9,13 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concat: {
-            dist: {
+            js: {
+                src: [
+                    'Scripts/*.js'
+                ],
+                dest: 'wwwroot/js/site.js'
+            },
+            css: {
                 src: [
                     'Styles/*.scss'
                 ],
@@ -31,6 +37,17 @@ module.exports = function (grunt) {
             }
         },
 
+        uglify: {
+            options: {
+                //compress: true,
+                sourceMap: true
+            },
+            dist: {
+                src: ['wwwroot/js/site.js'],
+                dest: 'wwwroot/js/site.min.js'
+            }
+        },
+
         clean: ['Styles/site.scss']
     });
 
@@ -38,7 +55,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
 
     // Default task(s).
-    grunt.registerTask('default', ['concat', 'sass', 'clean']);
+    grunt.registerTask('default', ['concat', 'sass', 'uglify', 'clean']);
 };

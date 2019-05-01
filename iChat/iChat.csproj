@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\signalRConnection.js" />
     <Content Include="Styles\main.scss" />
   </ItemGroup>
 
@@ -28,8 +30,8 @@
 
 
   <ItemGroup>
-    <Folder Include="Scripts\" />
     <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>
