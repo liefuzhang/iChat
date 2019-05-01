@@ -12,6 +12,7 @@
 
 .ql-editor {
     padding: 10px 15px !important;
+    max-height: 40vh;
 
     &.ql-blank::before {
         color: $placeholder-color;

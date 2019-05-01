@@ -108,23 +108,34 @@ input::placeholder {
     min-height: 100%;
     flex: 1 0 auto;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .content-header {
+    flex: 0 0 auto;
     height: 58px;
     border-bottom: 1px solid rgba(0,0,0,.1);
 }
 
 .message-container {
     position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+
+    .message-scrollable {
+        overflow-y: scroll;
+        max-height: 100%;
+        visibility: hidden;
+    }
 }
 
 .footer {
-    position: absolute;
     bottom: 0;
     min-height: 40px;
     margin-bottom: 20px;
     width: 100%;
+    flex: 0 0 auto;
 
     .message-box {
         margin: 0 20px;
