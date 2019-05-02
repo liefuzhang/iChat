@@ -53,6 +53,12 @@ pre {
     padding: 9px 7px;
 }
 
+blockquote {
+    padding-left: 0.9rem;
+    border-left: 4px solid $border-color;
+    margin-left: 0;
+}
+
 .btn {
     border-radius: 2px;
     background-color: $primary-blue;

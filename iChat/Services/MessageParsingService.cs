@@ -25,18 +25,10 @@ namespace iChat.Services
                 return string.Empty;
             }
 
-            // special handling for ```preformatted```
             var preFormattedRanges = new List<(int start, int end)>();
-            var pattern = @"(```)((?:(?!```).)+)(```)";
-            input = Regex.Replace(input, pattern, "<pre>$2</pre>");
+            input = HandlePreformatted(input, preFormattedRanges);
 
-            var regex = new Regex(@"(<pre>)((?:(?!```).)+)(</pre>)");
-            var matches = regex.Matches(input);
-            foreach (Match match in matches)
-            {
-                // first group is the entire matched string
-                preFormattedRanges.Add((match.Groups[1].Index, match.Groups[3].Index));
-            }
+            input = HandleQuote(input);
 
             var markedChanges = new List<Token>();
             var stagedTokens = new List<Token>();
@@ -87,6 +79,31 @@ namespace iChat.Services
             }
 
             return result.ToString();
+        }
+
+        private static string HandlePreformatted(string input, List<(int start, int end)> preFormattedRanges)
+        {
+            // special handling for ```preformatted```
+            var pattern = @"(<p>```)((?:.)+?)(```</p>)";
+            input = Regex.Replace(input, pattern, "<pre>$2</pre>");
+
+            var regex = new Regex(@"(<pre>)((?:.)+?)(</pre>)");
+            var matches = regex.Matches(input);
+            foreach (Match match in matches)
+            {
+                // first group is the entire matched string
+                preFormattedRanges.Add((match.Groups[1].Index, match.Groups[3].Index));
+            }
+
+            return input;
+        }
+
+        private static string HandleQuote(string input)
+        {
+            var pattern = @"(<p>&gt;)((?:.)+?)(</p>)";
+            input = Regex.Replace(input, pattern, "<blockquote>$2</blockquote>");
+
+            return input;
         }
 
         private static void ParseChar(ICollection<Token> stagedTokens, string input, int i,
