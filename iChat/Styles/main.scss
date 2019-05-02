@@ -38,20 +38,17 @@ input::placeholder {
 }
 
 code {
+    @extend %grey-background;
     color: $dark-red;
-    border: 1px solid $border-color;
-    background: $backgroud-grey;
     font-size: 0.75rem;
     padding: 2px 3px;
     font-weight: normal !important;
     font-style: normal !important;
-    border-radius: 3px;
 }
 
 pre {
+    @extend %grey-background;
     font-size: 0.75rem;
-    border: 1px solid $border-color;
-    background: $backgroud-grey;
     border-radius: 4px;
     padding: 9px 7px;
 }
@@ -90,6 +87,10 @@ pre {
     overflow: hidden;
     border-radius: 2px;
     box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.grey-background {
+    @extend %grey-background;
 }
 
 .form-control {
@@ -158,10 +159,19 @@ pre {
     margin-bottom: 22px;
     width: 100%;
     flex: 0 0 auto;
+    position: relative;
 
     .message-box {
         border: 2px solid #616061;
         border-radius: 6px;
         min-height: 40px;
+    }
+
+    .message-prompt {
+        font-size: 0.7rem;
+        position: absolute;
+        color: $grey-text;
+        bottom: -18px;
+        right: 0;
     }
 }

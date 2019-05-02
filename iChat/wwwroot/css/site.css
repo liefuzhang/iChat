@@ -1,3 +1,8 @@
+code, pre, .grey-background {
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  border-radius: 3px; }
+
 .login-page {
   height: 100vh;
   background: #f3f3f3;
@@ -26,6 +31,11 @@
         margin-top: 15px; }
         .login-page .login-container .login-form form .forgot-password a:hover {
           text-decoration: underline; }
+
+code, pre, .grey-background {
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  border-radius: 3px; }
 
 body {
   min-height: 100vh;
@@ -58,18 +68,13 @@ input::placeholder {
 
 code {
   color: #d32f2f;
-  border: 1px solid #ddd;
-  background: #f3f3f3;
   font-size: 0.75rem;
   padding: 2px 3px;
   font-weight: normal !important;
-  font-style: normal !important;
-  border-radius: 3px; }
+  font-style: normal !important; }
 
 pre {
   font-size: 0.75rem;
-  border: 1px solid #ddd;
-  background: #f3f3f3;
   border-radius: 4px;
   padding: 9px 7px; }
 
@@ -154,11 +159,23 @@ pre {
   min-height: 40px;
   margin-bottom: 22px;
   width: 100%;
-  flex: 0 0 auto; }
+  flex: 0 0 auto;
+  position: relative; }
   .footer .message-box {
     border: 2px solid #616061;
     border-radius: 6px;
     min-height: 40px; }
+  .footer .message-prompt {
+    font-size: 0.7rem;
+    position: absolute;
+    color: #666;
+    bottom: -18px;
+    right: 0; }
+
+code, pre, .grey-background {
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  border-radius: 3px; }
 
 .ql-container {
   border: none !important;
@@ -178,5 +195,10 @@ pre {
 
 .simplebar-track.simplebar-vertical {
   right: -17px; }
+
+code, pre, .grey-background {
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  border-radius: 3px; }
 
 /*# sourceMappingURL=site.css.map */

@@ -29,7 +29,12 @@ var mainController = (function () {
 
     function init(channelName) {
         var messageScrollable = document.querySelector(".message-scrollable");
-        messageScrollable.scrollTop = messageScrollable.scrollHeight;
+
+        // init simplebar
+        new SimpleBar(messageScrollable);
+
+        var scrollable = document.querySelector(".simplebar-content");
+        scrollable.scrollTop = scrollable.scrollHeight;
         messageScrollable.style.visibility = 'visible'; // show now to avoid flickering
 
         var bindings = {

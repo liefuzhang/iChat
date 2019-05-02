@@ -6,3 +6,11 @@ $main-text-color: #333;
 $placeholder-color: #aaa;
 $backgroud-grey: #f3f3f3;
 $dark-red: #d32f2f;
+$grey-text: #666;
+
+// shared css
+%grey-background {
+    border: 1px solid $border-color;
+    background: $backgroud-grey;
+    border-radius: 3px;
+}

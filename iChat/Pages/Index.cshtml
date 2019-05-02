@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="message-container">
-            <div data-simplebar class="message-scrollable">
+            <div class="message-scrollable">
                 @foreach (var message in Model.SelectedChannel.Messages)
                 {
                     <div class="message-item">
@@ -59,6 +59,14 @@
                     </div>
                 </div>
             </form>
+            <div class="message-prompt">
+                <b>*bold*</b>&nbsp;
+                <span class="grey-background">`code`</span>&nbsp;
+                <span class="grey-background">```preformatted```</span>&nbsp;
+                <i>_italics_</i>&nbsp;
+                <span>~strike~</span>&nbsp;
+                <span>>quote</span>&nbsp;
+            </div>
         </div>
     </div>
 </div>
