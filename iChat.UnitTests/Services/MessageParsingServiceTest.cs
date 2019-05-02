@@ -16,7 +16,13 @@ namespace iChat.UnitTests.Services
 
         [DataTestMethod]
         [DataRow("*hello*", "<b>hello</b>")]
+        [DataRow("_hello_", "<i>hello</i>")]
+        [DataRow("~hello~", "<strike>hello</strike>")]
+        [DataRow("`hello`", "<code>hello</code>")]
+        [DataRow("```hello```", "<pre>hello</pre>")]
         [DataRow("_*hello*_", "<i><b>hello</b></i>")]
+        [DataRow("```*hello*```", "<pre>*hello*</pre>")]
+        [DataRow("```<p>hello</p>text```", "<pre><p>hello</p>text</pre>")]
         [DataRow("*_hello_*", "<b><i>hello</i></b>")]
         [DataRow("~*_hello_*~", "~<b><i>hello</i></b>~")]
         [DataRow("_*hello_*", "<i>*hello</i>*")]
@@ -26,6 +32,7 @@ namespace iChat.UnitTests.Services
         [DataRow("something**", "something**")]
         [DataRow("something *test *", "something *test *")]
         [DataRow("<p>line 1</p><p>line2*hello*_</p>", "<p>line 1</p><p>line2<b>hello</b>_</p>")]
+        [DataRow("<p>line *1</p><p>line2*</p>", "<p>line *1</p><p>line2*</p>")]
         public void Parse_WhenCalled_ReturnParsedHtml(string input, string expectedHtml)
         {
             // arrange

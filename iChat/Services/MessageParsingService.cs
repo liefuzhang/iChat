@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
-namespace iChat.Services {
-    public class MessageParsingService : IMessageParsingService {
-        private class Token {
-            public Token(string tag, int index) {
+namespace iChat.Services
+{
+    public class MessageParsingService : IMessageParsingService
+    {
+        private class Token
+        {
+            public Token(string tag, int index)
+            {
                 Tag = tag;
                 Index = index;
             }
@@ -16,39 +18,70 @@ namespace iChat.Services {
             public int Index { get; }
         }
 
-        public string Parse(string input) {
+        public string Parse(string input)
+        {
             if (string.IsNullOrEmpty(input))
             {
                 return string.Empty;
             }
 
+            // special handling for ```preformatted```
+            var preFormattedRanges = new List<(int start, int end)>();
+            var pattern = @"(```)((?:(?!```).)+)(```)";
+            input = Regex.Replace(input, pattern, "<pre>$2</pre>");
+
+            var regex = new Regex(@"(<pre>)((?:(?!```).)+)(</pre>)");
+            var matches = regex.Matches(input);
+            foreach (Match match in matches)
+            {
+                // first group is the entire matched string
+                preFormattedRanges.Add((match.Groups[1].Index, match.Groups[3].Index));
+            }
+
             var markedChanges = new List<Token>();
             var stagedTokens = new List<Token>();
 
-            for (var i = 0; i < input.Length; i++) {
+            for (var i = 0; i < input.Length; i++)
+            {
+                // skip all chars between <pre> and </pre>
+                if (preFormattedRanges.Any(r=>r.start < i && r.end > i))
+                    continue;
+
                 var ch = input[i];
-                switch (ch) {
+                switch (ch)
+                {
                     case '*':
                         ParseChar(stagedTokens, input, i, markedChanges, "<b>", "</b>");
                         break;
                     case '_':
                         ParseChar(stagedTokens, input, i, markedChanges, "<i>", "</i>");
                         break;
+                    case '~':
+                        ParseChar(stagedTokens, input, i, markedChanges, "<strike>", "</strike>");
+                        break;
+                    case '`':
+                        ParseChar(stagedTokens, input, i, markedChanges, "<code>", "</code>");
+                        break;
                     case ' ':
+                    case '<':
+                    case '>':
                         stagedTokens.Clear();
                         break;
                 }
             }
 
             var result = new StringBuilder();
-            for (var i = 0; i < input.Length; i++) {
+            for (var i = 0; i < input.Length; i++)
+            {
                 var ch = input[i];
-                if ((ch == '*' || ch == '_') &&
-                    markedChanges.Any(mc=>mc.Index == i)) {
+                if ((ch == '*' || ch == '_' || ch == '~' || ch == '`') &&
+                    markedChanges.Any(mc => mc.Index == i))
+                {
                     var markedChange = markedChanges.Single(mc => mc.Index == i);
                     result.Append(markedChange.Tag);
                 }
-                else {
+                else
+                {
                     result.Append(ch);
                 }
             }
@@ -56,14 +89,16 @@ namespace iChat.Services {
             return result.ToString();
         }
 
-        private static void ParseChar(ICollection<Token> stagedTokens, string input, int i, 
+        private static void ParseChar(ICollection<Token> stagedTokens, string input, int i,
             ICollection<Token> markedChanges, string openTag, string closeTag)
         {
             var ch = input[i];
-            if (stagedTokens.All(s => s.Tag != ch.ToString())) {
+            if (stagedTokens.All(s => s.Tag != ch.ToString()))
+            {
                 stagedTokens.Add(new Token(ch.ToString(), i));
             }
-            else {
+            else
+            {
                 var matchedToken = stagedTokens.Single(s => s.Tag == ch.ToString());
                 stagedTokens.Remove(matchedToken);
 

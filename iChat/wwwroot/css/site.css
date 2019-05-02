@@ -56,6 +56,15 @@ input[type="password"]:focus, input[type="text"]:focus, input[type="email"]:focu
 input::placeholder {
   color: #aaa; }
 
+code {
+  color: #d32f2f;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  font-size: 0.75rem;
+  padding: 2px 3px;
+  font-weight: normal !important;
+  font-style: normal !important; }
+
 .btn {
   border-radius: 2px;
   background-color: #297fa3;
@@ -132,7 +141,7 @@ input::placeholder {
 .footer {
   bottom: 0;
   min-height: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   width: 100%;
   flex: 0 0 auto; }
   .footer .message-box {
