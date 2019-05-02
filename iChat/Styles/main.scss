@@ -45,6 +45,15 @@ code {
     padding: 2px 3px;
     font-weight: normal !important;
     font-style: normal !important;
+    border-radius: 3px;
+}
+
+pre {
+    font-size: 0.75rem;
+    border: 1px solid $border-color;
+    background: $backgroud-grey;
+    border-radius: 4px;
+    padding: 9px 7px;
 }
 
 .btn {
@@ -120,12 +129,16 @@ code {
     position: relative;
     display: flex;
     flex-direction: column;
+    padding: 0 20px;
+    overflow: hidden;
 }
 
 .content-header {
     flex: 0 0 auto;
     height: 58px;
     border-bottom: 1px solid rgba(0,0,0,.1);
+    margin: 0 -20px;
+    padding: 0 20px;
 }
 
 .message-container {
@@ -134,7 +147,6 @@ code {
     min-height: 0;
 
     .message-scrollable {
-        overflow-y: scroll;
         max-height: 100%;
         visibility: hidden;
     }
@@ -148,7 +160,6 @@ code {
     flex: 0 0 auto;
 
     .message-box {
-        margin: 0 20px;
         border: 2px solid #616061;
         border-radius: 6px;
         min-height: 40px;

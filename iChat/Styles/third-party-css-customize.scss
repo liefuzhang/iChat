@@ -1,5 +1,6 @@
 ﻿@import "variable";
 
+// quill editor
 .ql-container {
     border: none !important;
     height: auto;
@@ -21,3 +22,7 @@
     }
 }
 
+// simplebar
+.simplebar-track.simplebar-vertical {
+    right: -17px;
+}

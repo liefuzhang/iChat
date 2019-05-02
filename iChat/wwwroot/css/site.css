@@ -63,7 +63,15 @@ code {
   font-size: 0.75rem;
   padding: 2px 3px;
   font-weight: normal !important;
-  font-style: normal !important; }
+  font-style: normal !important;
+  border-radius: 3px; }
+
+pre {
+  font-size: 0.75rem;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  border-radius: 4px;
+  padding: 9px 7px; }
 
 .btn {
   border-radius: 2px;
@@ -122,19 +130,22 @@ code {
   flex: 1 0 auto;
   position: relative;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  padding: 0 20px;
+  overflow: hidden; }
 
 .content-header {
   flex: 0 0 auto;
   height: 58px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0 -20px;
+  padding: 0 20px; }
 
 .message-container {
   position: relative;
   flex: 1 1 0;
   min-height: 0; }
   .message-container .message-scrollable {
-    overflow-y: scroll;
     max-height: 100%;
     visibility: hidden; }
 
@@ -145,7 +156,6 @@ code {
   width: 100%;
   flex: 0 0 auto; }
   .footer .message-box {
-    margin: 0 20px;
     border: 2px solid #616061;
     border-radius: 6px;
     min-height: 40px; }
@@ -165,5 +175,8 @@ code {
     color: #aaa;
     font-style: normal;
     font-size: 1rem; }
+
+.simplebar-track.simplebar-vertical {
+  right: -17px; }
 
 /*# sourceMappingURL=site.css.map */
