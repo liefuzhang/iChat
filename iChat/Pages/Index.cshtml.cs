@@ -50,11 +50,11 @@ namespace iChat.Pages {
             }
 
             MessagesToDisplay = await _context.Messages
-                .Include(m => m.User)
+                .Include(m => m.Sender)
                 //.Where(m => (SelectedChannel != null ? 
                 //    m.ChannelId == SelectedChannel.Id : 
                 //    m.UserId == SelectedUser.Id))
-                .Where(m => m.ChannelId == SelectedChannel.Id)
+                //.Where(m => m.ChannelId == SelectedChannel.Id)
                 .OrderBy(m => m.CreatedDate)
                 .ToListAsync();
 
@@ -70,11 +70,11 @@ namespace iChat.Pages {
                 throw new ArgumentException("invalid channel.");
             }
 
-            var message = new Message {
-                ChannelId = channelId,
+            var message = new ChannelMessage {
+                //ChannelId = channelId,
                 Content = _messageParsingService.Parse(newMessage),
                 CreatedDate = DateTime.Now,
-                UserId = User.GetUserId()
+                SenderId = User.GetUserId()
             };
 
             _context.Messages.Add(message);

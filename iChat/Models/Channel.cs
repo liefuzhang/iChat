@@ -10,7 +10,7 @@ namespace iChat.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Topic { get; set; }
-        public ICollection<Message> Messages { get; set; }
-        public ICollection<User> Users { get; set; }
+        public ICollection<ChannelMessage> ChannelMessages { get; set; }
+        public ICollection<Subscription> ChannelSubscriptions { get; set; }
     }
 }

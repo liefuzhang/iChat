@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190429054651_CreateIdentitySchema.cs" />
     <Compile Remove="Migrations\20190429054651_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20190504081631_CreateChannelMessageAndDirectMessage.cs" />
+    <Compile Remove="Migrations\20190504081631_CreateChannelMessageAndDirectMessage.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

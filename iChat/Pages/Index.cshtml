@@ -55,7 +55,7 @@
                 @foreach (var message in Model.MessagesToDisplay) {
                     <div class="message-item">
                         <div class="message-title">
-                            @message.User.DisplayName
+                            @message.Sender.DisplayName
                             &nbsp;
                             @message.CreatedDate.ToShortTimeString()
                         </div>
