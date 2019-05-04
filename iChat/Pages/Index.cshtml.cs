@@ -40,6 +40,7 @@ namespace iChat.Pages {
         public async Task OnGetAsync(int? channelId, int? selectedUserId) {
             Channels = await _context.Channels.AsNoTracking().ToListAsync();
             DirectMessageUsers = await _context.Users.AsNoTracking().ToListAsync();
+            var currentUserId = User.GetUserId();
 
             if (channelId.HasValue) {
                 SelectedChannel = Channels.Single(c => c.Id == channelId.Value);
@@ -49,41 +50,65 @@ namespace iChat.Pages {
                 SelectedChannel = Channels.First();
             }
 
-            MessagesToDisplay = await _context.Messages
-                .Include(m => m.Sender)
-                //.Where(m => (SelectedChannel != null ? 
-                //    m.ChannelId == SelectedChannel.Id : 
-                //    m.UserId == SelectedUser.Id))
-                //.Where(m => m.ChannelId == SelectedChannel.Id)
-                .OrderBy(m => m.CreatedDate)
-                .ToListAsync();
-
-            var i = 1;
+            if (IsChannel) {
+                MessagesToDisplay = await _context.ChannelMessages
+                    .Include(m => m.Sender)
+                    .Where(m => m.ChannelId == SelectedChannel.Id)
+                    .OrderBy(m => m.CreatedDate)
+                    .Cast<Message>()
+                    .ToListAsync();
+            } else {
+                MessagesToDisplay = await _context.DirectMessages
+                    .Include(m => m.Sender)
+                    .Where(m => m.ReceiverId == currentUserId &&
+                                m.SenderId == selectedUserId ||
+                                m.ReceiverId == selectedUserId &&
+                                m.SenderId == currentUserId)
+                    .OrderBy(m => m.CreatedDate)
+                    .Cast<Message>()
+                    .ToListAsync();
+            }
         }
 
-        public async Task<IActionResult> OnPostAsync(int channelId, string newMessage) {
+        public async Task<IActionResult> OnPostAsync(int? channelId, int? selectedUserId, string newMessage) {
+            var currentUserId = User.GetUserId();
+
             if (string.IsNullOrWhiteSpace(newMessage)) {
                 throw new ArgumentException("Message cannot be empty.");
             }
 
-            if (channelId <= 0) {
-                throw new ArgumentException("invalid channel.");
+            if (!channelId.HasValue && !selectedUserId.HasValue) {
+                throw new ArgumentException("invalid arguments.");
             }
 
-            var message = new ChannelMessage {
-                //ChannelId = channelId,
-                Content = _messageParsingService.Parse(newMessage),
-                CreatedDate = DateTime.Now,
-                SenderId = User.GetUserId()
-            };
-
-            _context.Messages.Add(message);
+            if (channelId.HasValue) {
+                var message = new ChannelMessage {
+                    ChannelId = channelId.Value,
+                    Content = _messageParsingService.Parse(newMessage),
+                    CreatedDate = DateTime.Now,
+                    SenderId = User.GetUserId()
+                };
+                _context.ChannelMessages.Add(message);
+            } else {
+                var message = new DirectMessage {
+                    ReceiverId = selectedUserId.Value,
+                    Content = _messageParsingService.Parse(newMessage),
+                    CreatedDate = DateTime.Now,
+                    SenderId = User.GetUserId()
+                };
+                _context.DirectMessages.Add(message);
+            }
+            
             await _context.SaveChangesAsync();
 
-            _notificationService.SendUpdateChannelNotification(channelId);
-
-            return RedirectToPage("./Index",
-                new { channelId = channelId });
+            if (channelId.HasValue) {
+                _notificationService.SendUpdateChannelNotification(channelId.Value);
+                return RedirectToPage("./Index", new {channelId = channelId});
+            }
+            else {
+                _notificationService.SendDirectMessageNotification(selectedUserId.Value);
+                return RedirectToPage("./Index", new {selectedUserId = selectedUserId});
+            }
         }
     }
 }

@@ -176,9 +176,11 @@ blockquote {
   flex: 0 0 auto;
   position: relative; }
   .footer .message-box {
-    border: 2px solid #616061;
+    border: 2px solid #999;
     border-radius: 6px;
     min-height: 40px; }
+    .footer .message-box:focus, .footer .message-box.focus {
+      border-color: #666; }
   .footer .message-prompt {
     font-size: 0.7rem;
     position: absolute;

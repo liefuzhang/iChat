@@ -2,7 +2,7 @@
 
 var mainController = (function () {
     var quill;
-    
+
     function initSimpleBar() {
         var messageScrollable = document.querySelector(".message-scrollable");
 
@@ -126,10 +126,19 @@ var mainController = (function () {
             }, true); // true - event capturing phase
     }
 
+    function registerEventHandlers() {
+        $('.ql-editor').on('focus', () => {
+            $('.message-box').addClass('focus');
+        }).on('blur', () => {
+            $('.message-box').removeClass('focus');
+        });
+    }
+
     function init(channelName) {
         initSimpleBar();
         initQuill(channelName);
         captureKeydownEvent();
+        registerEventHandlers();
     }
 
     return {
@@ -148,9 +157,14 @@ var signalRController = (function () {
         connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
         connection.on("UpdateChannel",
             function (channelID) {
-                if (channelID === app.channelID) {
+                if (channelID === app.selectedChannelId) {
                     document.location.reload();
                 }
+            });
+
+        connection.on("ReceiveMessage",
+            function () {
+                document.location.reload();
             });
 
         connection.start().then(function () {

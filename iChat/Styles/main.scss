@@ -181,9 +181,13 @@ blockquote {
     position: relative;
 
     .message-box {
-        border: 2px solid #616061;
+        border: 2px solid $darker-border-color;
         border-radius: 6px;
         min-height: 40px;
+
+        &:focus, &.focus {
+            border-color: $darkest-border-color;
+        }
     }
 
     .message-prompt {

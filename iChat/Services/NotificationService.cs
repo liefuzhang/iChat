@@ -16,5 +16,9 @@ namespace iChat.Services {
         public async Task SendUpdateChannelNotification(int channelID) {
             await _hubContext.Clients.Group(channelID.ToString()).SendAsync("UpdateChannel", channelID);
         }
+
+        public async Task SendDirectMessageNotification(int selectedUserId) {
+            await _hubContext.Clients.User(selectedUserId.ToString()).SendAsync("ReceiveMessage");
+        }
     }
 }

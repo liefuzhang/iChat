@@ -10,9 +10,14 @@ var signalRController = (function () {
         connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
         connection.on("UpdateChannel",
             function (channelID) {
-                if (channelID === app.channelID) {
+                if (channelID === app.selectedChannelId) {
                     document.location.reload();
                 }
+            });
+
+        connection.on("ReceiveMessage",
+            function () {
+                document.location.reload();
             });
 
         connection.start().then(function () {

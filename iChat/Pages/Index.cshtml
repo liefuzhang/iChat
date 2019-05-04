@@ -70,6 +70,7 @@
         <div class="footer">
             <form id="messageForm" method="post">
                 <input type="hidden" name="channelId" value="@Model.SelectedChannel?.Id" />
+                <input type="hidden" name="selectedUserId" value="@Model.SelectedUser?.Id" />
                 <input type="hidden" name="newMessage" />
                 <div class="message-box">
                     <div id="messageEditor">
