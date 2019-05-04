@@ -26,25 +26,39 @@ namespace iChat.Pages {
             _messageParsingService = messageParsingService;
         }
 
+        public IList<User> DirectMessageUsers { get; set; }
         public IList<Channel> Channels { get; set; }
         public Channel SelectedChannel { get; set; }
+        public User SelectedUser { get; set; }
+        public IList<Message> MessagesToDisplay { get; set; }
+
+        public string SelectedName => SelectedChannel?.Name ?? SelectedUser.DisplayName;
+        public bool IsChannel => SelectedChannel != null;
 
 
-        public async Task OnGetAsync(int? channelID) {
+
+        public async Task OnGetAsync(int? channelId, int? selectedUserId) {
             Channels = await _context.Channels.AsNoTracking().ToListAsync();
-            if (channelID.HasValue) {
-                SelectedChannel = Channels.Single(c => c.ID == channelID.Value);
+            DirectMessageUsers = await _context.Users.AsNoTracking().ToListAsync();
+
+            if (channelId.HasValue) {
+                SelectedChannel = Channels.Single(c => c.Id == channelId.Value);
+            } else if (selectedUserId.HasValue) {
+                SelectedUser = DirectMessageUsers.Single(u => u.Id == selectedUserId.Value);
             } else {
                 SelectedChannel = Channels.First();
             }
 
-            var messages = await _context.Messages
+            MessagesToDisplay = await _context.Messages
                 .Include(m => m.User)
-                .Where(m => m.ChannelID == SelectedChannel.ID)
+                //.Where(m => (SelectedChannel != null ? 
+                //    m.ChannelId == SelectedChannel.Id : 
+                //    m.UserId == SelectedUser.Id))
+                .Where(m => m.ChannelId == SelectedChannel.Id)
                 .OrderBy(m => m.CreatedDate)
                 .ToListAsync();
 
-            SelectedChannel.Messages = messages;
+            var i = 1;
         }
 
         public async Task<IActionResult> OnPostAsync(int channelId, string newMessage) {
@@ -57,10 +71,10 @@ namespace iChat.Pages {
             }
 
             var message = new Message {
-                ChannelID = channelId,
+                ChannelId = channelId,
                 Content = _messageParsingService.Parse(newMessage),
                 CreatedDate = DateTime.Now,
-                UserID = User.GetUserId()
+                UserId = User.GetUserId()
             };
 
             _context.Messages.Add(message);

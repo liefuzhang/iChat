@@ -26,7 +26,7 @@ namespace iChat.Data
             modelBuilder.Entity<Message>().ToTable("Message");
 
             modelBuilder.Entity<Subscription>()
-                .HasKey(s => new { s.ChannelID, s.UserID });
+                .HasKey(s => new { ChannelID = s.ChannelId, UserID = s.UserId });
         }
     }
 }

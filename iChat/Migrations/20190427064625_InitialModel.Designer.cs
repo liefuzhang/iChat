@@ -22,7 +22,7 @@ namespace iChat.Migrations
 
             modelBuilder.Entity("iChat.Models.Channel", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -30,7 +30,7 @@ namespace iChat.Migrations
 
                     b.Property<string>("Topic");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("Channel");
                 });

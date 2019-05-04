@@ -128,13 +128,20 @@ blockquote {
   width: 220px;
   background: #206890;
   color: #ddd;
-  min-height: 100%; }
-  #sideBar .channel-item {
-    height: 26px; }
-    #sideBar .channel-item:hover {
+  min-height: 100%;
+  padding: 0 15px; }
+  #sideBar .section-title {
+    line-height: 2;
+    font-weight: 500;
+    margin: 30px 0 5px; }
+  #sideBar .sidebar-item {
+    height: 26px;
+    margin: 0 -15px;
+    padding: 0 15px; }
+    #sideBar .sidebar-item:hover {
       cursor: pointer;
       background: #259; }
-    #sideBar .channel-item.active-channel {
+    #sideBar .sidebar-item.active-item {
       background: #259; }
 
 #content {

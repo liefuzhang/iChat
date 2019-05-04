@@ -192,7 +192,7 @@ namespace iChat.Migrations
 
             modelBuilder.Entity("iChat.Models.Channel", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -200,43 +200,43 @@ namespace iChat.Migrations
 
                     b.Property<string>("Topic");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("Channel");
                 });
 
             modelBuilder.Entity("iChat.Models.Message", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ChannelID");
+                    b.Property<int>("ChannelId");
 
                     b.Property<string>("Content");
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<int>("UserID");
+                    b.Property<int>("UserId");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ChannelID");
+                    b.HasIndex("ChannelId");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Message");
                 });
 
             modelBuilder.Entity("iChat.Models.Subscription", b =>
                 {
-                    b.Property<int>("ChannelID");
+                    b.Property<int>("ChannelId");
 
-                    b.Property<int>("UserID");
+                    b.Property<int>("UserId");
 
-                    b.HasKey("ChannelID", "UserID");
+                    b.HasKey("ChannelId", "UserId");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Subscription");
                 });
@@ -305,12 +305,12 @@ namespace iChat.Migrations
                 {
                     b.HasOne("iChat.Models.Channel", "Channel")
                         .WithMany("Messages")
-                        .HasForeignKey("ChannelID")
+                        .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("iChat.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -318,12 +318,12 @@ namespace iChat.Migrations
                 {
                     b.HasOne("iChat.Models.Channel", "Channel")
                         .WithMany()
-                        .HasForeignKey("ChannelID")
+                        .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("iChat.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

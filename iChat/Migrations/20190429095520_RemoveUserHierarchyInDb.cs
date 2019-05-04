@@ -89,7 +89,7 @@ namespace iChat.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Message_User_UserID",
                 table: "Message",
-                column: "UserID",
+                column: "UserId",
                 principalTable: "User",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -97,7 +97,7 @@ namespace iChat.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Subscription_User_UserID",
                 table: "Subscription",
-                column: "UserID",
+                column: "UserId",
                 principalTable: "User",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -189,7 +189,7 @@ namespace iChat.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Message_AspNetUsers_UserID",
                 table: "Message",
-                column: "UserID",
+                column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -197,7 +197,7 @@ namespace iChat.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Subscription_AspNetUsers_UserID",
                 table: "Subscription",
-                column: "UserID",
+                column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);

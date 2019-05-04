@@ -41,13 +41,13 @@ namespace iChat.Migrations
                         name: "FK_Message_Channel_ChannelID",
                         column: x => x.ChannelID,
                         principalTable: "Channel",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Message_User_UserID",
                         column: x => x.UserID,
                         principalTable: "User",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -65,30 +65,30 @@ namespace iChat.Migrations
                         name: "FK_Subscription_Channel_ChannelID",
                         column: x => x.ChannelID,
                         principalTable: "Channel",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Subscription_User_UserID",
                         column: x => x.UserID,
                         principalTable: "User",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_ChannelID",
                 table: "Message",
-                column: "ChannelID");
+                column: "ChannelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_UserID",
                 table: "Message",
-                column: "UserID");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subscription_UserID",
                 table: "Subscription",
-                column: "UserID");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
