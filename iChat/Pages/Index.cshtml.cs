@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using iChat.Data;
+using iChat.Extensions;
 using iChat.Models;
 using iChat.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace iChat.Pages {
+    [Authorize]
     public class IndexModel : PageModel {
         private readonly iChatContext _context;
         private readonly INotificationService _notificationService;
@@ -17,8 +20,7 @@ namespace iChat.Pages {
 
         public IndexModel(iChatContext context,
             INotificationService notificationService,
-            IMessageParsingService messageParsingService)
-        {
+            IMessageParsingService messageParsingService) {
             _context = context;
             _notificationService = notificationService;
             _messageParsingService = messageParsingService;
@@ -58,7 +60,7 @@ namespace iChat.Pages {
                 ChannelID = channelId,
                 Content = _messageParsingService.Parse(newMessage),
                 CreatedDate = DateTime.Now,
-                UserID = 1
+                UserID = User.GetUserId()
             };
 
             _context.Messages.Add(message);

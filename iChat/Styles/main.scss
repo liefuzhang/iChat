@@ -108,6 +108,10 @@ blockquote {
 #container {
     display: flex;
     min-height: 100vh;
+
+    &.page-loading {
+        opacity: 0;
+    }
 }
 
 #sideBar {

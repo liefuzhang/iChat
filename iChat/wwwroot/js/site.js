@@ -141,29 +141,33 @@ var mainController = (function () {
 
 // Write your Javascript code.
 
-"use strict";
+var signalRController = (function () {
+    var connection;
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    function init(channelID) {
+        connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.on("UpdateChannel",
+            function (channelID) {
+                if (channelID === app.channelID) {
+                    document.location.reload();
+                }
+            });
 
-connection.on("UpdateChannel", function (channelID) {
-    if (channelID === app.channelID) {
-        document.location.reload();
+        connection.start().then(function () {
+            $("#container").removeClass("page-loading");
+            addUserToChannelGroup(channelID);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
     }
-});
 
-connection.start().then(function () {
-    // TODO finish loading page here after connection started
+    function addUserToChannelGroup(channelID) {
+        connection.invoke("AddToChannelGroup", channelID).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
 
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
-//document.getElementById("sendButton").addEventListener("click", function (event) {
-//    var user = document.getElementById("userInput").value;
-//    var message = document.getElementById("messageInput").value;
-//    connection.invoke("SendMessage", user, message).catch(function (err) {
-//        return console.error(err.toString());
-//    });
-//    event.preventDefault();
-//});
-
+    return {
+        init: init
+    };
+})();
