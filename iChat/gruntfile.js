@@ -7,6 +7,22 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        
+        babel: {
+            options: {
+                plugins: ['transform-react-jsx'],
+                presets: ['es2015', 'react']
+            },
+            jsx: {
+                files: [{
+                    expand: true,
+                    cwd: 'React/', // Custom folder
+                    src: ['*.jsx'],
+                    dest: 'Scripts/', // Custom folder
+                    ext: '.js'
+                }]
+            }
+        },
 
         concat: {
             js: {
@@ -54,9 +70,10 @@ module.exports = function (grunt) {
     // Load the plugin
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify-es');
 
     // Default task(s).
-    grunt.registerTask('default', ['concat', 'sass', 'uglify', 'clean']);
+    grunt.registerTask('default', ['babel', 'concat', 'sass', 'uglify', 'clean']);
 };

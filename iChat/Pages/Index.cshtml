@@ -8,7 +8,7 @@
 <div id="container" class="page-loading">
     <div id="sideBar">
         <section>
-            <div class="section-title">Channels</div>
+            <div class="section-title">CHANNELS</div>
             @foreach (var channel in Model.Channels) {
                 var isActive = "";
                 if (channel.Id == Model.SelectedChannel?.Id) {
@@ -24,7 +24,7 @@
         </section>
 
         <section>
-            <div class="section-title">Direct Messages</div>
+            <div class="section-title">DIRECT MESSAGES</div>
             @foreach (var user in Model.DirectMessageUsers) {
                 var isActive = "";
                 if (user.Id == Model.SelectedUser?.Id) {
@@ -40,11 +40,13 @@
         </section>
     </div>
 
+    <div id="like_button_container"></div>
+
     <div id="content">
         <div class="content-header">
             <div class="content-header-name">
                 @(Model.IsChannel ?
-                        "#" + Model.SelectedName : @Model.SelectedName)
+                                                "#" + Model.SelectedName : @Model.SelectedName)
             </div>
             <div class="content-header-topic">
                 @Model.SelectedChannel?.Topic
