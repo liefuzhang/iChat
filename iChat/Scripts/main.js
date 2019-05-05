@@ -48,6 +48,7 @@ var mainController = (function () {
                     messageInput.value = message;
                     form.submit();
                     return false;
+
                 }
             }
         };
@@ -112,7 +113,7 @@ var mainController = (function () {
                             break;
                     }
                 }
-                if (!!char) {
+                if (char) {
                     toggleFormatChars(char);
                 }
 

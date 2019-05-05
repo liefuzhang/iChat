@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat", "iChat\iChat.csproj", "{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.API", "iChat\iChat.API.csproj", "{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

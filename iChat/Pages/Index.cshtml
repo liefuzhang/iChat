@@ -69,25 +69,8 @@
             </div>
         </div>
 
-        <div class="footer">
-            <form id="messageForm" method="post">
-                <input type="hidden" name="channelId" value="@Model.SelectedChannel?.Id" />
-                <input type="hidden" name="selectedUserId" value="@Model.SelectedUser?.Id" />
-                <input type="hidden" name="newMessage" />
-                <div class="message-box">
-                    <div id="messageEditor">
-                    </div>
-                </div>
-            </form>
-            <div class="message-prompt">
-                <b>*bold*</b>&nbsp;
-                <span class="grey-background">`code`</span>&nbsp;
-                <span class="grey-background">```preformatted```</span>&nbsp;
-                <i>_italics_</i>&nbsp;
-                <span>~strike~</span>&nbsp;
-                <span>>quote</span>&nbsp;
-            </div>
-        </div>
+        <div id="footer" data-selected-channel-id ="@Model.SelectedChannel?.Id"
+             data-selected-user-id ="@Model.SelectedUser?.Id"></div>
     </div>
 </div>
 

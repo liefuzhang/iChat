@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'React/', // Custom folder
                     src: ['*.jsx'],
-                    dest: 'Scripts/', // Custom folder
+                    dest: 'Scripts/React/', // Custom folder
                     ext: '.js'
                 }]
             }
@@ -27,13 +27,13 @@ module.exports = function (grunt) {
         concat: {
             js: {
                 src: [
-                    'Scripts/*.js'
+                    'Scripts/**/*.js'
                 ],
                 dest: 'wwwroot/js/site.js'
             },
             css: {
                 src: [
-                    'Styles/*.scss'
+                    'Styles/**/*.scss'
                 ],
                 dest: 'Styles/site.scss'
             }
@@ -64,7 +64,18 @@ module.exports = function (grunt) {
             }
         },
 
-        clean: ['Styles/site.scss']
+        clean: {
+                js: {
+                    src: [
+                        'Scripts/React/*.js'
+                    ]
+                },
+                scss: {
+                    src: [
+                        'Styles/site.scss'
+                    ]
+                }
+            }
     });
 
     // Load the plugin
@@ -75,5 +86,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify-es');
 
     // Default task(s).
-    grunt.registerTask('default', ['babel', 'concat', 'sass', 'uglify', 'clean']);
+    grunt.registerTask('default', ['clean:js', 'babel', 'concat', 'sass', 'uglify', 'clean:scss']);
 };

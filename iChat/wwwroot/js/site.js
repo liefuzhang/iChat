@@ -1,50 +1,3 @@
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var LikeButton = function (_React$Component) {
-    _inherits(LikeButton, _React$Component);
-
-    function LikeButton(props) {
-        _classCallCheck(this, LikeButton);
-
-        var _this = _possibleConstructorReturn(this, (LikeButton.__proto__ || Object.getPrototypeOf(LikeButton)).call(this, props));
-
-        _this.state = { liked: false };
-        return _this;
-    }
-
-    _createClass(LikeButton, [{
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            if (this.state.liked) {
-                return 'You liked this.';
-            }
-
-            return React.createElement(
-                'button',
-                { onClick: function onClick() {
-                        return _this2.setState({ liked: true });
-                    } },
-                'Like'
-            );
-        }
-    }]);
-
-    return LikeButton;
-}(React.Component);
-
-var domContainer = document.querySelector('#like_button_container');
-ReactDOM.render(React.createElement(LikeButton, null), domContainer);
-
 "use strict";
 
 var mainController = (function () {
@@ -159,7 +112,7 @@ var mainController = (function () {
                             break;
                     }
                 }
-                if (!!char) {
+                if (char) {
                     toggleFormatChars(char);
                 }
 
@@ -192,6 +145,80 @@ var mainController = (function () {
         init: init
     };
 })();
+'use strict';
+
+function Footer(props) {
+    console.log(props);
+
+    return React.createElement(
+        "div",
+        { className: "footer" },
+        "channel: ",
+        props.selectedChannelId,
+        React.createElement(
+            "form",
+            { id: "messageForm", method: "post" },
+            React.createElement("input", { type: "hidden", name: "channelId", value: props.selectedChannelId }),
+            React.createElement("input", { type: "hidden", name: "newMessage" }),
+            React.createElement(
+                "div",
+                { className: "message-box" },
+                React.createElement("div", { id: "messageEditor" })
+            )
+        ),
+        React.createElement(MessagePrompt, null)
+    );
+}
+
+var domContainer = document.querySelector('#footer');
+ReactDOM.render(React.createElement(Footer, { selectedChannelId: domContainer.getAttribute('data-selected-channel-id'),
+    selectedUserId: domContainer.getAttribute('data-selected-user-id') }), domContainer);
+
+'use strict';
+
+function MessagePrompt() {
+    return React.createElement(
+        "div",
+        { className: "message-prompt" },
+        React.createElement(
+            "b",
+            null,
+            "*bold*"
+        ),
+        "\xA0",
+        React.createElement(
+            "span",
+            { className: "grey-background" },
+            "`code`"
+        ),
+        "\xA0",
+        React.createElement(
+            "span",
+            { className: "grey-background" },
+            "```preformatted```"
+        ),
+        "\xA0",
+        React.createElement(
+            "i",
+            null,
+            "_italics_"
+        ),
+        "\xA0",
+        React.createElement(
+            "span",
+            null,
+            "~strike~"
+        ),
+        "\xA0",
+        React.createElement(
+            "span",
+            null,
+            ">quote"
+        ),
+        "\xA0"
+    );
+}
+
 // Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
