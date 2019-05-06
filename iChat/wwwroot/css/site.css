@@ -1,7 +1,3 @@
-code, pre, .grey-background {
-  border: 1px solid #ddd;
-  background: #f3f3f3;
-  border-radius: 3px; }
 
 .login-page {
   height: 100vh;
@@ -31,98 +27,6 @@ code, pre, .grey-background {
         margin-top: 15px; }
         .login-page .login-container .login-form form .forgot-password a:hover {
           text-decoration: underline; }
-
-code, pre, .grey-background {
-  border: 1px solid #ddd;
-  background: #f3f3f3;
-  border-radius: 3px; }
-
-body {
-  min-height: 100vh;
-  margin: 0;
-  color: #333;
-  line-height: 1.5;
-  font-family: "Roboto",sans-serif;
-  font-size: 15px; }
-
-a {
-  text-decoration: none;
-  color: inherit; }
-  a:active, a:visited {
-    color: inherit; }
-
-textarea, input {
-  border: 1px solid #e7eaf1;
-  border-radius: 3px;
-  padding: 6px 12px; }
-
-input[type="password"]:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
-  outline: none;
-  border: 1px solid #206890;
-  box-shadow: 0 0 4px #206890;
-  -moz-box-shadow: 0 0 4px #206890;
-  -webkit-box-shadow: 0 0 4px #206890; }
-
-input::placeholder {
-  color: #aaa; }
-
-code {
-  color: #d32f2f;
-  font-size: 0.75rem;
-  padding: 2px 3px;
-  font-weight: normal !important;
-  font-style: normal !important; }
-
-pre {
-  font-size: 0.75rem;
-  border-radius: 4px;
-  padding: 9px 7px; }
-
-blockquote {
-  padding-left: 0.9rem;
-  border-left: 4px solid #ddd;
-  margin-left: 0; }
-
-.btn {
-  border-radius: 2px;
-  background-color: #297fa3;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #fefefe;
-  padding: 0 30px;
-  cursor: pointer;
-  display: inline-block;
-  line-height: 30px;
-  height: 30px;
-  border: none; }
-  .btn:hover {
-    background: #368bc1;
-    box-shadow: 0 0 2px #368bc1;
-    -moz-box-shadow: 0 0 2px #368bc1;
-    -webkit-box-shadow: 0 0 2px #368bc1;
-    text-decoration: none; }
-  .btn:active {
-    background-color: #277aac;
-    box-shadow: inset 0 0 10px #174a80;
-    -moz-box-shadow: inset 0 0 10px #174a80;
-    -webkit-box-shadow: inset 0 0 10px #174a80; }
-
-.panel {
-  background: #fff;
-  overflow: hidden;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-
-.form-control {
-  margin-bottom: 12px;
-  box-sizing: border-box;
-  height: 40px; }
-
-#container {
-  display: flex;
-  min-height: 100vh; }
-  #container.page-loading {
-    opacity: 0; }
 
 #sideBar {
   width: 220px;

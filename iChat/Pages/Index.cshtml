@@ -39,56 +39,8 @@
             }
         </section>
     </div>
-
-    <div id="like_button_container"></div>
-
-    <div id="content">
-        <div class="content-header">
-            <div class="content-header-name">
-                @(Model.IsChannel ?
-                                                "#" + Model.SelectedName : @Model.SelectedName)
-            </div>
-            <div class="content-header-topic">
-                @Model.SelectedChannel?.Topic
-            </div>
-        </div>
-        <div class="message-container">
-            <div class="message-scrollable">
-                @foreach (var message in Model.MessagesToDisplay) {
-                    <div class="message-item">
-                        <div class="message-title">
-                            @message.Sender.DisplayName
-                            &nbsp;
-                            @message.CreatedDate.ToShortTimeString()
-                        </div>
-                        <div class="message-content">
-                            @Html.Raw(message.Content)
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <div class="footer">
-            <form id="messageForm" method="post">
-                <input type="hidden" name="channelId" value="@Model.SelectedChannel?.Id" />
-                <input type="hidden" name="selectedUserId" value="@Model.SelectedUser?.Id" />
-                <input type="hidden" name="newMessage" />
-                <div class="message-box">
-                    <div id="messageEditor">
-                    </div>
-                </div>
-            </form>
-            <div class="message-prompt">
-                <b>*bold*</b>&nbsp;
-                <span class="grey-background">`code`</span>&nbsp;
-                <span class="grey-background">```preformatted```</span>&nbsp;
-                <i>_italics_</i>&nbsp;
-                <span>~strike~</span>&nbsp;
-                <span>>quote</span>&nbsp;
-            </div>
-        </div>
-    </div>
+   
+    
 </div>
 
 @section Scripts

@@ -1,11 +1,14 @@
 import React from "react";
+import "./Sidebar.css";
+import SidebarItem from "./SidebarItem";
 
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      channels: []
+      channels: [],
+      directMessageUsers: []
     };
   }
 
@@ -13,6 +16,10 @@ class Sidebar extends React.Component {
     fetch("/api/channels")
       .then(response => response.json())
       .then(channels => this.setState({ channels }));
+
+    fetch("/api/users")
+      .then(response => response.json())
+      .then(directMessageUsers => this.setState({ directMessageUsers }));
   }
 
   render() {
@@ -20,31 +27,17 @@ class Sidebar extends React.Component {
       <div id="sideBar">
         <section>
           <div className="section-title">CHANNELS</div>
-          {this.state.channels.map(c => 
-            <a>
-              <div className="sidebar-item">
-                #&nbsp;
-                {c.name}
-              </div>
-            </a>
-          )}
+          {this.state.channels.map(c => (
+            <SidebarItem key={c.id} section="channel" name={c.name} id={c.id} />
+          ))}
         </section>
-        {/* 
+
         <section>
-            <div className="section-title">DIRECT MESSAGES</div>
-            @foreach (var user in Model.DirectMessageUsers) {
-                var isActive = "";
-                if (user.Id == Model.SelectedUser?.Id) {
-                    isActive = "active-item";
-                }
-                <a asp-page="./Index" asp-route-selectedUserId="@user.Id">
-                    <div className="sidebar-item @isActive">
-                        #&nbsp;
-                        @Html.DisplayFor(model => user.DisplayName)
-                    </div>
-                </a>
-            }
-        </section> */}
+          <div className="section-title">DIRECT MESSAGES</div>
+          {this.state.directMessageUsers.map(c => (
+            <SidebarItem key={c.id}  section="user" name={c.displayName} id={c.id} />
+          ))}
+        </section>
       </div>
     );
   }

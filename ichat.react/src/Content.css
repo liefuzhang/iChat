@@ -1,0 +1,7 @@
+#container {
+  display: flex;
+  min-height: 100vh;
+}
+#container.page-loading {
+  /* opacity: 0; */
+}

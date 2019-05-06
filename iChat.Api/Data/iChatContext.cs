@@ -15,7 +15,8 @@ namespace iChat.Data
         }
 
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<ChannelSubscription> Subscriptions { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<ChannelSubscription> ChannelSubscription { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChannelMessage> ChannelMessages { get; set; }
         public DbSet<DirectMessage> DirectMessages { get; set; }

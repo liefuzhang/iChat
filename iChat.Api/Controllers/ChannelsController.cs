@@ -1,10 +1,10 @@
-﻿using iChat.Api.Services;
+﻿using iChat.Api.Models;
+using iChat.Api.Services;
 using iChat.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using iChat.Api.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace iChat.Api.Controllers
 {
@@ -34,11 +34,17 @@ namespace iChat.Api.Controllers
             return channels;
         }
 
-        // GET api/values/5
+        // GET api/channels/1
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<ActionResult<Channel>> GetAsync(int id)
         {
-            return "value";
+            var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c=>c.Id == id);
+            if (channel == null)
+            {
+                return NotFound();
+            }
+
+            return channel;
         }
 
         // POST api/values
