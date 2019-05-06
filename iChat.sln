@@ -5,7 +5,30 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat", "iChat\iChat.csproj", "{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.Api", "iChat.Api\iChat.Api.csproj", "{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ichat.react", "ichat.react\", "{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_62660"
+		Debug.AspNetCompiler.PhysicalPath = "ichat.react\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_62660\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_62660"
+		Release.AspNetCompiler.PhysicalPath = "ichat.react\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_62660\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "62660"
+		SlnRelativePath = "ichat.react\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +44,14 @@ Global
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
