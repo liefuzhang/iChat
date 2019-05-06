@@ -1,7 +1,24 @@
-#container {
-  display: flex;
-  min-height: 100vh;
+#sideBar {
+  width: 220px;
+  background: #206890;
+  color: #ddd;
+  min-height: 100%;
+  padding: 0 15px;
 }
-#container.page-loading {
-  /* opacity: 0; */
+#sideBar .section-title {
+  line-height: 2;
+  font-weight: 500;
+  margin: 25px 0 5px;
+}
+#sideBar .sidebar-item {
+  height: 26px;
+  margin: 0 -15px;
+  padding: 0 15px;
+}
+#sideBar .sidebar-item:hover {
+  cursor: pointer;
+  background: #259;
+}
+#sideBar .sidebar-item.active-item {
+  background: #259;
 }

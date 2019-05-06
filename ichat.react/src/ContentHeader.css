@@ -1,0 +1,7 @@
+.content-header {
+  flex: 0 0 auto;
+  height: 58px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0 -20px;
+  padding: 0 20px;
+}

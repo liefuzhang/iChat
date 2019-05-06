@@ -28,11 +28,15 @@ namespace iChat.Api.Controllers
             return users;
         }
 
-        // GET api/values/5
+        // GET api/users/1
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
+        public async Task<ActionResult<User>> GetAsync(int id) {
+            var user = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id);
+            if (user == null) {
+                return NotFound();
+            }
+
+            return user;
         }
 
         // POST api/values

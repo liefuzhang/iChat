@@ -1,11 +1,12 @@
 import React from "react";
-import "./Sidebar.css";
+import "./ContentHeader.css";
 
 class ContentHeader extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
+    this.isChannel = this.props.isChannel;
 
     this.state = {
       selectedChannel: {},
@@ -13,14 +14,20 @@ class ContentHeader extends React.Component {
     };
   }
 
-  fetchData() {
-    fetch(`/api/messages/${this.params.section}/${this.params.id}`)
-      .then(response => response.json())
-      .then(messages => this.setState({ messages }));
+  fetchData(props) {
+    if (props.isChannel) {
+      fetch(`/api/channels/${props.id}`)
+        .then(response => response.json())
+        .then(channel => this.setState({ selectedChannel: channel }));
+    } else {
+      fetch(`/api/users/${props.id}`)
+        .then(response => response.json())
+        .then(user => this.setState({ selectedUser: user }));
+    }
   }
 
   componentWillMount() {
-    this.fetchData();
+    this.fetchData(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -28,27 +35,8 @@ class ContentHeader extends React.Component {
       this.props.isChannel !== nextProps.isChannel ||
       this.props.id !== nextProps.id
     ) {
-      if (nextProps.isChannel) {
-        fetch(`/api/channels/${nextProps.id}`)
-          .then(response => response.json())
-          .then(channel => this.setState({ selectedChannel: channel }));
-      } else {
-        fetch(`/api/users/${nextProps.id}`)
-          .then(response => response.json())
-          .then(user => this.setState({ selectedUser: user }));
-      }
-    }
-  }
-
-  componentDidMount() {
-    if (this.props.isChannel) {
-      fetch(`/api/channels/${this.props.id}`)
-        .then(response => response.json())
-        .then(channel => this.setState({ selectedChannel: channel }));
-    } else {
-      fetch(`/api/users/${this.props.id}`)
-        .then(response => response.json())
-        .then(user => this.setState({ selectedUser: user }));
+      this.fetchData(nextProps);
+      this.isChannel = nextProps.isChannel;
     }
   }
 

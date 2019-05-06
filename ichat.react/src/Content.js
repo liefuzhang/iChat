@@ -1,7 +1,7 @@
 import React from "react";
 import "./Content.css";
-import { withRouter } from "react-router-dom";
 import ContentHeader from "./ContentHeader";
+import ContentMessages from "./ContentMessages";
 
 class Content extends React.Component {
   constructor(props) {
@@ -9,21 +9,10 @@ class Content extends React.Component {
 
     this.params = this.props.match.params;
     this.isChannel = this.params.section === "channel";
-    this.fetchData = this.fetchData.bind(this);
 
     this.state = {
       messages: []
     };
-  }
-
-  fetchData() {
-    fetch(`/api/messages/${this.params.section}/${this.params.id}`)
-      .then(response => response.json())
-      .then(messages => this.setState({ messages }));
-  }
-
-  componentWillMount() {
-    this.fetchData();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,32 +22,14 @@ class Content extends React.Component {
     ) {
       this.params = nextProps.match.params;
       this.isChannel = this.params.section === "channel";
-
-      this.fetchData();
     }
   }
 
   render() {
-    console.log(this.props);
     return (
       <div id="content">
         <ContentHeader isChannel={this.isChannel} id={this.params.id} />
-        <div className="message-container">
-          <div className="message-scrollable">
-            @foreach (var message in Model.MessagesToDisplay){" "}
-            {
-              <div className="message-item">
-                <div className="message-title">
-                  @message.Sender.DisplayName &nbsp;
-                  @message.CreatedDate.ToShortTimeString()
-                </div>
-                <div className="message-content">
-                  @Html.Raw(message.Content)
-                </div>
-              </div>
-            }
-          </div>
-        </div>
+        <ContentMessages section={this.params.section} id={this.params.id} />
 
         <div className="footer">
           <form id="messageForm" method="post">
