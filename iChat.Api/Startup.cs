@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using iChat.Api.Hubs;
+﻿using iChat.Api.Hubs;
 using iChat.Api.Services;
 using iChat.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace iChat.Api
 {
@@ -38,7 +30,13 @@ namespace iChat.Api
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
-                    builder => { builder.WithOrigins("http://localhost:3000").AllowAnyHeader(); });
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://localhost:3000")
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

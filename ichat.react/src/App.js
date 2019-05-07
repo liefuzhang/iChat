@@ -2,16 +2,17 @@ import React from "react";
 import "./App.css";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
-import signalR from "@aspnet/signalr";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
+import SignalRHub from "./SignalRHub";
 
 function App() {
   return (
-    <div id="container" className="page-loading">
+    <div id="container">
       <BrowserRouter>
         <Sidebar />
         <Route path={`/:section/:id`} component={Content} />
       </BrowserRouter>
+      <SignalRHub></SignalRHub>
     </div>
   );
 }

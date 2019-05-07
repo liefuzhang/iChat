@@ -1,6 +1,7 @@
 import React from "react";
 import "./ContentMessages.css";
 import "./simplebar.css";
+import signalR from "@aspnet/signalr";
 import SimpleBar from "simplebar-react";
 
 class ContentMessages extends React.Component {
