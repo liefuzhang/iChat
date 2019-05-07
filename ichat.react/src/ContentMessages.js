@@ -1,7 +1,7 @@
 import React from "react";
 import "./ContentMessages.css";
 import "./simplebar.css";
-import SimpleBar from 'simplebar';
+import SimpleBar from "simplebar-react";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -16,12 +16,15 @@ class ContentMessages extends React.Component {
   fetchData(props) {
     return fetch(`/api/messages/${props.section}/${props.id}`)
       .then(response => response.json())
-      .then(messages => this.setState({ messages }));
+      .then(messages => this.setState({ messages }))
+      .then(() => scrollToBottom());
   }
 
   componentDidMount() {
-    this.fetchData(this.props).then(()=>
-    initSimpleBar());
+    this.fetchData(this.props).then(() => {
+      var messageScrollable = document.querySelector(".message-scrollable");
+      messageScrollable.style.visibility = "visible"; // show now to avoid flickering
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -36,7 +39,7 @@ class ContentMessages extends React.Component {
   render() {
     return (
       <div className="message-container">
-        <div className="message-scrollable">
+        <SimpleBar className="message-scrollable">
           {this.state.messages.map(m => (
             <div key={m.id} className="message-item">
               <div className="message-title">
@@ -45,7 +48,7 @@ class ContentMessages extends React.Component {
               <RawMessage content={m.content} />
             </div>
           ))}
-        </div>
+        </SimpleBar>
       </div>
     );
   }
@@ -60,15 +63,9 @@ function RawMessage(props) {
   );
 }
 
-function initSimpleBar() {
-  var messageScrollable = document.querySelector(".message-scrollable");
-
-  // init simplebar
-  new SimpleBar(messageScrollable);
-
-  var scrollable = document.querySelector(".simplebar-content");
+function scrollToBottom() {
+  var scrollable = document.querySelector(".simplebar-content-wrapper");
   scrollable.scrollTop = scrollable.scrollHeight;
-  messageScrollable.style.visibility = "visible"; // show now to avoid flickering
 }
 
 export default ContentMessages;
