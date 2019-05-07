@@ -38,7 +38,7 @@ namespace iChat.Api
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
-                    builder => { builder.WithOrigins("http://localhost:3000"); });
+                    builder => { builder.WithOrigins("http://localhost:3000").AllowAnyHeader(); });
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

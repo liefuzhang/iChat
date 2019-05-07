@@ -40,9 +40,20 @@ class ContentFooter extends React.Component {
 
   initQuill() {
     this.configPlainClipboard();
-    var submitMessage = function(message) {
+    var submitMessage = function() {
+      var message = this.quill.root.innerHTML;
+      if (!message) return;
+
+      this.quill.root.innerHTML = "";
+
       if (this.props.isChannel) {
-        alert("submitted: " + message);
+        fetch(`/api/messages/channel/${this.props.id}`, {
+          method: "POST",
+          body: JSON.stringify(message),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }).catch(error => console.error("Error:", error));
       }
     };
     submitMessage = submitMessage.bind(this);
@@ -52,9 +63,7 @@ class ContentFooter extends React.Component {
         key: "enter",
         shiftKey: false,
         handler: function() {
-          var message = this.quill.root.innerHTML;
-          if (message) submitMessage(message);
-
+          submitMessage();
           return false;
         }
       }

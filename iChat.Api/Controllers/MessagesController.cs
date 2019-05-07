@@ -1,9 +1,11 @@
-﻿using iChat.Api.Services;
+﻿using System;
+using iChat.Api.Services;
 using iChat.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using iChat.Api.Extensions;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,17 +58,23 @@ namespace iChat.Api.Controllers
             return messages;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        // POST api/messages/channel/1
+        [HttpPost("channel/{id}")]
+        public async Task PostMessageToChannelAsync(int id, [FromBody] string newMessage)
         {
-            return "value";
-        }
+            if (id < 1)
+                throw new ArgumentException("invalid channel id");
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
+            var message = new ChannelMessage
+            {
+                ChannelId = id,
+                Content = _messageParsingService.Parse(newMessage),
+                CreatedDate = DateTime.Now,
+                SenderId = 1
+            };
+            _context.ChannelMessages.Add(message);
+
+            await _context.SaveChangesAsync();
         }
 
         // PUT api/values/5
