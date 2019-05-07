@@ -6,12 +6,13 @@ class ContentHeader extends React.Component {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
-    this.isChannel = this.props.isChannel;
 
     this.state = {
       selectedChannel: {},
       selectedUser: {}
     };
+
+    this.fetchData(this.props);
   }
 
   fetchData(props) {
@@ -25,18 +26,11 @@ class ContentHeader extends React.Component {
         .then(user => this.setState({ selectedUser: user }));
     }
   }
-
-  componentWillMount() {
-    this.fetchData(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (
-      this.props.isChannel !== nextProps.isChannel ||
-      this.props.id !== nextProps.id
-    ) {
-      this.fetchData(nextProps);
-      this.isChannel = nextProps.isChannel;
+ 
+  componentDidUpdate(prevProps) {
+    if (this.props.isChannel !== prevProps.isChannel ||
+      this.props.id !== prevProps.id) {
+      this.fetchData(this.props);
     }
   }
 
@@ -44,12 +38,12 @@ class ContentHeader extends React.Component {
     return (
       <div className="content-header">
         <div className="content-header-name">
-          {this.isChannel
+          {this.props.isChannel
             ? "#" + this.state.selectedChannel.name
             : this.state.selectedUser.name}
         </div>
         <div className="content-header-topic">
-          {this.isChannel ? this.state.selectedChannel.topic : ""}
+          {this.props.isChannel ? this.state.selectedChannel.topic : ""}
         </div>
       </div>
     );

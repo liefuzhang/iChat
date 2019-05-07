@@ -17,16 +17,16 @@ class ContentMessages extends React.Component {
       .then(messages => this.setState({ messages }));
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.fetchData(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     if (
-      this.propssection !== nextProps.section ||
-      this.props.id !== nextProps.id
+      this.props.section !== prevProps.section ||
+      this.props.id !== prevProps.id
     ) {
-      this.fetchData(nextProps);
+      this.fetchData(this.props);
     }
   }
 
