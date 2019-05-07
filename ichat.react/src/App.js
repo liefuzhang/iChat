@@ -1,6 +1,4 @@
 import React from "react";
-import simplebar from "simplebar";
-import logo from "./logo.svg";
 import "./App.css";
 import Sidebar from "./Sidebar";
 import Content from "./Content";

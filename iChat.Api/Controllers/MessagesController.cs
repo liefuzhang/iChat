@@ -75,6 +75,8 @@ namespace iChat.Api.Controllers
             _context.ChannelMessages.Add(message);
 
             await _context.SaveChangesAsync();
+
+            _notificationService.SendUpdateChannelNotification(id);
         }
 
         // PUT api/values/5

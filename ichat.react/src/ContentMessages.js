@@ -1,5 +1,7 @@
 import React from "react";
 import "./ContentMessages.css";
+import "./simplebar.css";
+import SimpleBar from 'simplebar';
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -12,13 +14,14 @@ class ContentMessages extends React.Component {
   }
 
   fetchData(props) {
-    fetch(`/api/messages/${props.section}/${props.id}`)
+    return fetch(`/api/messages/${props.section}/${props.id}`)
       .then(response => response.json())
       .then(messages => this.setState({ messages }));
   }
 
   componentDidMount() {
-    this.fetchData(this.props);
+    this.fetchData(this.props).then(()=>
+    initSimpleBar());
   }
 
   componentDidUpdate(prevProps) {
@@ -55,6 +58,17 @@ function RawMessage(props) {
       dangerouslySetInnerHTML={{ __html: props.content }}
     />
   );
+}
+
+function initSimpleBar() {
+  var messageScrollable = document.querySelector(".message-scrollable");
+
+  // init simplebar
+  new SimpleBar(messageScrollable);
+
+  var scrollable = document.querySelector(".simplebar-content");
+  scrollable.scrollTop = scrollable.scrollHeight;
+  messageScrollable.style.visibility = "visible"; // show now to avoid flickering
 }
 
 export default ContentMessages;
