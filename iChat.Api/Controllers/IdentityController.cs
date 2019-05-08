@@ -1,0 +1,84 @@
+﻿using System;
+using iChat.Api.Services;
+using iChat.Data;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using iChat.Api.Dtos;
+using iChat.Api.Helpers;
+using iChat.Api.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace iChat.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class IdentityController : ControllerBase
+    {
+        private IIdentityService _identityService;
+        private readonly AppSettings _appSettings;
+        private IMapper _mapper;
+
+        public IdentityController(IIdentityService identityService, IOptions<AppSettings> appSettings, IMapper mapper)
+        {
+            _identityService = identityService;
+            _mapper = mapper;
+            _appSettings = appSettings.Value;
+        }
+
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody]UserDto userDto)
+        {
+            var user = _identityService.Authenticate(userDto.Email, userDto.Password);
+
+            if (user == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // return basic user info (without password) and token to store client side
+            return Ok(new
+            {
+                Id = user.Id,
+                Email = user.Email,
+                DisplayName = user.DisplayName,
+                Token = tokenString
+            });
+        }
+
+        [HttpPost("register")]
+        public IActionResult Register([FromBody]UserDto userDto)
+        {
+            var user = _mapper.Map<User>(userDto);
+
+            try
+            {
+                _identityService.Register(user, userDto.Password);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+    }
+}

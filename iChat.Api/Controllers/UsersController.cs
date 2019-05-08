@@ -14,10 +14,12 @@ namespace iChat.Api.Controllers
     {
 
         private readonly iChatContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(iChatContext context)
+        public UsersController(iChatContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET api/users
@@ -31,7 +33,7 @@ namespace iChat.Api.Controllers
         // GET api/users/1
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetAsync(int id) {
-            var user = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id);
+            var user = await _userService.GetUserByIdAsync(id);
             if (user == null) {
                 return NotFound();
             }

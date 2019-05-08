@@ -1,6 +1,7 @@
 ﻿using iChat.Api.Models;
 using iChat.Api.Services;
 using iChat.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace iChat.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ChannelsController : ControllerBase
     {
 
@@ -38,7 +40,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id)
         {
-            var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c=>c.Id == id);
+            var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c => c.Id == id);
             if (channel == null)
             {
                 return NotFound();
