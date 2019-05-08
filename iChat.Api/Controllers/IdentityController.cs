@@ -1,19 +1,15 @@
-﻿using System;
-using iChat.Api.Services;
-using iChat.Data;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using iChat.Api.Dtos;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
-using Microsoft.EntityFrameworkCore;
+using iChat.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace iChat.Api.Controllers
 {
@@ -38,7 +34,9 @@ namespace iChat.Api.Controllers
             var user = _identityService.Authenticate(userDto.Email, userDto.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+            {
+                return BadRequest(new { message = "Email or password is incorrect" });
+            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
@@ -54,13 +52,13 @@ namespace iChat.Api.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            // return basic user info (without password) and token to store client side
+            // return basic user info (without password) and token to store on client side
             return Ok(new
             {
-                Id = user.Id,
-                Email = user.Email,
-                DisplayName = user.DisplayName,
-                Token = tokenString
+                id = user.Id,
+                email = user.Email,
+                displayName = user.DisplayName,
+                token = tokenString
             });
         }
 

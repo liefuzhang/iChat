@@ -1,0 +1,36 @@
+.login-page {
+  max-height: 100vh;
+  background: #f3f3f3;
+  padding-top: 150px;
+  flex: 1;
+}
+.login-page .login-container {
+  margin: 0 auto;
+  width: 640px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 110px;
+  box-sizing: border-box;
+}
+.login-page .login-container .login-form form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.login-page .login-container .login-form form .form-control {
+  width: 100%;
+  font-size: 1.2rem;
+}
+.login-page .login-container .login-form form button[type="submit"] {
+  margin-top: 10px;
+}
+.login-page .login-container .login-form form .forgot-password {
+  color: #8590a6;
+  margin-bottom: 40px;
+  margin-top: 15px;
+}
+.login-page .login-container .login-form form .forgot-password a:hover {
+  text-decoration: underline;
+}
