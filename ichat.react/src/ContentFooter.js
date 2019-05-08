@@ -1,12 +1,14 @@
 import React from "react";
 import "./ContentFooter.css";
 import Quill from "quill";
+import AuthService from "./services/AuthService";
 
 class ContentFooter extends React.Component {
   constructor(props) {
     super(props);
 
     this.quill = {};
+    this.authService = new AuthService(props);
     this.keydownEventHandler = keydownEventHandler.bind(this);
   }
 
@@ -47,13 +49,12 @@ class ContentFooter extends React.Component {
       this.quill.root.innerHTML = "";
 
       if (this.props.isChannel) {
-        fetch(`/api/messages/channel/${this.props.id}`, {
-          method: "POST",
-          body: JSON.stringify(message),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).catch(error => console.error("Error:", error));
+        this.authService
+          .fetch(`/api/messages/channel/${this.props.id}`, {
+            method: "POST",
+            body: JSON.stringify(message)
+          })
+          .catch(error => console.error("Error:", error));
       }
     };
     submitMessage = submitMessage.bind(this);

@@ -3,20 +3,24 @@ import "./ContentMessages.css";
 import "./simplebar.css";
 import signalR from "@aspnet/signalr";
 import SimpleBar from "simplebar-react";
+import AuthService from "./services/AuthService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
+    this.authService = new AuthService(props);
+
     this.state = {
       messages: []
     };
   }
 
   fetchData(props) {
-    return fetch(`/api/messages/${props.section}/${props.id}`)
-      .then(response => response.json())
+    let section = props.section || "channel";
+    let id = props.id || 0;
+    return this.authService.fetch(`/api/messages/${section}/${id}`)
       .then(messages => this.setState({ messages }))
       .then(() => scrollToBottom());
   }

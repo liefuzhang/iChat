@@ -1,36 +1,27 @@
 import React from "react";
 import "./Sidebar.css";
 import SidebarItem from "./SidebarItem";
+import AuthService from "./services/AuthService";
 
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
 
+    this.authService = new AuthService(props);
+
     this.state = {
       channels: [],
       directMessageUsers: []
     };
-
-    this.myHeaders = new Headers();
-    this.myHeaders.append(
-      "Authorization",
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwibmJmIjoxNTU3MzA5NjQyLCJleHAiOjE1NTc5MTQ0NDIsImlhdCI6MTU1NzMwOTY0Mn0.6w5Fv39ErR34g3WMDCO0XWdsLbwoTZQn-YD5lX7YKKc"
-    );
   }
 
   componentDidMount() {
-    fetch("/api/channels", {
-      method: "GET",
-      headers: this.myHeaders
-    })
-      .then(response => response.json())
+    this.authService
+      .fetch("/api/channels")
       .then(channels => this.setState({ channels }));
 
-    fetch("/api/users", {
-      method: "GET",
-      headers: this.myHeaders
-    })
-      .then(response => response.json())
+    this.authService
+      .fetch("/api/users")
       .then(directMessageUsers => this.setState({ directMessageUsers }));
   }
 

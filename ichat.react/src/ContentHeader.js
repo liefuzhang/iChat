@@ -1,11 +1,13 @@
 import React from "react";
 import "./ContentHeader.css";
+import AuthService from "./services/AuthService";
 
 class ContentHeader extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
+    this.authService = new AuthService(props);
 
     this.state = {
       selectedChannel: {},
@@ -17,12 +19,10 @@ class ContentHeader extends React.Component {
 
   fetchData(props) {
     if (props.isChannel) {
-      fetch(`/api/channels/${props.id}`)
-        .then(response => response.json())
+      this.authService.fetch(`/api/channels/${props.id}`)
         .then(channel => this.setState({ selectedChannel: channel }));
     } else {
-      fetch(`/api/users/${props.id}`)
-        .then(response => response.json())
+      this.authService.fetch(`/api/users/${props.id}`)
         .then(user => this.setState({ selectedUser: user }));
     }
   }

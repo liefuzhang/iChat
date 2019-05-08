@@ -10,7 +10,7 @@ function Content(props) {
   let isChannel = params.section === "channel";
 
   return (
-    <div>
+    <div id="contentContainer">
       <Sidebar />
       <div id="content">
         <ContentHeader isChannel={isChannel} id={params.id} />

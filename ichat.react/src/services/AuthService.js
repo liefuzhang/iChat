@@ -4,6 +4,7 @@ class AuthService {
   constructor(props) {
     this.localStorageKey = "ichat.user";
     this.props = props;
+    this.fetch = this.fetch.bind(this);
   }
 
   login(email, password) {
@@ -22,19 +23,64 @@ class AuthService {
       })
       .then(response => response.json())
       .then(response => {
-        localStorage.setItem("ichat.user", JSON.stringify(response));
+        this.setProfile(JSON.stringify(response));
         this.props.history.push("/");
       })
       .catch(error => alert(error));
   }
 
-  setToken() {}
+  setProfile(profile) {
+    localStorage.setItem(this.localStorageKey, profile);
+  }
+
+  getProfile() {
+    return JSON.parse(localStorage.getItem(this.localStorageKey));
+  }
+
+  getToken() {
+    let profile = this.getProfile();
+    return profile && profile.token;
+  }
 
   checkIfTokenExpired(){}
   
-  logout(){}
+  logout(){
+    localStorage.removeItem(this.localStorageKey);
+    this.props.history.push("/login");
+  }
 
-  fetch(){}
+  fetch(url, options){
+    if (!url) {
+      return Promise.reject(new Error('Empty url'));
+    }
+    
+    var token = this.getToken();
+    if (!token || this.checkIfTokenExpired(token)){
+      this.props.history.push("/login");
+      return Promise.reject(new Error('invalid token, taken to login'))
+        .then(()=>this.props.history.push("/login"));
+    }
+
+    var bearer = 'Bearer ' + token;
+    options || (options = {});
+    options.headers = {
+      "Content-Type": "application/json",
+      "Authorization": bearer
+    };
+
+    return fetch(url, options)
+      .then(function(response) {
+        if (!response.ok) {
+          return Promise.reject(new Error((response.status)));
+        }
+        return response;
+      })
+      .then(response => response.json())
+      .then(response => {
+        return Promise.resolve(response);
+      })
+      .catch(error => alert(error));
+  }
 }
 
 export default AuthService;
