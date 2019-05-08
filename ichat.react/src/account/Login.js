@@ -1,9 +1,12 @@
 import React from "react";
 import "./Login.css";
+import AuthService from "../services/AuthService";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+
+    this.authService = new AuthService(props);
   }
 
   componentDidMount() {
@@ -12,25 +15,7 @@ class Login extends React.Component {
       let email = event.target.elements["email"].value;
       let password = event.target.elements["password"].value;
       if (email && password) {
-        fetch(`/api/identity/authenticate`, {
-          method: "POST",
-          body: JSON.stringify({ email: email, password: password }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        })
-          .then(function(response) {
-            if (!response.ok) {
-              throw Error("Incorrect email or password");
-            }
-            return response;
-          })
-          .then(response => response.json())
-          .then(response => {
-            localStorage.setItem("ichat.user", JSON.stringify(response));
-            this.props.history.push("/")
-          })
-          .catch(error => alert(error));
+        this.authService.login(email, password);
       }
     });
   }
