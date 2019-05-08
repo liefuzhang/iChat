@@ -28,6 +28,7 @@ class Login extends React.Component {
           .then(response => response.json())
           .then(response => {
             localStorage.setItem("ichat.user", JSON.stringify(response));
+            this.props.history.push("/")
           })
           .catch(error => alert(error));
       }

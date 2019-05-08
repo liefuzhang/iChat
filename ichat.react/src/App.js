@@ -4,15 +4,17 @@ import Content from "./Content";
 import Login from "./account/Login";
 import { BrowserRouter, Route } from "react-router-dom";
 import SignalRHub from "./SignalRHub";
+import PrivateRoute from "./PrivateRoute"
 
 function App() {
   return (
     <div id="container">
       <BrowserRouter>
-        <Route path={`/login`} component={Login} />
-        <Route path={`/:section/:id`} component={Content} />
+        <PrivateRoute path="/" exact component={Content} />
+        <PrivateRoute path={'/:section/:id'} component={Content} />
+        <Route path={'/login'} component={Login} />
       </BrowserRouter>
-      <SignalRHub></SignalRHub>
+      <SignalRHub />
     </div>
   );
 }
