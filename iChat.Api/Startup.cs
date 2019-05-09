@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using iChat.Api.Helpers;
 using iChat.Api.Hubs;
 using iChat.Api.Services;
@@ -49,7 +50,8 @@ namespace iChat.Api
                         builder
                             .WithOrigins("http://localhost:3000")
                             .AllowAnyHeader()
-                            .AllowCredentials();
+                            .AllowCredentials()
+                            .AllowAnyMethod();
                     });
             });
 
@@ -85,12 +87,33 @@ namespace iChat.Api
                                 // return unauthorized if user no longer exists
                                 context.Fail("Unauthorized");
                             }
+                        },
+                        // We have to hook the OnMessageReceived event in order to
+                        // allow the JWT authentication handler to read the access
+                        // token from the query string when a WebSocket or 
+                        // Server-Sent Events request comes in.
+                        // ref https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-2.2#bearer-token-authentication
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            // If the request is for signalR hub...
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/chatHub")))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
                         }
                     };
                     x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
+                        LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
+                        ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,

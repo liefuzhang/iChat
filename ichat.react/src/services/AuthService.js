@@ -29,11 +29,16 @@ class AuthService {
       .catch(error => alert(error));
   }
 
+  isLoggedIn() {
+    return !!this.getProfile();
+  }
+
   setProfile(profile) {
     localStorage.setItem(this.localStorageKey, profile);
   }
 
   getProfile() {
+    if (!localStorage.getItem(this.localStorageKey)) return null;
     return JSON.parse(localStorage.getItem(this.localStorageKey));
   }
 
@@ -77,10 +82,8 @@ class AuthService {
         return response;
       })
       .then(response => response.text())
-      .then(
-        text => (text.length ? JSON.parse(text) : {}))
-      .then(
-        json => Promise.resolve(json))
+      .then(text => (text.length ? JSON.parse(text) : {}))
+      .then(json => Promise.resolve(json))
       .catch(error => alert(error));
   }
 }

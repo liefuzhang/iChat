@@ -169,6 +169,8 @@ function keydownEventHandler(event) {
       case 117:
         ret = false;
         break;
+      default:
+        break;
     }
   }
   if (!!char) {
