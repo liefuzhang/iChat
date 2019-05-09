@@ -18,7 +18,6 @@ class Content extends React.Component {
     let isChannel = params.section === "channel";
     return (
       <div id="contentContainer">
-        <Sidebar />
         <div id="content">
           <ContentHeader isChannel={isChannel} id={params.id} />
           <ContentMessages section={params.section} id={params.id} />
