@@ -10,12 +10,18 @@ class Content extends React.Component {
   constructor(props) {
     super(props);
 
-    new SignalRHubService().connect();
+    let hubService = new SignalRHubService();
+    hubService.connect().then(() => {
+      //todo change: add connection to all the users' channels and private messages
+      if (props.match.params.section === "channel")
+        hubService.addUserToChannelGroup(props.match.params.id);
+    });
   }
 
   render() {
     let params = this.props.match.params;
     let isChannel = params.section === "channel";
+
     return (
       <div id="contentContainer">
         <Sidebar />

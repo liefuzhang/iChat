@@ -4,6 +4,7 @@ import "./simplebar.css";
 import signalR from "@aspnet/signalr";
 import SimpleBar from "simplebar-react";
 import AuthService from "./services/AuthService";
+import SignalRHubService from "./services/SignalRHubService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -11,6 +12,12 @@ class ContentMessages extends React.Component {
 
     this.fetchData = this.fetchData.bind(this);
     this.authService = new AuthService(props);
+    
+    // new SignalRHubService().addEventHandler("UpdateChannel", function(channelId) {
+    //   if (props.section === "channel" && props.id === channelId) {
+    //     this.fetchData(props);
+    //   }
+    // });
 
     this.state = {
       messages: []

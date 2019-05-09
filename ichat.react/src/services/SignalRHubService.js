@@ -16,10 +16,14 @@ class SignalRHubService {
     });
   }
 
-  addUserToChannelGroup(channelID) {
-    this.connection.invoke("AddToChannelGroup", channelID).catch(function(err) {
+  addUserToChannelGroup(channelId) {
+    this.connection.invoke("AddToChannelGroup", channelId).catch(function(err) {
       return console.error(err.toString());
     });
+  }
+
+  addEventHandler(eventName, handler) {
+    this.connection.on(eventName, handler);
   }
 }
 
