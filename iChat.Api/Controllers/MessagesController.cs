@@ -70,8 +70,9 @@ namespace iChat.Api.Controllers
                 ChannelId = id,
                 Content = _messageParsingService.Parse(newMessage),
                 CreatedDate = DateTime.Now,
-                SenderId = 1
+                SenderId = User.GetUserId()
             };
+            
             _context.ChannelMessages.Add(message);
 
             await _context.SaveChangesAsync();

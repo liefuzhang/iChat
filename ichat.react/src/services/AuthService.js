@@ -42,43 +42,45 @@ class AuthService {
     return profile && profile.token;
   }
 
-  checkIfTokenExpired(){}
-  
-  logout(){
+  checkIfTokenExpired() {}
+
+  logout() {
     localStorage.removeItem(this.localStorageKey);
     this.props.history.push("/login");
   }
 
-  fetch(url, options){
+  fetch(url, options) {
     if (!url) {
-      return Promise.reject(new Error('Empty url'));
-    }
-    
-    var token = this.getToken();
-    if (!token || this.checkIfTokenExpired(token)){
-      this.props.history.push("/login");
-      return Promise.reject(new Error('invalid token, taken to login'))
-        .then(()=>this.props.history.push("/login"));
+      return Promise.reject(new Error("Empty url"));
     }
 
-    var bearer = 'Bearer ' + token;
+    var token = this.getToken();
+    if (!token || this.checkIfTokenExpired(token)) {
+      this.props.history.push("/login");
+      return Promise.reject(new Error("invalid token, taken to login")).then(
+        () => this.props.history.push("/login")
+      );
+    }
+
+    var bearer = "Bearer " + token;
     options || (options = {});
     options.headers = {
       "Content-Type": "application/json",
-      "Authorization": bearer
+      Authorization: bearer
     };
 
     return fetch(url, options)
       .then(function(response) {
         if (!response.ok) {
-          return Promise.reject(new Error((response.status)));
+          return Promise.reject(new Error(response.status));
         }
         return response;
       })
-      .then(response => response.json())
-      .then(response => {
-        return Promise.resolve(response);
-      })
+      .then(response => response.text())
+      .then(
+        text => (text.length ? JSON.parse(text) : {}))
+      .then(
+        json => Promise.resolve(json))
       .catch(error => alert(error));
   }
 }
