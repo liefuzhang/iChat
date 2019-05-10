@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function SidebarItem(props) {
   return (
     <Link to={`/${props.section}/${props.id}`}>
-      <div className="sidebar-item">
+      <div className={"sidebar-item " + (props.active ? "active-item":"")}>
         #&nbsp;
         {props.name}
       </div>

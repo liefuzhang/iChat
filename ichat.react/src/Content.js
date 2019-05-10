@@ -35,18 +35,18 @@ class Content extends React.Component {
   render() {
     let params = this.props.match.params;
     let isChannel = params.section === "channel";
-
+    let id = +params.id;
     return (
       <div id="contentContainer">
-        <Sidebar />
+        <Sidebar isChannel={isChannel} id={id} />
         <div id="content">
-          <ContentHeader isChannel={isChannel} id={params.id} />
+          <ContentHeader isChannel={isChannel} id={id} />
           <ContentMessages
             section={params.section}
-            id={params.id}
+            id={id}
             hubConnection={this.connection}
           />
-          <ContentFooter isChannel={isChannel} id={params.id} />
+          <ContentFooter isChannel={isChannel} id={id} />
         </div>
       </div>
     );

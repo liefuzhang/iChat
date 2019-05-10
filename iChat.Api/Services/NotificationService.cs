@@ -10,8 +10,8 @@ namespace iChat.Api.Services {
             _hubContext = hubContext;
         }
 
-        public async Task SendUpdateChannelNotification(int channelID) {
-            await _hubContext.Clients.Group(channelID.ToString()).SendAsync("UpdateChannel", channelID.ToString());
+        public async Task SendUpdateChannelNotification(int channelId) {
+            await _hubContext.Clients.Group(channelId.ToString()).SendAsync("UpdateChannel", channelId);
         }
 
         public async Task SendDirectMessageNotification(int userId) {

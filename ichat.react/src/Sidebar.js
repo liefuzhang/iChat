@@ -13,9 +13,11 @@ class Sidebar extends React.Component {
       channels: [],
       directMessageUsers: []
     };
+
+    this.fecthData();
   }
 
-  componentDidMount() {
+  fecthData() {
     this.authService
       .fetch("/api/channels")
       .then(channels => this.setState({ channels }));
@@ -30,21 +32,36 @@ class Sidebar extends React.Component {
       <div id="sideBar">
         <section>
           <div className="section-title">CHANNELS</div>
-          {this.state.channels.map(c => (
-            <SidebarItem key={c.id} section="channel" name={c.name} id={c.id} />
-          ))}
+          {this.state.channels.map(c => {
+            let active = false;
+            if (this.props.isChannel && this.props.id === c.id) active = true;
+            return (
+              <SidebarItem
+                key={c.id}
+                section="channel"
+                name={c.name}
+                id={c.id}
+                active={active}
+              />
+            );
+          })}
         </section>
 
         <section>
           <div className="section-title">DIRECT MESSAGES</div>
-          {this.state.directMessageUsers.map(c => (
-            <SidebarItem
-              key={c.id}
-              section="user"
-              name={c.displayName}
-              id={c.id}
-            />
-          ))}
+          {this.state.directMessageUsers.map(c => {
+            let active = false;
+            if (!this.props.isChannel && this.props.id === c.id) active = true;
+            return (
+              <SidebarItem
+                key={c.id}
+                section="user"
+                name={c.displayName}
+                id={c.id}
+                active={active}
+              />
+            );
+          })}
         </section>
       </div>
     );
