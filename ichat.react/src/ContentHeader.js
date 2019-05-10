@@ -40,7 +40,7 @@ class ContentHeader extends React.Component {
         <div className="content-header-name">
           {this.props.isChannel
             ? "#" + this.state.selectedChannel.name
-            : this.state.selectedUser.name}
+            : this.state.selectedUser.displayName}
         </div>
         <div className="content-header-topic">
           {this.props.isChannel ? this.state.selectedChannel.topic : ""}

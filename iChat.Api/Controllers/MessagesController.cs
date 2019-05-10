@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 using iChat.Api.Extensions;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iChat.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MessagesController : ControllerBase
     {
 
@@ -49,47 +51,56 @@ namespace iChat.Api.Controllers
             var messages = await _context.DirectMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ReceiverId == id &&
-                            m.SenderId == 1 || // todo change here
-                            m.ReceiverId == id &&
-                            m.SenderId == 1)
+                            m.SenderId == User.GetUserId() || 
+                            m.ReceiverId == User.GetUserId() &&
+                            m.SenderId == id)
                 .OrderBy(m => m.CreatedDate)
                 .Cast<Message>()
                 .ToListAsync();
             return messages;
         }
 
-        // POST api/messages/channel/1
-        [HttpPost("channel/{id}")]
-        public async Task PostMessageToChannelAsync(int id, [FromBody] string newMessage)
+        // POST api/messages/user/1
+        [HttpPost("user/{id}")]
+        public async Task PostMessageToUserAsync(int id, [FromBody] string newMessage)
         {
             if (id < 1)
-                throw new ArgumentException("invalid channel id");
+                throw new ArgumentException("invalid user id");
 
-            var message = new ChannelMessage
+            var message = new DirectMessage
             {
-                ChannelId = id,
+                ReceiverId = id,
                 Content = _messageParsingService.Parse(newMessage),
                 CreatedDate = DateTime.Now,
                 SenderId = User.GetUserId()
             };
             
+            _context.DirectMessages.Add(message);
+
+            await _context.SaveChangesAsync();
+
+            _notificationService.SendDirectMessageNotification(User.GetUserId());
+            _notificationService.SendDirectMessageNotification(id);
+        }
+
+        // POST api/messages/channel/1
+        [HttpPost("channel/{id}")]
+        public async Task PostMessageToChannelAsync(int id, [FromBody] string newMessage) {
+            if (id < 1)
+                throw new ArgumentException("invalid channel id");
+
+            var message = new ChannelMessage {
+                ChannelId = id,
+                Content = _messageParsingService.Parse(newMessage),
+                CreatedDate = DateTime.Now,
+                SenderId = User.GetUserId()
+            };
+
             _context.ChannelMessages.Add(message);
 
             await _context.SaveChangesAsync();
 
             _notificationService.SendUpdateChannelNotification(id);
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

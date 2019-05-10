@@ -4,20 +4,20 @@ import "./simplebar.css";
 import signalR from "@aspnet/signalr";
 import SimpleBar from "simplebar-react";
 import AuthService from "./services/AuthService";
-import SignalRHubService from "./services/SignalRHubService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
+    this.onUpdateChannel = this.onUpdateChannel.bind(this);
+    this.onReceiveMessage = this.onReceiveMessage.bind(this);
     this.authService = new AuthService(props);
-    
-    // new SignalRHubService().addEventHandler("UpdateChannel", function(channelId) {
-    //   if (props.section === "channel" && props.id === channelId) {
-    //     this.fetchData(props);
-    //   }
-    // });
+
+    if (props.hubConnection) {
+      props.hubConnection.on("UpdateChannel", this.onUpdateChannel);
+      props.hubConnection.on("ReceiveMessage", this.onReceiveMessage);
+    }
 
     this.state = {
       messages: []
@@ -27,7 +27,8 @@ class ContentMessages extends React.Component {
   fetchData(props) {
     let section = props.section || "channel";
     let id = props.id || 0;
-    return this.authService.fetch(`/api/messages/${section}/${id}`)
+    return this.authService
+      .fetch(`/api/messages/${section}/${id}`)
       .then(messages => this.setState({ messages }))
       .then(() => scrollToBottom());
   }
@@ -44,6 +45,18 @@ class ContentMessages extends React.Component {
       this.props.section !== prevProps.section ||
       this.props.id !== prevProps.id
     ) {
+      this.fetchData(this.props);
+    }
+  }
+
+  onUpdateChannel(channelId){
+    if (this.props.section === "channel" && this.props.id === channelId) {
+      this.fetchData(this.props);
+    }
+  }
+
+  onReceiveMessage() {
+    if (this.props.section === "user") {
       this.fetchData(this.props);
     }
   }

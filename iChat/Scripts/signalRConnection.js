@@ -14,7 +14,7 @@ var signalRController = (function () {
                     document.location.reload();
                 }
             });
-
+        
         connection.on("ReceiveMessage",
             function () {
                 document.location.reload();

@@ -112,7 +112,7 @@ var mainController = (function () {
                             break;
                     }
                 }
-                if (!!char) {
+                if (char) {
                     toggleFormatChars(char);
                 }
 

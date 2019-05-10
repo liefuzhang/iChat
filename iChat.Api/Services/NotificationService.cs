@@ -11,11 +11,11 @@ namespace iChat.Api.Services {
         }
 
         public async Task SendUpdateChannelNotification(int channelID) {
-            await _hubContext.Clients.Group(channelID.ToString()).SendAsync("UpdateChannel", channelID);
+            await _hubContext.Clients.Group(channelID.ToString()).SendAsync("UpdateChannel", channelID.ToString());
         }
 
-        public async Task SendDirectMessageNotification(int selectedUserId) {
-            await _hubContext.Clients.User(selectedUserId.ToString()).SendAsync("ReceiveMessage");
+        public async Task SendDirectMessageNotification(int userId) {
+            await _hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveMessage");
         }
     }
 }

@@ -55,6 +55,13 @@ class ContentFooter extends React.Component {
             body: JSON.stringify(message)
           })
           .catch(error => console.error("Error:", error));
+      } else {
+        this.authService
+          .fetch(`/api/messages/user/${this.props.id}`, {
+            method: "POST",
+            body: JSON.stringify(message)
+          })
+          .catch(error => console.error("Error:", error));
       }
     };
     submitMessage = submitMessage.bind(this);
