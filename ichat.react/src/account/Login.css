@@ -14,6 +14,7 @@
   align-items: center;
   padding: 0 110px;
   box-sizing: border-box;
+  padding-bottom: 40px;
 }
 .login-page .login-container .login-form form {
   display: flex;
@@ -29,9 +30,39 @@
 }
 .login-page .login-container .login-form form .forgot-password {
   color: #8590a6;
-  margin-bottom: 40px;
   margin-top: 15px;
 }
 .login-page .login-container .login-form form .forgot-password a:hover {
   text-decoration: underline;
+}
+
+.login-page .login-section {
+  width: 300px;
+}
+
+.login-section .white-btn{
+  width: 100%;
+  
+}
+
+.horizontal-divider {
+  position: relative;
+  margin: 20px 0;
+  width: 300px;
+  text-align: center;
+}
+.horizontal-divider::before,
+.horizontal-divider::after {
+  content: "";
+  width: 40%;
+  position: absolute;
+  height: 1px;
+  top: 50%;
+  background-color: #ddd;
+}
+.horizontal-divider::before{
+  left: 0;
+}
+.horizontal-divider::after{
+  right: 0;
 }
