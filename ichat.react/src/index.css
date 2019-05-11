@@ -99,6 +99,7 @@ blockquote {
   color: #333;
   border: 1px solid #ddd;
   font-weight: 600;
+  font-size: 1rem;
 }
 
 .btn.white-btn:hover,

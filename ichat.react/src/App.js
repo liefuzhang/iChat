@@ -4,8 +4,13 @@ import Content from "./Content";
 import Login from "./account/Login";
 import { BrowserRouter, Route } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-function App() {
+function App() { 
+  library.add(faTimes);
+
   return (
     <div id="container">
       <BrowserRouter>

@@ -12,9 +12,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 110px;
   box-sizing: border-box;
-  padding-bottom: 40px;
+  padding: 20px 110px 40px;
+  transition: all 1s;
 }
 .login-page .login-container .login-form form {
   display: flex;
@@ -36,13 +36,22 @@
   text-decoration: underline;
 }
 
-.login-page .login-section {
-  width: 300px;
+.login-page session {
+  width: 300px; 
 }
 
-.login-section .white-btn{
-  width: 100%;
-  
+.login-page session .white-btn{
+  width: 100%;  
+}
+
+#workspaceContainer{
+  position: relative;
+}
+
+.hide-container {
+  display: none !important;
+  transition: all 1s;
+  opacity: 0;
 }
 
 .horizontal-divider {
