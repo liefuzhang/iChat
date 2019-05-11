@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat", "iChat\iChat.csproj", "{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.Api", "iChat.Api\iChat.Api.csproj", "{0E6F8E63-B16B-4AFC-BD67-826399F4BB2E}"
@@ -36,10 +34,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F20918E-FA13-40F8-BE2C-54B6FD36E03C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDADC48E-0409-4030-82BC-3900CA52416C}.Release|Any CPU.ActiveCfg = Release|Any CPU

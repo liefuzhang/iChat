@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace iChat.Data
-{
-    public class iChatContext: DbContext
-    {
+namespace iChat.Data {
+    public class iChatContext : DbContext {
         public iChatContext(DbContextOptions<iChatContext> options) : base(options) {
         }
 
@@ -45,6 +43,11 @@ namespace iChat.Data
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
                 .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.WorkSpace)
+                .WithMany(w => w.Users)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

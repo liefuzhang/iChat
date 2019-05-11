@@ -10,6 +10,8 @@ namespace iChat.Api.Models
         public string DisplayName { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public int WorkSpaceId { get; set; }
+        public WorkSpace WorkSpace { get; set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; set; }
     }
 }

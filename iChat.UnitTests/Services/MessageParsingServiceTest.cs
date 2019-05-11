@@ -1,4 +1,4 @@
-using iChat.Services;
+using iChat.Api.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace iChat.UnitTests.Services
