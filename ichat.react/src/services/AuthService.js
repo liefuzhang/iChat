@@ -21,9 +21,8 @@ class AuthService {
         }
         return response.text();
       })
-      .then(response => response.json())
-      .then(response => {
-        this.setProfile(JSON.stringify(response));
+      .then(text => {
+        this.setProfile(text);
         this.props.history.push("/");
       })
       .catch(error => alert(error));

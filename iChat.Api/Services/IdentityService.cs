@@ -38,7 +38,8 @@ namespace iChat.Api.Services {
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 CreatedDate = DateTime.Now,
-                WorkspaceId = workspaceId
+                WorkspaceId = workspaceId,
+                DisplayName = email
             };
 
             _context.Users.Add(user);

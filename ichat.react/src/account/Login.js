@@ -9,45 +9,99 @@ class Login extends React.Component {
 
     this.authService = new AuthService(props);
     this.showCreateWorkSpace = this.showCreateWorkSpace.bind(this);
+    this.onAccountFormSubmit = this.onAccountFormSubmit.bind(this);
+    this.onWorkspaceFormSubmit = this.onWorkspaceFormSubmit.bind(this);
+    this.onOwnerAccountFormSubmit = this.onOwnerAccountFormSubmit.bind(this);
+
+    this.state = {
+      createdWorkspaceName: "",
+      createdWorkspaceOwnerEmail: "",
+      createdWorkspaceOwnerPassword: ""
+    };
+  }
+
+  onAccountFormSubmit(event) {
+    event.preventDefault();
+    let email = event.target.elements["email"].value;
+    let password = event.target.elements["password"].value;
+    if (email && password) {
+      this.authService.login(email, password);
+    }
+  }
+
+  onWorkspaceFormSubmit(event) {
+    event.preventDefault();
+    let email = event.target.elements["email"].value;
+    let password = event.target.elements["password"].value;
+    let workspace = event.target.elements["workspace"].value;
+    if (email && password && workspace) {
+      this.authService
+        .fetch(`/api/workspaces/register`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            workspaceName: workspace
+          })
+        })
+        .then(() => {document
+          .querySelector("#workspaceContainer")
+          .classList.add("hide-container");
+          document
+            .querySelector("#ownerLoginContainer")
+            .classList.remove("hide-container");
+
+          this.setState({
+            createdWorkspaceName: workspace,
+            createdWorkspaceOwnerEmail: email,
+            createdWorkspaceOwnerPassword: password
+          });
+        });
+    }
+  }
+
+  onOwnerAccountFormSubmit(event) {
+    event.preventDefault();
+
+    this.authService.login(this.state.createdWorkspaceOwnerEmail, this.state.createdWorkspaceOwnerPassword);
+  }
+
+  componentWillUnmount() {
+    document
+      .querySelector("#account")
+      .removeEventListener("submit", this.onAccountFormSubmit);
+    document
+      .querySelector("#workspace")
+      .removeEventListener("submit", this.onWorkspaceFormSubmit);
+    document
+      .querySelector("#ownerAccount")
+      .removeEventListener("submit", this.onOwnerAccountFormSubmit);
   }
 
   componentDidMount() {
-    document.querySelector("#account").addEventListener("submit", event => {
-      event.preventDefault();
-      let email = event.target.elements["email"].value;
-      let password = event.target.elements["password"].value;
-      if (email && password) {
-        this.authService.login(email, password);
-      }
-    });
-
-    document.querySelector("#workspace").addEventListener("submit", event => {
-      event.preventDefault();
-      let email = event.target.elements["email"].value;
-      let password = event.target.elements["password"].value;
-      let workspace = event.target.elements["workspace"].value;
-      if (email && password && workspace) {
-        this.authService
-          .fetch(`/api/workspaces/register`, {
-            method: "POST",
-            body: JSON.stringify({
-              email: email,
-              password: password,
-              workspaceName: workspace
-            })
-          });
-      }
-    });
+    document
+      .querySelector("#account")
+      .addEventListener("submit", this.onAccountFormSubmit);
+    document
+      .querySelector("#workspace")
+      .addEventListener("submit", this.onWorkspaceFormSubmit);
+    document
+      .querySelector("#ownerAccount")
+      .addEventListener("submit", this.onOwnerAccountFormSubmit);
   }
 
   showCreateWorkSpace() {
     document.querySelector("#loginContainer").style.display = "none";
-    document.querySelector("#workspaceContainer").classList.remove("hide-container");
+    document
+      .querySelector("#workspaceContainer")
+      .classList.remove("hide-container");
   }
 
   hideCreateWorkspace() {
     document.querySelector("#loginContainer").style.display = "flex";
-    document.querySelector("#workspaceContainer").classList.add("hide-container");
+    document
+      .querySelector("#workspaceContainer")
+      .classList.add("hide-container");
   }
 
   render() {
@@ -89,13 +143,19 @@ class Login extends React.Component {
           </section>
           <div className="horizontal-divider">or</div>
           <section>
-            <button className="btn white-btn" onClick={this.showCreateWorkSpace}>
+            <button
+              className="btn white-btn"
+              onClick={this.showCreateWorkSpace}
+            >
               Create New WorkSpace
             </button>
           </section>
         </div>
-        <div id="workspaceContainer" className="login-container panel hide-container">
-          <CloseButton onClose={this.hideCreateWorkspace}/>
+        <div
+          id="workspaceContainer"
+          className="login-container panel hide-container"
+        >
+          <CloseButton onClose={this.hideCreateWorkspace} />
           <section>
             <h1 style={{ textAlign: "center" }}>Create a new workspace</h1>
             <div className="login-form">
@@ -127,6 +187,27 @@ class Login extends React.Component {
                 />
                 <button type="submit" className="btn form-control">
                   Create
+                </button>
+              </form>
+            </div>
+          </section>
+        </div>
+        <div
+          id="ownerLoginContainer"
+          className="login-container panel hide-container"
+        >
+          <section>
+            <h1 style={{ textAlign: "center" }}>
+              Workspace <b>{this.state.createdWorkspaceName}</b> Created!
+            </h1>
+            <div className="login-form">
+              <form id="ownerAccount" method="post">
+                <p>
+                  Click <b>Continue</b> to login as{" "}
+                  <b>{this.state.createdWorkspaceOwnerEmail}</b>.
+                </p>
+                <button type="submit" className="btn form-control">
+                  Continue
                 </button>
               </form>
             </div>

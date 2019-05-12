@@ -15,7 +15,6 @@ namespace iChat.Api.Controllers
     [ApiController]
     public class WorkspacesController : ControllerBase
     {
-
         private readonly iChatContext _context;
         private readonly IWorkspaceService _workspaceService;
         private readonly IIdentityService _identityService;
