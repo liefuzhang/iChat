@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.cs" />
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.Designer.cs" />
+    <Compile Remove="Migrations\20190511222647_RenameWorkSpaceToWorkspace.cs" />
+    <Compile Remove="Migrations\20190511222647_RenameWorkSpaceToWorkspace.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

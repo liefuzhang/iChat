@@ -17,9 +17,14 @@ namespace iChat.Api.Services
             _context = context;
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
-        {
+        public async Task<User> GetUserByIdAsync(int id) {
             var user = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id);
+
+            return user;
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email) {
+            var user = await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Email == email);
 
             return user;
         }

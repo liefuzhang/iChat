@@ -20,6 +20,24 @@ class Login extends React.Component {
         this.authService.login(email, password);
       }
     });
+
+    document.querySelector("#workspace").addEventListener("submit", event => {
+      event.preventDefault();
+      let email = event.target.elements["email"].value;
+      let password = event.target.elements["password"].value;
+      let workspace = event.target.elements["workspace"].value;
+      if (email && password && workspace) {
+        this.authService
+          .fetch(`/api/workspaces/register`, {
+            method: "POST",
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              workspaceName: workspace
+            })
+          });
+      }
+    });
   }
 
   showCreateWorkSpace() {
@@ -53,6 +71,7 @@ class Login extends React.Component {
                   name="password"
                   type="password"
                   placeholder="Password"
+                  minLength="6"
                   required
                 />
                 <button type="submit" className="btn form-control">
@@ -86,7 +105,9 @@ class Login extends React.Component {
                   className="form-control"
                   name="workspace"
                   type="text"
-                  placeholder="workspace name"
+                  placeholder="Workspace Name"
+                  pattern="[0-9A-Za-z_]*"
+                  title="Workspace name can only contain numbers, letters and underscore."
                   required
                 />
                 <input
@@ -101,6 +122,7 @@ class Login extends React.Component {
                   name="password"
                   type="password"
                   placeholder="Password"
+                  minLength="6"
                   required
                 />
                 <button type="submit" className="btn form-control">

@@ -4,6 +4,7 @@ using iChat.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -40,13 +41,16 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id)
         {
-            var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c => c.Id == id);
-            if (channel == null)
-            {
-                return NotFound();
-            }
+            try {
+                var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c => c.Id == id);
+                if (channel == null) {
+                    return NotFound();
+                }
 
-            return channel;
+                return channel;
+            } catch (Exception ex) {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // POST api/values

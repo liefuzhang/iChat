@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace iChat.Api.Controllers
 {
@@ -28,19 +29,27 @@ namespace iChat.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAsync()
         {
-            var users = await _context.Users.AsNoTracking().ToListAsync();
-            return users;
+            try {
+                var users = await _context.Users.AsNoTracking().ToListAsync();
+                return users;
+            } catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET api/users/1
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetAsync(int id) {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null) {
-                return NotFound();
-            }
+            try {
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null) {
+                    return NotFound();
+                }
 
-            return user;
+                return user;
+            } catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST api/values

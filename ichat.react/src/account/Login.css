@@ -36,11 +36,11 @@
   text-decoration: underline;
 }
 
-.login-page session {
+.login-page section {
   width: 300px; 
 }
 
-.login-page session .white-btn{
+.login-page section .white-btn{
   width: 100%;  
 }
 

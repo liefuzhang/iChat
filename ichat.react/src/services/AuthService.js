@@ -17,9 +17,9 @@ class AuthService {
     })
       .then(function(response) {
         if (!response.ok) {
-          throw Error("Incorrect email or password");
+          return response.text().then(r => Promise.reject(r));
         }
-        return response;
+        return response.text();
       })
       .then(response => response.json())
       .then(response => {
@@ -77,11 +77,10 @@ class AuthService {
     return fetch(url, options)
       .then(function(response) {
         if (!response.ok) {
-          return Promise.reject(new Error(response.status));
+          return response.text().then(r => Promise.reject(r));
         }
-        return response;
+        return response.text();
       })
-      .then(response => response.text())
       .then(text => (text.length ? JSON.parse(text) : {}))
       .then(json => Promise.resolve(json))
       .catch(error => alert(error));

@@ -14,17 +14,13 @@ namespace iChat.Data {
 
         public DbSet<Channel> Channels { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<ChannelSubscription> ChannelSubscription { get; set; }
+        public DbSet<ChannelSubscription> ChannelSubscriptions { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChannelMessage> ChannelMessages { get; set; }
         public DbSet<DirectMessage> DirectMessages { get; set; }
+        public DbSet<Workspace> Workspaces { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Channel>().ToTable("Channel");
-            modelBuilder.Entity<User>().ToTable("User");
-            modelBuilder.Entity<ChannelSubscription>().ToTable("ChannelSubscription");
-            modelBuilder.Entity<Message>().ToTable("Message");
 
             //// config many-to-many for channel and user
             modelBuilder.Entity<ChannelSubscription>()
@@ -46,7 +42,7 @@ namespace iChat.Data {
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<User>()
-                .HasOne(u => u.WorkSpace)
+                .HasOne(u => u.Workspace)
                 .WithMany(w => w.Users)
                 .OnDelete(DeleteBehavior.Restrict);
         }
