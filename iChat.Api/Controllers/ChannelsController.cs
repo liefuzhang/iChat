@@ -19,38 +19,41 @@ namespace iChat.Api.Controllers {
         private readonly iChatContext _context;
         private readonly INotificationService _notificationService;
         private IMessageParsingService _messageParsingService;
+        private IChannelService _channelService;
 
         public ChannelsController(iChatContext context,
             INotificationService notificationService,
-            IMessageParsingService messageParsingService) {
+            IMessageParsingService messageParsingService,
+            IChannelService channelService) {
             _context = context;
             _notificationService = notificationService;
             _messageParsingService = messageParsingService;
+            _channelService = channelService;
         }
 
         // GET api/channels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Channel>>> GetAsync() {
-            var channels = await _context.Channels.AsNoTracking()
-                .Where(c => c.WorkspaceId == User.GetWorkplaceId())
-                .ToListAsync();
-            return channels;
+            try {
+                var channels = await _channelService.GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
+                return channels.ToList();
+            } catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET api/channels/1
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id) {
             try {
-                var channel = await _context.Channels.AsNoTracking()
-                    .Where(c => c.WorkspaceId == User.GetWorkplaceId())
-                    .SingleOrDefaultAsync(c => c.Id == id);
+                var channel = await _channelService.GetChannelByIdAsync(id, User.GetUserId());
                 if (channel == null) {
                     return NotFound();
                 }
 
                 return channel;
             } catch (Exception ex) {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
