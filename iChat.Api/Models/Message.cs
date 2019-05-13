@@ -8,6 +8,7 @@ namespace iChat.Api.Models
         public int SenderId { get; set; }
         public User Sender { get; set; }
         public string Content { get; set; }
+        public int WorkspaceId { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

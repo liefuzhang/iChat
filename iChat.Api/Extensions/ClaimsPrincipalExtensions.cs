@@ -11,5 +11,13 @@ namespace iChat.Api.Extensions
             var id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return int.Parse(id);
         }
+
+        public static int GetWorkplaceId(this ClaimsPrincipal principal) {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            var id = principal.FindFirst("WorkspaceId")?.Value;
+            return int.Parse(id);
+        }
     }
 }

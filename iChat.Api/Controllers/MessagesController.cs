@@ -34,7 +34,7 @@ namespace iChat.Api.Controllers {
             try {
                 var messages = await _context.ChannelMessages
                         .Include(m => m.Sender)
-                        .Where(m => m.ChannelId == id)
+                        .Where(m => m.ChannelId == id && m.WorkspaceId == User.GetWorkplaceId())
                         .OrderBy(m => m.CreatedDate)
                         .Cast<Message>()
                         .ToListAsync();
@@ -51,9 +51,11 @@ namespace iChat.Api.Controllers {
                 var messages = await _context.DirectMessages
                         .Include(m => m.Sender)
                         .Where(m => m.ReceiverId == id &&
-                                    m.SenderId == User.GetUserId() ||
+                                    m.SenderId == User.GetUserId() &&
+                                    m.WorkspaceId == User.GetWorkplaceId() ||
                                     m.ReceiverId == User.GetUserId() &&
-                                    m.SenderId == id)
+                                    m.SenderId == id &&
+                                    m.WorkspaceId == User.GetWorkplaceId())
                         .OrderBy(m => m.CreatedDate)
                         .Cast<Message>()
                         .ToListAsync();
@@ -74,7 +76,8 @@ namespace iChat.Api.Controllers {
                     ReceiverId = id,
                     Content = _messageParsingService.Parse(newMessage),
                     CreatedDate = DateTime.Now,
-                    SenderId = User.GetUserId()
+                    SenderId = User.GetUserId(),
+                    WorkspaceId = User.GetWorkplaceId()
                 };
 
                 _context.DirectMessages.Add(message);
@@ -101,7 +104,8 @@ namespace iChat.Api.Controllers {
                     ChannelId = id,
                     Content = _messageParsingService.Parse(newMessage),
                     CreatedDate = DateTime.Now,
-                    SenderId = User.GetUserId()
+                    SenderId = User.GetUserId(),
+                    WorkspaceId = User.GetWorkplaceId()
                 };
 
                 _context.ChannelMessages.Add(message);

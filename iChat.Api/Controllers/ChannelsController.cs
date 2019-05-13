@@ -1,4 +1,5 @@
-﻿using iChat.Api.Models;
+﻿using iChat.Api.Extensions;
+using iChat.Api.Models;
 using iChat.Api.Services;
 using iChat.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -6,15 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Controllers
-{
+namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class ChannelsController : ControllerBase
-    {
+    public class ChannelsController : ControllerBase {
 
         private readonly iChatContext _context;
         private readonly INotificationService _notificationService;
@@ -22,8 +22,7 @@ namespace iChat.Api.Controllers
 
         public ChannelsController(iChatContext context,
             INotificationService notificationService,
-            IMessageParsingService messageParsingService)
-        {
+            IMessageParsingService messageParsingService) {
             _context = context;
             _notificationService = notificationService;
             _messageParsingService = messageParsingService;
@@ -31,18 +30,20 @@ namespace iChat.Api.Controllers
 
         // GET api/channels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Channel>>> GetAsync()
-        {
-            var channels = await _context.Channels.AsNoTracking().ToListAsync();
+        public async Task<ActionResult<IEnumerable<Channel>>> GetAsync() {
+            var channels = await _context.Channels.AsNoTracking()
+                .Where(c => c.WorkspaceId == User.GetWorkplaceId())
+                .ToListAsync();
             return channels;
         }
 
         // GET api/channels/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Channel>> GetAsync(int id)
-        {
+        public async Task<ActionResult<Channel>> GetAsync(int id) {
             try {
-                var channel = await _context.Channels.AsNoTracking().SingleOrDefaultAsync(c => c.Id == id);
+                var channel = await _context.Channels.AsNoTracking()
+                    .Where(c => c.WorkspaceId == User.GetWorkplaceId())
+                    .SingleOrDefaultAsync(c => c.Id == id);
                 if (channel == null) {
                     return NotFound();
                 }
@@ -55,20 +56,17 @@ namespace iChat.Api.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
+        public void Post([FromBody] string value) {
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+        public void Put(int id, [FromBody] string value) {
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+        public void Delete(int id) {
         }
     }
 }

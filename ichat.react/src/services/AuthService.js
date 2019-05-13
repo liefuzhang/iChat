@@ -82,7 +82,10 @@ class AuthService {
       })
       .then(text => (text.length ? JSON.parse(text) : {}))
       .then(json => Promise.resolve(json))
-      .catch(error => alert(error));
+      .catch(error => {
+        alert(error);
+        return Promise.reject();
+      });
   }
 }
 
