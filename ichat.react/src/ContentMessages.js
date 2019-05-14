@@ -25,10 +25,8 @@ class ContentMessages extends React.Component {
   }
 
   fetchData(props) {
-    let section = props.section || "channel";
-    let id = props.id || 0;
     return this.authService
-      .fetch(`/api/messages/${section}/${id}`)
+      .fetch(`/api/messages/${props.section}/${props.id}`)
       .then(messages => this.setState({ messages }))
       .then(() => scrollToBottom());
   }

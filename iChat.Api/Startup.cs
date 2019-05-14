@@ -35,6 +35,7 @@ namespace iChat.Api {
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
+            services.AddScoped<IChannelService, ChannelService>();
 
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
 

@@ -9,5 +9,6 @@ namespace iChat.Api.Constants
     {
         public static readonly string DefaultChannelGeneral = "general";
         public static readonly string DefaultChannelRandom = "random";
+        public static readonly int DefaultChannelIdInRequest = 0;
     }
 }

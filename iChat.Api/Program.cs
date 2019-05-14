@@ -26,7 +26,7 @@ namespace iChat.Api
                 try
                 {
                     var context = services.GetRequiredService<iChatContext>();
-                    DbInitializer.Initialize(context);
+                    //DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

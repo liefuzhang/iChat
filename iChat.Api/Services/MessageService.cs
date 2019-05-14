@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace iChat.Api.Services {
-    public class UserService : IUserService {
+    public class MessageService
+    {
         private readonly iChatContext _context;
 
-        public UserService(iChatContext context) {
+        public MessageService(iChatContext context) {
             _context = context;
         }
 
-        // when workspace is not available (e.g. onTokenValidated)
         public async Task<User> GetUserByIdAsync(int id)
         {
             var user = await _context.Users.AsNoTracking()

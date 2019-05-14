@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using iChat.Api.Constants;
 using iChat.Api.Extensions;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,11 @@ namespace iChat.Api.Controllers {
         [HttpGet("channel/{id}")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForChannelAsync(int id) {
             try {
+                //if (id == iChatConstants.DefaultChannelIdInRequest)
+                //{
+                //    id = await GetDefaultChannelGeneralId(workspaceId);
+                //}
+                
                 var messages = await _context.ChannelMessages
                         .Include(m => m.Sender)
                         .Where(m => m.ChannelId == id && m.WorkspaceId == User.GetWorkplaceId())

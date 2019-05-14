@@ -34,8 +34,8 @@ class Content extends React.Component {
 
   render() {
     let params = this.props.match.params;
-    let isChannel = params.section === "channel";
-    let id = +params.id;
+    let isChannel = params.section ? params.section === "channel" : true;
+    let id = params.id ? +params.id : 0;
     return (
       <div id="contentContainer">
         <Sidebar isChannel={isChannel} id={id} />
