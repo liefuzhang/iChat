@@ -35,7 +35,7 @@ namespace iChat.Api.Services
         {
             if (id == iChatConstants.DefaultChannelIdInRequest)
             {
-                id = await GetDefaultChannelGeneralId(workspaceId);
+                id = await GetDefaultChannelGeneralIdAsync(workspaceId);
             }
 
             var channel = await _context.Channels.AsNoTracking()
@@ -124,7 +124,7 @@ namespace iChat.Api.Services
             return channel;
         }
 
-        public async Task<int> GetDefaultChannelGeneralId(int workspaceId)
+        public async Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId)
         {
             if (workspaceId < 1)
             {

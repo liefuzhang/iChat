@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using iChat.Api.Models;
@@ -37,6 +38,15 @@ namespace iChat.Api.Services {
                 .SingleOrDefaultAsync(u => u.Email == email);
 
             return user;
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync(int workspaceId)
+        {
+            var users = await _context.Users.AsNoTracking()
+                .Where(u => u.WorkspaceId == workspaceId)
+                .ToListAsync();
+
+            return users;
         }
     }
 }

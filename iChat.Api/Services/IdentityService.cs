@@ -1,17 +1,29 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using iChat.Api.Helpers;
 using iChat.Api.Models;
 using iChat.Data;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
-namespace iChat.Api.Services {
-    public class IdentityService : IIdentityService {
+namespace iChat.Api.Services
+{
+    public class IdentityService : IIdentityService
+    {
         private readonly iChatContext _context;
+        private readonly AppSettings _appSettings;
 
-        public IdentityService(iChatContext context) {
+        public IdentityService(iChatContext context, IOptions<AppSettings> appSettings)
+        {
             _context = context;
+            _appSettings = appSettings.Value;
         }
 
-        public User Authenticate(string email, string password) {
+        public User Authenticate(string email, string password)
+        {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 return null;
 
@@ -29,11 +41,13 @@ namespace iChat.Api.Services {
             return user;
         }
 
-        public int Register(string email, string password, int workspaceId) {
+        public int Register(string email, string password, int workspaceId)
+        {
             ValidateUserEmailAndPassword(email, password);
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
-            var user = new User {
+            var user = new User
+            {
                 Email = email,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
@@ -48,7 +62,8 @@ namespace iChat.Api.Services {
             return user.Id;
         }
 
-        public void ValidateUserEmailAndPassword(string email, string password) {
+        public void ValidateUserEmailAndPassword(string email, string password)
+        {
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("Password is required");
 
@@ -62,15 +77,21 @@ namespace iChat.Api.Services {
                 throw new Exception($"Email \"{email}\" is already taken");
         }
 
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt) {
+        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
+        {
             if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            if (storedHash.Length != 64)
+                throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
+            if (storedSalt.Length != 128)
+                throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt)) {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
+            {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++) {
+                for (int i = 0; i < computedHash.Length; i++)
+                {
                     if (computedHash[i] != storedHash[i]) return false;
                 }
             }
@@ -78,14 +99,35 @@ namespace iChat.Api.Services {
             return true;
         }
 
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt) {
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
             if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
+        }
+
+        public string GenerateAccessToken(int userId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials =
+                    new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

@@ -11,7 +11,6 @@ namespace iChat.Api.Controllers
     [ApiController]
     public class WorkspacesController : ControllerBase
     {
-        private readonly iChatContext _context;
         private readonly IWorkspaceService _workspaceService;
         private readonly IChannelService _channelService;
         private readonly IIdentityService _identityService;
@@ -20,7 +19,6 @@ namespace iChat.Api.Controllers
         public WorkspacesController(iChatContext context, IWorkspaceService workspaceService,
             IIdentityService identityService, IUserService userService, IChannelService channelService)
         {
-            _context = context;
             _workspaceService = workspaceService;
             _identityService = identityService;
             _userService = userService;

@@ -15,19 +15,12 @@ namespace iChat.Api.Controllers {
     [ApiController]
     [Authorize]
     public class ChannelsController : ControllerBase {
-
-        private readonly iChatContext _context;
-        private readonly INotificationService _notificationService;
-        private IMessageParsingService _messageParsingService;
         private IChannelService _channelService;
 
         public ChannelsController(iChatContext context,
             INotificationService notificationService,
             IMessageParsingService messageParsingService,
             IChannelService channelService) {
-            _context = context;
-            _notificationService = notificationService;
-            _messageParsingService = messageParsingService;
             _channelService = channelService;
         }
 

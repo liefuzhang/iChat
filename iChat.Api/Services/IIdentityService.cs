@@ -7,5 +7,6 @@ namespace iChat.Api.Services
         User Authenticate(string email, string password);
         int Register(string email, string password, int workspaceId);
         void ValidateUserEmailAndPassword(string email, string password);
+        string GenerateAccessToken(int userId);
     }
 }

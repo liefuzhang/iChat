@@ -16,13 +16,9 @@ namespace iChat.Api.Controllers {
     [ApiController]
     public class IdentityController : ControllerBase {
         private IIdentityService _identityService;
-        private readonly AppSettings _appSettings;
-        private IMapper _mapper;
 
-        public IdentityController(IIdentityService identityService, IOptions<AppSettings> appSettings, IMapper mapper) {
+        public IdentityController(IIdentityService identityService, IMapper mapper) {
             _identityService = identityService;
-            _mapper = mapper;
-            _appSettings = appSettings.Value;
         }
 
         [HttpPost("authenticate")]
@@ -34,18 +30,7 @@ namespace iChat.Api.Controllers {
                     return BadRequest("Email or password is incorrect");
                 }
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
-                var tokenDescriptor = new SecurityTokenDescriptor {
-                    Subject = new ClaimsIdentity(new[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    }),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                var tokenString = _identityService.GenerateAccessToken(user.Id);
 
                 // return basic user info (without password) and token to store on client side
                 return Ok(new {

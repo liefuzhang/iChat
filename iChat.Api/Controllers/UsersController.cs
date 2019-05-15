@@ -15,23 +15,19 @@ namespace iChat.Api.Controllers {
     [ApiController]
     [Authorize]
     public class UsersController : ControllerBase {
-
-        private readonly iChatContext _context;
         private readonly IUserService _userService;
 
         public UsersController(iChatContext context, IUserService userService) {
-            _context = context;
             _userService = userService;
         }
 
         // GET api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAsync() {
-            try {
-                var users = await _context.Users.AsNoTracking()
-                    .Where(u => u.WorkspaceId == User.GetWorkplaceId())
-                    .ToListAsync();
-                return users;
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsersAsync() {
+            try
+            {
+                var users = await _userService.GetAllUsersAsync(User.GetWorkplaceId());
+                return users.ToList();
             } catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
