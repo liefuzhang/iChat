@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,21 +13,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace iChat.Api.Services
-{
-    public class IdentityService : IIdentityService
-    {
+namespace iChat.Api.Services {
+    public class IdentityService : IIdentityService {
         private readonly iChatContext _context;
         private readonly AppSettings _appSettings;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public IdentityService(iChatContext context, IOptions<AppSettings> appSettings)
-        {
+        public IdentityService(iChatContext context, IOptions<AppSettings> appSettings, IHttpClientFactory clientFactory) {
             _context = context;
             _appSettings = appSettings.Value;
+            _clientFactory = clientFactory;
         }
 
-        public async Task<User> AuthenticateAsync(string email, string password)
-        {
+        public async Task<User> AuthenticateAsync(string email, string password) {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 return null;
 
@@ -43,13 +43,13 @@ namespace iChat.Api.Services
             return user;
         }
 
-        public async Task<int> RegisterAsync(string email, string password, int workspaceId)
-        {
+        public async Task<int> RegisterAsync(string email, string password, int workspaceId) {
             await ValidateUserEmailAndPasswordAsync(email, password);
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
-            var user = new User
-            {
+            GenerateUserIdenticon(email);
+
+            var user = new User {
                 Email = email,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
@@ -64,8 +64,25 @@ namespace iChat.Api.Services
             return user.Id;
         }
 
-        public async Task ValidateUserEmailAndPasswordAsync(string email, string password)
-        {
+        private async Task<string> GenerateUserIdenticon(string email) {
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"https://avatars.dicebear.com/v2/identicon/{email}.svg");
+
+            var client = _clientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode) {
+                var svgContent = await response.Content.ReadAsStringAsync();
+                File.WriteAllText("test.svg", svgContent);
+            } else {
+                Console.WriteLine("Error getting user icon");
+            }
+
+            return "test";
+        }
+
+        public async Task ValidateUserEmailAndPasswordAsync(string email, string password) {
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("Password is required");
 
@@ -79,8 +96,7 @@ namespace iChat.Api.Services
                 throw new Exception($"Email \"{email}\" is already taken");
         }
 
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
+        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt) {
             if (password == null) throw new ArgumentNullException("password");
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
@@ -89,11 +105,9 @@ namespace iChat.Api.Services
             if (storedSalt.Length != 128)
                 throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt)) {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
+                for (int i = 0; i < computedHash.Length; i++) {
                     if (computedHash[i] != storedHash[i]) return false;
                 }
             }
@@ -101,25 +115,21 @@ namespace iChat.Api.Services
             return true;
         }
 
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt) {
             if (password == null) throw new ArgumentNullException("password");
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
 
-        public string GenerateAccessToken(int userId)
-        {
+        public string GenerateAccessToken(int userId) {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
+            var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, userId.ToString()),

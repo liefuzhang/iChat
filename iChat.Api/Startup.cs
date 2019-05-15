@@ -61,6 +61,8 @@ namespace iChat.Api {
 
             services.AddSignalR();
 
+            services.AddHttpClient();
+
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
