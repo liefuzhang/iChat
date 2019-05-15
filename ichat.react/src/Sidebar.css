@@ -5,6 +5,7 @@
   min-height: 100%;
   padding: 15px;
   flex: 0 0 auto;
+  box-sizing: border-box;
 }
 #sidebar .section-title {
   line-height: 2;

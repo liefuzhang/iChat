@@ -37,7 +37,7 @@ namespace iChat.Api.Controllers {
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id) {
             try {
-                var channel = await _channelService.GetChannelByIdAsync(id, User.GetUserId());
+                var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkplaceId());
                 if (channel == null) {
                     return NotFound();
                 }

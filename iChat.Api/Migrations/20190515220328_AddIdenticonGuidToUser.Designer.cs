@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iChat.Data;
 
 namespace iChat.Api.Migrations
 {
     [DbContext(typeof(iChatContext))]
-    partial class iChatContextModelSnapshot : ModelSnapshot
+    [Migration("20190515220328_AddIdenticonGuidToUser")]
+    partial class AddIdenticonGuidToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,7 +1,9 @@
-﻿using iChat.Api.Dtos;
+﻿using iChat.Api.Constants;
+using iChat.Api.Dtos;
 using iChat.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Controllers
@@ -41,7 +43,8 @@ namespace iChat.Api.Controllers
                     id = user.Id,
                     email = user.Email,
                     displayName = user.DisplayName,
-                    workspaceName=  workspace?.Name,
+                    workspaceName = workspace?.Name,
+                    identiconPath = Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
                     token = tokenString
                 });
             }

@@ -40,6 +40,7 @@ class SidebarHeader extends React.Component {
         <div className="sidebar-header-dropdown panel hide">
           <section className="sidebar-header-dropdown-section">
             <div className="sidebar-header-dropdown-section-header">
+              <img src={this.props.userProfile.identiconPath}></img>
               {this.props.userProfile.displayName}
             </div>
             <ul>
