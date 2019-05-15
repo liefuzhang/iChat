@@ -18,8 +18,6 @@ namespace iChat.Api.Controllers {
         private IChannelService _channelService;
 
         public ChannelsController(iChatContext context,
-            INotificationService notificationService,
-            IMessageParsingService messageParsingService,
             IChannelService channelService) {
             _channelService = channelService;
         }

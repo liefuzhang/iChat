@@ -27,7 +27,7 @@ class Sidebar extends React.Component {
       .then(directMessageUsers => this.setState({ directMessageUsers }));
   }
 
-  render() {
+  render() { 
     return (
       <div id="sideBar">
         <section>

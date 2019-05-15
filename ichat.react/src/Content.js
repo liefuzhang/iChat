@@ -12,9 +12,9 @@ class Content extends React.Component {
     super(props);
 
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("/chatHub", {
-        accessTokenFactory: () => new AuthService().getToken()
-      })
+        .withUrl("https://localhost:44389/chatHub/", {
+            accessTokenFactory: () => new AuthService().getToken()
+        })
       .build();
     this.connection
       .start()
@@ -34,7 +34,8 @@ class Content extends React.Component {
 
   render() {
     let params = this.props.match.params;
-    let isChannel = params.section ? params.section === "channel" : true;
+    let section = params.section || "channel";
+    let isChannel = section === "channel";
     let id = params.id ? +params.id : 0;
     return (
       <div id="contentContainer">
@@ -42,7 +43,7 @@ class Content extends React.Component {
         <div id="content">
           <ContentHeader isChannel={isChannel} id={id} />
           <ContentMessages
-            section={params.section}
+            section={section}
             id={id}
             hubConnection={this.connection}
           />
