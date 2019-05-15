@@ -11,10 +11,13 @@ class Content extends React.Component {
   constructor(props) {
     super(props);
 
+    this.authService = new AuthService(props);
+
     this.connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:44389/chatHub/", {
-            accessTokenFactory: () => new AuthService().getToken()
-        })
+      // TODO use config here?
+      .withUrl("https://localhost:44389/chatHub/", {
+        accessTokenFactory: () => new AuthService().getToken()
+      })
       .build();
     this.connection
       .start()
@@ -30,6 +33,8 @@ class Content extends React.Component {
       .catch(function(err) {
         return console.error(err.toString());
       });
+
+    this.userProfile = this.authService.getProfile();
   }
 
   render() {
@@ -39,7 +44,7 @@ class Content extends React.Component {
     let id = params.id ? +params.id : 0;
     return (
       <div id="contentContainer">
-        <Sidebar isChannel={isChannel} id={id} />
+        <Sidebar isChannel={isChannel} id={id} userProfile={this.userProfile} />
         <div id="content">
           <ContentHeader isChannel={isChannel} id={id} />
           <ContentMessages

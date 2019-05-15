@@ -1,25 +1,13 @@
-#sideBar {
+#sidebar {
   width: 220px;
   background: #206890;
   color: #ddd;
   min-height: 100%;
-  padding: 0 15px;
+  padding: 15px;
   flex: 0 0 auto;
 }
-#sideBar .section-title {
+#sidebar .section-title {
   line-height: 2;
   font-weight: 500;
   margin: 25px 0 5px;
-}
-#sideBar .sidebar-item {
-  height: 26px;
-  margin: 0 -15px;
-  padding: 0 15px;
-}
-#sideBar .sidebar-item:hover {
-  cursor: pointer;
-  background: #259;
-}
-#sideBar .sidebar-item.active-item {
-  background: #259;
 }

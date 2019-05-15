@@ -1,7 +1,9 @@
 import React from "react";
 import "./Sidebar.css";
 import SidebarItem from "./SidebarItem";
+import SidebarHeader from "./SidebarHeader";
 import AuthService from "./services/AuthService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -27,14 +29,23 @@ class Sidebar extends React.Component {
       .then(directMessageUsers => this.setState({ directMessageUsers }));
   }
 
-  render() { 
+  render() {
     return (
-      <div id="sideBar">
+      <div id="sidebar">
+        <section>
+          <SidebarHeader userProfile={this.props.userProfile}></SidebarHeader>
+        </section>
         <section>
           <div className="section-title">CHANNELS</div>
           {this.state.channels.map(c => {
             let active = false;
             if (this.props.isChannel && this.props.id === c.id) active = true;
+            if (
+              this.props.isChannel &&
+              this.props.id === 0 &&
+              c.name === "general"
+            )
+              active = true;
             return (
               <SidebarItem
                 key={c.id}

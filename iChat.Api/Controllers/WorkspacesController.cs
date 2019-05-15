@@ -4,6 +4,8 @@ using iChat.Data;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using iChat.Api.Extensions;
+using iChat.Api.Models;
 
 namespace iChat.Api.Controllers
 {
@@ -31,15 +33,30 @@ namespace iChat.Api.Controllers
         {
             try
             {
-                _identityService.ValidateUserEmailAndPassword(workspaceDto.Email, workspaceDto.Password);
-                var workspaceId = _workspaceService.Register(workspaceDto.WorkspaceName);
-                var userId = _identityService.Register(workspaceDto.Email, workspaceDto.Password, workspaceId);
-                _workspaceService.UpdateOwnerId(workspaceId, userId);
+                await _identityService.ValidateUserEmailAndPasswordAsync(workspaceDto.Email, workspaceDto.Password);
+                var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
+                var userId = await _identityService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
+                await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
 
                 await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
                 await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
 
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET api/workspaces
+        public async Task<ActionResult<Workspace>> GetWorkspaceAsync()
+        {
+            try
+            {
+                var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+
+                return Ok(workspace);
             }
             catch (Exception ex)
             {

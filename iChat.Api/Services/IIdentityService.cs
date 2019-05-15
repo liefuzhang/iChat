@@ -1,12 +1,13 @@
-﻿using iChat.Api.Models;
+﻿using System.Threading.Tasks;
+using iChat.Api.Models;
 
 namespace iChat.Api.Services
 {
     public interface IIdentityService
     {
-        User Authenticate(string email, string password);
-        int Register(string email, string password, int workspaceId);
-        void ValidateUserEmailAndPassword(string email, string password);
+        Task<User> AuthenticateAsync(string email, string password);
+        Task<int> RegisterAsync(string email, string password, int workspaceId);
+        Task ValidateUserEmailAndPasswordAsync(string email, string password);
         string GenerateAccessToken(int userId);
     }
 }

@@ -3,9 +3,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
 using iChat.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,12 +24,12 @@ namespace iChat.Api.Services
             _appSettings = appSettings.Value;
         }
 
-        public User Authenticate(string email, string password)
+        public async Task<User> AuthenticateAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _context.Users.SingleOrDefault(u => u.Email == email);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
             // check if email exists
             if (user == null)
@@ -41,9 +43,9 @@ namespace iChat.Api.Services
             return user;
         }
 
-        public int Register(string email, string password, int workspaceId)
+        public async Task<int> RegisterAsync(string email, string password, int workspaceId)
         {
-            ValidateUserEmailAndPassword(email, password);
+            await ValidateUserEmailAndPasswordAsync(email, password);
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
             var user = new User
@@ -57,12 +59,12 @@ namespace iChat.Api.Services
             };
 
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return user.Id;
         }
 
-        public void ValidateUserEmailAndPassword(string email, string password)
+        public async Task ValidateUserEmailAndPasswordAsync(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("Password is required");
@@ -73,7 +75,7 @@ namespace iChat.Api.Services
             if (password.Length < 6)
                 throw new Exception("Password needs to have at least 6 characters");
 
-            if (_context.Users.Any(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == email))
                 throw new Exception($"Email \"{email}\" is already taken");
         }
 
