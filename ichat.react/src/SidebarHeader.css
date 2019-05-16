@@ -35,3 +35,24 @@
   font-size: 1.1rem;
   margin: 20px 0;
 }
+
+.modal-panel-overlay {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: black;
+  opacity: 0.4;
+}
+
+.modal-panel{
+  height: 400px;
+  width: 600px;
+  color: #333;
+}
