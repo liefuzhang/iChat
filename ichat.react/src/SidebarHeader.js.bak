@@ -61,6 +61,22 @@ class SidebarHeader extends React.Component {
             </section>
           </div>
         </div>
+<<<<<<< HEAD
+        <div className="sidebar-header-dropdown panel hide">
+          <section className="sidebar-header-dropdown-section">
+            <div className="sidebar-header-dropdown-section-header">
+              <img src={this.props.userProfile.identiconPath}></img>
+              {this.props.userProfile.displayName}
+            </div>
+            <ul>
+              <li>Set status</li>
+              <li>Profile</li>
+            </ul>
+          </section>
+          <section className="sidebar-header-dropdown-section">
+            <div className="sidebar-header-dropdown-section-header">
+              {this.props.userProfile.workspaceName}
+=======
         <div className="modal-panel-container">
           <div className="modal-panel-overlay">
             <div className="modal-panel panel">
@@ -76,6 +92,7 @@ class SidebarHeader extends React.Component {
                 />
                 <button className="btn form-control">Send Invitation</button>
               </div>
+>>>>>>> 52239698b716f99ddda7663ee087b5f865bc926e
             </div>
           </div>
         </div>

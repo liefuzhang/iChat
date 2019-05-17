@@ -53,10 +53,15 @@
   opacity: 0.4;
 }
 
-
-
 .sidebar-header-dropdown-section-header img {
   height: 30px;
   width: 30px;
   margin-right: 10px;
+}
+
+
+.modal-panel{
+  height: 400px;
+  width: 600px;
+  color: #333;
 }
