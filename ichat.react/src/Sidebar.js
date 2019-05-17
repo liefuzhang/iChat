@@ -3,7 +3,6 @@ import "./Sidebar.css";
 import SidebarItem from "./SidebarItem";
 import SidebarHeader from "./SidebarHeader";
 import AuthService from "./services/AuthService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class Sidebar extends React.Component {
   constructor(props) {

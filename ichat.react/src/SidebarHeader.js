@@ -1,17 +1,36 @@
 import React from "react";
 import "./SidebarHeader.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Modal from "./Modal";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
     super(props);
+
+    this.onInvitePeople = this.onInvitePeople.bind(this);
+    this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
+
+    this.state = {
+      isInvitePeopleModalOpen: false
+    };
   }
 
   onHeaderClick(event) {
     document.querySelector(".sidebar-header-dropdown").classList.toggle("hide");
   }
 
-  onInvitePeople(event) {}
+  onInvitePeople(event) {
+    this.onHeaderClick();
+    this.setState({
+      isInvitePeopleModalOpen: true
+    });
+  }
+
+  onCloseInvitePeople(event) {
+    this.setState({
+      isInvitePeopleModalOpen: false
+    });
+  }
 
   componentDidMount() {
     document
@@ -32,9 +51,9 @@ class SidebarHeader extends React.Component {
           <div className="sidebar-header-container">
             <div>
               <span className="sidebar-header-workspace-name">
-                {this.props.userProfile.workspaceName}{" "}
+                {this.props.userProfile.workspaceName}
               </span>
-              <FontAwesomeIcon icon="chevron-down" />
+              <FontAwesomeIcon icon="chevron-down"/>
             </div>
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
@@ -43,6 +62,7 @@ class SidebarHeader extends React.Component {
           <div className="sidebar-header-dropdown panel hide">
             <section className="sidebar-header-dropdown-section">
               <div className="sidebar-header-dropdown-section-header">
+                <img src={this.props.userProfile.identiconPath} />
                 {this.props.userProfile.displayName}
               </div>
               <ul>
@@ -61,9 +81,9 @@ class SidebarHeader extends React.Component {
             </section>
           </div>
         </div>
-        <div className="modal-panel-container">
-          <div className="modal-panel-overlay">
-            <div className="modal-panel panel">
+        <div className="invite-people-modal hide">
+          {this.state.isInvitePeopleModalOpen && (
+            <Modal onClose={this.onCloseInvitePeople}>
               <h1 style={{ textAlign: "center" }}>
                 Invite People to {this.props.userProfile.workspaceName}
               </h1>
@@ -76,8 +96,8 @@ class SidebarHeader extends React.Component {
                 />
                 <button className="btn form-control">Send Invitation</button>
               </div>
-            </div>
-          </div>
+            </Modal>
+          )}
         </div>
       </div>
     );
