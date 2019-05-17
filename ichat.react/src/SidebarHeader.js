@@ -2,27 +2,39 @@ import React from "react";
 import "./SidebarHeader.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "./Modal";
+import DropdownModal from "./DropdownModal";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
     super(props);
 
+    this.onHeaderClick = this.onHeaderClick.bind(this);
+    this.onCloseDropdown = this.onCloseDropdown.bind(this);
     this.onInvitePeople = this.onInvitePeople.bind(this);
     this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
 
     this.state = {
-      isInvitePeopleModalOpen: false
+      isInvitePeopleModalOpen: false,
+      isDropdownModalOpen: false
     };
   }
 
   onHeaderClick(event) {
-    document.querySelector(".sidebar-header-dropdown").classList.toggle("hide");
+    this.setState({
+      isDropdownModalOpen: true
+    });
+  }
+
+  onCloseDropdown(event) {
+    this.setState({
+      isDropdownModalOpen: false
+    });
   }
 
   onInvitePeople(event) {
-    this.onHeaderClick();
     this.setState({
-      isInvitePeopleModalOpen: true
+      isInvitePeopleModalOpen: true,
+      isDropdownModalOpen: false
     });
   }
 
@@ -53,33 +65,37 @@ class SidebarHeader extends React.Component {
               <span className="sidebar-header-workspace-name">
                 {this.props.userProfile.workspaceName}
               </span>
-              <FontAwesomeIcon icon="chevron-down"/>
+              <FontAwesomeIcon icon="chevron-down" />
             </div>
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
             </div>
           </div>
-          <div className="sidebar-header-dropdown panel hide">
-            <section className="sidebar-header-dropdown-section">
-              <div className="sidebar-header-dropdown-section-header">
-                <img src={this.props.userProfile.identiconPath} />
-                {this.props.userProfile.displayName}
+          {this.state.isDropdownModalOpen && (
+            <DropdownModal onClose={this.onCloseDropdown}>
+              <div className="sidebar-header-dropdown panel">
+                <section className="sidebar-header-dropdown-section">
+                  <div className="sidebar-header-dropdown-section-header">
+                    <img src={this.props.userProfile.identiconPath} />
+                    {this.props.userProfile.displayName}
+                  </div>
+                  <ul>
+                    <li>Set status</li>
+                    <li>Profile</li>
+                  </ul>
+                </section>
+                <section className="sidebar-header-dropdown-section">
+                  <div className="sidebar-header-dropdown-section-header">
+                    {this.props.userProfile.workspaceName}
+                  </div>
+                  <ul>
+                    <li onClick={this.onInvitePeople}>Invite people</li>
+                    <li>Log out of {this.props.userProfile.workspaceName}</li>
+                  </ul>
+                </section>
               </div>
-              <ul>
-                <li>Set status</li>
-                <li>Profile</li>
-              </ul>
-            </section>
-            <section className="sidebar-header-dropdown-section">
-              <div className="sidebar-header-dropdown-section-header">
-                {this.props.userProfile.workspaceName}
-              </div>
-              <ul>
-                <li onClick={this.onInvitePeople}>Invite people</li>
-                <li>Log out of {this.props.userProfile.workspaceName}</li>
-              </ul>
-            </section>
-          </div>
+            </DropdownModal>
+          )}
         </div>
         <div className="invite-people-modal hide">
           {this.state.isInvitePeopleModalOpen && (

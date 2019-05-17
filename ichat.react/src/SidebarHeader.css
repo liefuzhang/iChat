@@ -21,12 +21,13 @@
 }
 
 .sidebar-header-dropdown {
-  position: absolute;
+  position: fixed;
   z-index: 100;
   background-color: white;
   color: #333;
   padding: 0 22px 15px;
-  left: -5px;
+  left: 12px;
+  top: 66px;
   min-width: 220px;
   transition: all 0.3s;
 }
