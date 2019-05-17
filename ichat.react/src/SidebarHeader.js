@@ -97,20 +97,23 @@ class SidebarHeader extends React.Component {
             </DropdownModal>
           )}
         </div>
-        <div className="invite-people-modal hide">
+        <div>
           {this.state.isInvitePeopleModalOpen && (
             <Modal onClose={this.onCloseInvitePeople}>
-              <h1 style={{ textAlign: "center" }}>
-                Invite People to {this.props.userProfile.workspaceName}
-              </h1>
-              <div className="invite-people">
-                <input
-                  className="form-control"
-                  type="email"
-                  placeholder="Email"
-                  required
-                />
-                <button className="btn form-control">Send Invitation</button>
+              <div className="form-container">
+                <h1 style={{ textAlign: "center" }}>
+                  Invite People to {this.props.userProfile.workspaceName}
+                </h1>
+                <form id="ownerAccount" method="post">
+                  <p>Enter email addresses to invite.</p>
+                  <input
+                    className="form-control"
+                    type="email"
+                    placeholder="Email"
+                    required
+                  />
+                  <button type="submit" className="btn form-control">Send Invitation</button>
+                </form>
               </div>
             </Modal>
           )}

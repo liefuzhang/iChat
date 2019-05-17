@@ -24,6 +24,12 @@ a:visited {
   color: inherit;
 }
 
+h1 {
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+}
+
 textarea,
 input {
   border: 1px solid #e7eaf1;
@@ -123,10 +129,33 @@ blockquote {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.form-control {
+.form-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 300px;
+}
+
+.form-container h1 {
+  text-align: center;
+}
+
+form .form-control {
   margin-bottom: 12px;
   box-sizing: border-box;
   height: 40px;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+form button[type="submit"] {
+  margin-top: 10px;
 }
 
 .hide {

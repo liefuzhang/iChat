@@ -16,23 +16,11 @@
   padding: 20px 110px 40px;
   transition: all 1s;
 }
-.login-page .login-container .login-form form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.login-page .login-container .login-form form .form-control {
-  width: 100%;
-  font-size: 1.2rem;
-}
-.login-page .login-container .login-form form button[type="submit"] {
-  margin-top: 10px;
-}
-.login-page .login-container .login-form form .forgot-password {
+.login-page .login-container .form-container form .forgot-password {
   color: #8590a6;
   margin-top: 15px;
 }
-.login-page .login-container .login-form form .forgot-password a:hover {
+.login-page .login-container .form-container form .forgot-password a:hover {
   text-decoration: underline;
 }
 

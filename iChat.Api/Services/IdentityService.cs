@@ -89,7 +89,7 @@ namespace iChat.Api.Services
 
             var client = _clientFactory.CreateClient();
             var response = await client.SendAsync(request);
-            var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, iChatConstants.IdenticonPath,
+            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, iChatConstants.IdenticonPath,
                 identiconName);
 
             if (response.IsSuccessStatusCode)

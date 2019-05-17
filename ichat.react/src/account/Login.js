@@ -44,9 +44,10 @@ class Login extends React.Component {
             workspaceName: workspace
           })
         })
-        .then(() => {document
-          .querySelector("#workspaceContainer")
-          .classList.add("hide-container");
+        .then(() => {
+          document
+            .querySelector("#workspaceContainer")
+            .classList.add("hide-container");
           document
             .querySelector("#ownerLoginContainer")
             .classList.remove("hide-container");
@@ -63,7 +64,10 @@ class Login extends React.Component {
   onOwnerAccountFormSubmit(event) {
     event.preventDefault();
 
-    this.authService.login(this.state.createdWorkspaceOwnerEmail, this.state.createdWorkspaceOwnerPassword);
+    this.authService.login(
+      this.state.createdWorkspaceOwnerEmail,
+      this.state.createdWorkspaceOwnerPassword
+    );
   }
 
   componentWillUnmount() {
@@ -109,8 +113,8 @@ class Login extends React.Component {
       <div className="login-page">
         <div id="loginContainer" className="login-container panel">
           <section>
-            <h1 style={{ textAlign: "center" }}>Login to your workspace</h1>
-            <div className="login-form">
+            <div className="form-container">
+              <h1>Login to your workspace</h1>
               <form id="account" method="post">
                 <p>Enter email address and password to log in.</p>
                 <input
@@ -157,8 +161,8 @@ class Login extends React.Component {
         >
           <CloseButton onClose={this.hideCreateWorkspace} />
           <section>
-            <h1 style={{ textAlign: "center" }}>Create a new workspace</h1>
-            <div className="login-form">
+            <div className="form-container">
+              <h1>Create a new workspace</h1>
               <form id="workspace" method="post">
                 <p>Enter details to create workspace.</p>
                 <input
@@ -197,10 +201,10 @@ class Login extends React.Component {
           className="login-container panel hide-container"
         >
           <section>
-            <h1 style={{ textAlign: "center" }}>
-              Workspace <b>{this.state.createdWorkspaceName}</b> Created!
-            </h1>
-            <div className="login-form">
+            <div className="form-container">
+              <h1>
+                Workspace <b>{this.state.createdWorkspaceName}</b> Created!
+              </h1>
               <form id="ownerAccount" method="post">
                 <p>
                   Click <b>Continue</b> to login as{" "}
