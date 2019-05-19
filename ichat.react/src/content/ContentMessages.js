@@ -1,9 +1,8 @@
 import React from "react";
 import "./ContentMessages.css";
-import "./simplebar.css";
-import signalR from "@aspnet/signalr";
+import "lib/simplebar.css";
 import SimpleBar from "simplebar-react";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class ContentMessages extends React.Component {
   constructor(props) {

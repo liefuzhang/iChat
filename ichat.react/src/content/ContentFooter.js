@@ -1,7 +1,7 @@
 import React from "react";
 import "./ContentFooter.css";
 import Quill from "quill";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class ContentFooter extends React.Component {
   constructor(props) {

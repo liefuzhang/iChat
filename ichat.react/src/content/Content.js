@@ -3,9 +3,9 @@ import "./Content.css";
 import ContentHeader from "./ContentHeader";
 import ContentMessages from "./ContentMessages";
 import ContentFooter from "./ContentFooter";
-import Sidebar from "./Sidebar";
+import Sidebar from "sidebar/Sidebar";
 import * as signalR from "@aspnet/signalr";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class Content extends React.Component {
   constructor(props) {

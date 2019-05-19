@@ -1,8 +1,8 @@
 import React from "react";
 import "./SidebarHeader.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from "./Modal";
-import DropdownModal from "./DropdownModal";
+import Modal from "../modals/Modal";
+import DropdownModal from "../modals/DropdownModal";
 import InvitePeopleForm from "./InvitePeopleForm";
 
 class SidebarHeader extends React.Component {

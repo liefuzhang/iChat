@@ -2,7 +2,7 @@ import React from "react";
 import "./Sidebar.css";
 import SidebarItem from "./SidebarItem";
 import SidebarHeader from "./SidebarHeader";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class Sidebar extends React.Component {
   constructor(props) {

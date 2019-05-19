@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./Modal.css";
-import CloseButton from "./components/CloseButton"
+import CloseButton from "components/CloseButton"
 import SimpleBar from "simplebar-react";
+import "lib/simplebar.css";
 
 class Modal extends React.Component {
   constructor(props) {

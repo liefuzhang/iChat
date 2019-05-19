@@ -1,12 +1,11 @@
 import React from "react";
 import "./App.css";
-import Content from "./Content";
-import Login from "./account/Login";
+import Content from "./content/Content";
+import Login from "account/Login";
 import AcceptInvitation from "./account/AcceptInvitation";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "components/PrivateRoute";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
   faChevronDown,

@@ -1,6 +1,6 @@
 import React from "react";
 import "./ContentHeader.css";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class ContentHeader extends React.Component {
   constructor(props) {

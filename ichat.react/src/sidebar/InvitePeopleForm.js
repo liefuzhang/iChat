@@ -1,7 +1,7 @@
 import React from "react";
 import "./InvitePeopleForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AuthService from "./services/AuthService";
+import AuthService from "services/AuthService";
 
 class InvitePeopleForm extends React.Component {
   constructor(props) {
