@@ -19,6 +19,8 @@ namespace iChat.Data {
         public DbSet<ChannelMessage> ChannelMessages { get; set; }
         public DbSet<DirectMessage> DirectMessages { get; set; }
         public DbSet<Workspace> Workspaces { get; set; }
+        public DbSet<UserInvitation> UserInvitations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 

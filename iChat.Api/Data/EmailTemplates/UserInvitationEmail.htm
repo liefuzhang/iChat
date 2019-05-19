@@ -7,7 +7,7 @@
             background-color: #297fa3;
             font-size: 20px;
             font-weight: 500;
-            color: #fefefe;
+            color: #fefefe !important;
             padding: 0 30px;
             cursor: pointer;
             display: inline-block;
@@ -15,7 +15,7 @@
             height: 40px;
             border: none;
             outline: none;
-            margin-top: 30px;
+            margin-top: 20px;
             text-decoration: none;
         }
     </style>
@@ -26,7 +26,8 @@
         <span>
             <span style="font-family:Microsoft Yahei;font-size:24px; line-height: 40px;">Join {WorkspaceName} on iChat</span><br />
             {InviterName} ({InviterEmail}) has invited you to join the iChat workspace {WorkspaceName}. Join now to start chatting!<br /><br />
-            <a class="btn" href="{JoinUrl}">Join Now</a>
+            <!--<a class="btn" href="{JoinUrl}">Join Now</a>-->
+            {JoinUrl}
         </span>
         <div style="padding:20px 0px;text-align:left;">
             <br />iChat

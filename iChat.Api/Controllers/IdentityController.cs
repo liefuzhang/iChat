@@ -12,8 +12,8 @@ namespace iChat.Api.Controllers
     [ApiController]
     public class IdentityController : ControllerBase
     {
-        private IIdentityService _identityService;
-        private IWorkspaceService _workspaceService;
+        private readonly IIdentityService _identityService;
+        private readonly IWorkspaceService _workspaceService;
 
         public IdentityController(IIdentityService identityService, IWorkspaceService workspaceService)
         {
@@ -22,7 +22,7 @@ namespace iChat.Api.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync([FromBody]UserDto userDto)
+        public async Task<IActionResult> AuthenticateAsync(UserDto userDto)
         {
             try
             {
@@ -52,21 +52,6 @@ namespace iChat.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody]UserDto userDto)
-        {
-            try
-            {
-                await _identityService.RegisterAsync(userDto.Email, userDto.Password, userDto.WorkspaceId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                // return error message if there was an exception
-                return BadRequest(ex.Message);
-            }
-        }
+        }        
     }
 }

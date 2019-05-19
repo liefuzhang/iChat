@@ -4,6 +4,8 @@ using iChat.Api.Helpers;
 using iChat.Api.Models;
 using iChat.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,9 +15,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace iChat.Api.Services {
-    public class EmailService: IEmailService {
+    public class EmailService : IEmailService {
         private readonly AppSettings _appSettings;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -24,29 +27,33 @@ namespace iChat.Api.Services {
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public async Task  SendUserInvitationEmailAsync(UserInvitationData data) {
+        public async Task SendUserInvitationEmailAsync(UserInvitationData data) {
+            if (string.IsNullOrWhiteSpace(data.ReceiverAddress)) {
+                throw new ArgumentException("Cannot send to empty email address.");
+            }
             var body = ConstructUserInvitationEmailBody(data);
 
-            foreach (var address in data.ReceiverAddresses) {
-                using (MailMessage mailMessage = new MailMessage(new MailAddress(_appSettings.GmailUserName), new MailAddress(address))) {
-                    mailMessage.Subject = $"Join iChat";
-                    mailMessage.Body = body;
-                    mailMessage.IsBodyHtml = true;
-                    var smtp = new SmtpClient {
-                        Host = _appSettings.GmailHost,
-                        Port = Int32.Parse(_appSettings.GmailPort),
-                        EnableSsl = Boolean.Parse(_appSettings.GmailSsl),
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(_appSettings.GmailUserName, _appSettings.GmailPassword)
-                    };
-                    await smtp.SendMailAsync(mailMessage);
-                }
+            using (MailMessage mailMessage = new MailMessage(new MailAddress(_appSettings.GmailUserName), new MailAddress(data.ReceiverAddress))) {
+                mailMessage.Subject = $"Join iChat";
+                mailMessage.Body = body;
+                mailMessage.IsBodyHtml = true;
+                var smtp = new SmtpClient {
+                    Host = _appSettings.GmailHost,
+                    Port = Int32.Parse(_appSettings.GmailPort),
+                    EnableSsl = Boolean.Parse(_appSettings.GmailSsl),
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(_appSettings.GmailUserName, _appSettings.GmailPassword)
+                };
+                await smtp.SendMailAsync(mailMessage);
             }
         }
 
         private string ConstructUserInvitationEmailBody(UserInvitationData data) {
             var emailTemplatePath = Path.Combine(iChatConstants.EmailTemplatePath, "UserInvitationEmail.htm");
+            var joinUrl = $"{_appSettings.FrontEndUrl}/user/acceptinvitation" +
+                $"?email={data.ReceiverAddress}&code={data.InvitationCode}" +
+                $"&workspaceName={data.WorkspaceName}";
 
             var body = string.Empty;
             if (!string.IsNullOrEmpty(emailTemplatePath)) {
@@ -54,10 +61,10 @@ namespace iChat.Api.Services {
                     body = reader.ReadToEnd();
                 }
             }
-            body = body.Replace("{WorkspaceName}", data.WorkspaceName);
-            body = body.Replace("{InviterName}", data.InviterName);
-            body = body.Replace("{InviterEmail}", data.InviterEmail);
-            body = body.Replace("{JoinUrl}", data.JoinUrl);
+            body = body.Replace("{WorkspaceName}", HttpUtility.HtmlEncode(data.WorkspaceName));
+            body = body.Replace("{InviterName}", HttpUtility.HtmlEncode(data.InviterName));
+            body = body.Replace("{InviterEmail}", HttpUtility.HtmlEncode(data.InviterEmail));
+            body = body.Replace("{JoinUrl}", joinUrl);
             return body;
         }
     }

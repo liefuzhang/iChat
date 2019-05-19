@@ -1,5 +1,6 @@
 import React from "react";
 import "./Login.css";
+import "./AccountCommon.css";
 import AuthService from "../services/AuthService";
 import CloseButton from "../components/CloseButton";
 

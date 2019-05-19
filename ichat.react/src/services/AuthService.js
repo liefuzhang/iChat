@@ -7,6 +7,34 @@ class AuthService {
     this.fetch = this.fetch.bind(this);
   }
 
+  acceptInvitation(email, password, name, code) {
+    fetch(`/api/users/acceptInvitation`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        name: name,
+        code: code
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function(response) {
+        if (!response.ok) {
+          return response.text().then(r => Promise.reject(r));
+        }
+        return response.text();
+      })
+      .then(text => {
+        this.login(email, password);
+      })
+      .catch(error => {
+        alert(error);
+        return Promise.reject();
+      });
+  }
+
   login(email, password) {
     fetch(`/api/identity/authenticate`, {
       method: "POST",
@@ -25,7 +53,10 @@ class AuthService {
         this.setProfile(text);
         this.props.history.push("/");
       })
-      .catch(error => alert(error));
+      .catch(error => {
+        alert(error);
+        return Promise.reject();
+      });
   }
 
   isLoggedIn() {

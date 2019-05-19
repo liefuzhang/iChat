@@ -13,5 +13,6 @@ namespace iChat.Api.Helpers
         public string GmailPassword { get; set; }
         public string GmailPort { get; set; }
         public string GmailSsl { get; set; }
+        public string FrontEndUrl { get; set; }
     }
 }

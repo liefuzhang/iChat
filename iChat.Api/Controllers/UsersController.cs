@@ -11,6 +11,7 @@ using System.Linq;
 using iChat.Api.Extensions;
 using iChat.Api.Constants;
 using iChat.Api.Contract;
+using iChat.Api.Dtos;
 
 namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
@@ -20,16 +21,17 @@ namespace iChat.Api.Controllers {
 
         private readonly iChatContext _context;
         private readonly IUserService _userService;
+        private readonly IChannelService _channelService;
         private readonly IWorkspaceService _workspaceService;
-        private readonly IEmailService _emailService;
 
-        public UsersController(iChatContext context, IUserService userService, IEmailService emailService, IWorkspaceService workspaceService) {
+        public UsersController(iChatContext context, IUserService userService,
+            IWorkspaceService workspaceService, IChannelService channelService) {
             _context = context;
             _userService = userService;
             _workspaceService = workspaceService;
-            _emailService = emailService;
+            _channelService = channelService;
         }
-        
+
         // GET api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAsync() {
@@ -60,16 +62,11 @@ namespace iChat.Api.Controllers {
 
         // POST api/users/invite
         [HttpPost("invite")]
-        public async Task<IActionResult> Post(List<string> emails) {
+        public async Task<IActionResult> InviteUsers(List<string> emails) {
             try {
                 var user = await _userService.GetUserByIdAsync(User.GetUserId());
                 var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
-                await _emailService.SendUserInvitationEmailAsync(new UserInvitationData {
-                    ReceiverAddresses = emails,
-                    InviterName = user.DisplayName,
-                    InviterEmail = user.Email,
-                    WorkspaceName = workspace.Name
-                });
+                await _userService.InviteUsersAsync(user, workspace, emails);
 
                 return Ok();
             } catch (Exception ex) {
@@ -77,14 +74,19 @@ namespace iChat.Api.Controllers {
             }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
+        // POST api/users/acceptInvitation
+        [HttpPost("acceptInvitation")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AcceptInvitation(AcceptInvitationDto acceptInvitationDto) {
+            try {
+                var userId = await _userService.AcceptInvitationAsync(acceptInvitationDto);
+                var user = await _userService.GetUserByIdAsync(userId);
+                await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
+                return Ok();
+            } catch (Exception ex) {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }
