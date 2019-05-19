@@ -6,12 +6,13 @@ import { BrowserRouter, Route } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faChevronDown  } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faChevronDown, faPlusCircle  } from "@fortawesome/free-solid-svg-icons";
 {/* usage: <FontAwesomeIcon icon="chevron-down" /> */}
 
 function App() { 
   library.add(faTimes);
   library.add(faChevronDown);
+  library.add(faPlusCircle);
 
   return (
     <div id="container">            

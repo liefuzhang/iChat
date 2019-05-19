@@ -70,30 +70,6 @@ class Login extends React.Component {
     );
   }
 
-  componentWillUnmount() {
-    document
-      .querySelector("#account")
-      .removeEventListener("submit", this.onAccountFormSubmit);
-    document
-      .querySelector("#workspace")
-      .removeEventListener("submit", this.onWorkspaceFormSubmit);
-    document
-      .querySelector("#ownerAccount")
-      .removeEventListener("submit", this.onOwnerAccountFormSubmit);
-  }
-
-  componentDidMount() {
-    document
-      .querySelector("#account")
-      .addEventListener("submit", this.onAccountFormSubmit);
-    document
-      .querySelector("#workspace")
-      .addEventListener("submit", this.onWorkspaceFormSubmit);
-    document
-      .querySelector("#ownerAccount")
-      .addEventListener("submit", this.onOwnerAccountFormSubmit);
-  }
-
   showCreateWorkSpace() {
     document.querySelector("#loginContainer").style.display = "none";
     document
@@ -115,7 +91,7 @@ class Login extends React.Component {
           <section>
             <div className="form-container">
               <h1>Login to your workspace</h1>
-              <form id="account" method="post">
+              <form id="account" method="post" onSubmit={this.onAccountFormSubmit}>
                 <p>Enter email address and password to log in.</p>
                 <input
                   className="form-control"
@@ -163,7 +139,7 @@ class Login extends React.Component {
           <section>
             <div className="form-container">
               <h1>Create a new workspace</h1>
-              <form id="workspace" method="post">
+              <form id="workspace" method="post" onSubmit={this.onWorkspaceFormSubmit}>
                 <p>Enter details to create workspace.</p>
                 <input
                   className="form-control"
@@ -205,7 +181,7 @@ class Login extends React.Component {
               <h1>
                 Workspace <b>{this.state.createdWorkspaceName}</b> Created!
               </h1>
-              <form id="ownerAccount" method="post">
+              <form id="ownerAccount" method="post" onSubmit={this.onOwnerAccountFormSubmit}>
                 <p>
                   Click <b>Continue</b> to login as{" "}
                   <b>{this.state.createdWorkspaceOwnerEmail}</b>.

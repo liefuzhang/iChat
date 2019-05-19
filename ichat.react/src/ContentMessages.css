@@ -9,6 +9,6 @@
   visibility: hidden;
 }
 
-.simplebar-track.simplebar-vertical {
+.message-container .simplebar-track.simplebar-vertical {
   right: -17px; 
 }

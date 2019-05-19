@@ -3,6 +3,7 @@ import "./SidebarHeader.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "./Modal";
 import DropdownModal from "./DropdownModal";
+import InvitePeopleForm from "./InvitePeopleForm";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -100,21 +101,10 @@ class SidebarHeader extends React.Component {
         <div>
           {this.state.isInvitePeopleModalOpen && (
             <Modal onClose={this.onCloseInvitePeople}>
-              <div className="form-container">
-                <h1 style={{ textAlign: "center" }}>
-                  Invite People to {this.props.userProfile.workspaceName}
-                </h1>
-                <form id="ownerAccount" method="post">
-                  <p>Enter email addresses to invite.</p>
-                  <input
-                    className="form-control"
-                    type="email"
-                    placeholder="Email"
-                    required
-                  />
-                  <button type="submit" className="btn form-control">Send Invitation</button>
-                </form>
-              </div>
+              <InvitePeopleForm
+                userProfile={this.props.userProfile}
+                onClose={this.onCloseInvitePeople}
+              />
             </Modal>
           )}
         </div>

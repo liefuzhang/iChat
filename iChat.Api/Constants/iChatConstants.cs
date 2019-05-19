@@ -12,5 +12,6 @@ namespace iChat.Api.Constants
         public static readonly int DefaultChannelIdInRequest = 0;
         public static readonly string IdenticonPath = "Contents\\Identicons";
         public static readonly string IdenticonExt = ".svg";
+        public static readonly string EmailTemplatePath = "Data\\EmailTemplates";
     }
 }

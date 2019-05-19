@@ -27,7 +27,6 @@
     <None Include="wwwroot\Contents\Identicons\9bf68cdc-f2bb-4a00-ab0f-5fb05a26488c.svg" />
     <None Include="wwwroot\Contents\Identicons\9d2dc4ab-2763-416c-92c7-5f0bdf5932bd.svg" />
     <None Include="wwwroot\Contents\Identicons\c24b6aec-18ae-4f39-90a9-6d86c5d2ab33.svg" />
-    <None Include="wwwroot\Contents\Identicons\tes1%40test.com.svg" />
   </ItemGroup>
 
 </Project>

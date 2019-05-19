@@ -2,36 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./Modal.css";
 import CloseButton from "./components/CloseButton"
+import SimpleBar from "simplebar-react";
 
 class Modal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onOverlayClick = this.onOverlayClick.bind(this);
-
     this.modalRoot = document.getElementById("modal-root");
     this.el = document.createElement("div");
   }
 
-  onOverlayClick(event) {
-    if (!event.target.closest(".modal-panel")) {
-      this.props.onClose();
-    }
-  }
-
   componentDidMount() {
     this.modalRoot.appendChild(this.el);
-
-    document
-      .querySelector(".modal-panel-overlay")
-      .addEventListener("click", this.onOverlayClick);
   }
 
   componentWillUnmount() {
-    document
-      .querySelector(".modal-panel-overlay")
-      .removeEventListener("click", this.onOverlayClick);
-
     this.modalRoot.removeChild(this.el);
   }
 
@@ -39,10 +24,10 @@ class Modal extends React.Component {
     var modal = (
       <div className="modal-panel-container">
         <div className="modal-panel-overlay">
-          <div className="modal-panel panel">
+          <SimpleBar className="modal-panel panel">
             <CloseButton onClose={this.props.onClose} />
             {this.props.children}
-          </div>
+          </SimpleBar>
         </div>
       </div>
     );

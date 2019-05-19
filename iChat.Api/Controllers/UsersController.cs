@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
 using iChat.Api.Extensions;
+using iChat.Api.Constants;
+using iChat.Api.Contract;
 
 namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
@@ -18,10 +20,14 @@ namespace iChat.Api.Controllers {
 
         private readonly iChatContext _context;
         private readonly IUserService _userService;
+        private readonly IWorkspaceService _workspaceService;
+        private readonly IEmailService _emailService;
 
-        public UsersController(iChatContext context, IUserService userService) {
+        public UsersController(iChatContext context, IUserService userService, IEmailService emailService, IWorkspaceService workspaceService) {
             _context = context;
             _userService = userService;
+            _workspaceService = workspaceService;
+            _emailService = emailService;
         }
         
         // GET api/users
@@ -52,9 +58,23 @@ namespace iChat.Api.Controllers {
             }
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value) {
+        // POST api/users/invite
+        [HttpPost("invite")]
+        public async Task<IActionResult> Post(List<string> emails) {
+            try {
+                var user = await _userService.GetUserByIdAsync(User.GetUserId());
+                var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+                await _emailService.SendUserInvitationEmailAsync(new UserInvitationData {
+                    ReceiverAddresses = emails,
+                    InviterName = user.DisplayName,
+                    InviterEmail = user.Email,
+                    WorkspaceName = workspace.Name
+                });
+
+                return Ok();
+            } catch (Exception ex) {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // PUT api/values/5
