@@ -12,6 +12,6 @@ namespace iChat.Api.Services
         Task<User> GetUserByEmailAsync(string email, int workspaceId);
         Task<IEnumerable<User>> GetAllUsersAsync(int workspaceId);
         Task InviteUsersAsync(User user, Workspace workspace, List<string> emails);
-        Task<int> AcceptInvitationAsync(AcceptInvitationDto acceptInvitationDto);
+        Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto);
     }
 }

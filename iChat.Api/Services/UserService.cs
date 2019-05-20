@@ -96,26 +96,26 @@ namespace iChat.Api.Services {
             }
         }
 
-        public async Task<int> AcceptInvitationAsync(AcceptInvitationDto acceptInvitationDto) {
-            if (acceptInvitationDto.Email == null)
-                throw new ArgumentNullException(nameof(acceptInvitationDto.Email));
+        public async Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto) {
+            if (userInvitationDto.Email == null)
+                throw new ArgumentNullException(nameof(userInvitationDto.Email));
 
-            if (acceptInvitationDto.Password == null)
-                throw new ArgumentNullException(nameof(acceptInvitationDto.Password));
+            if (userInvitationDto.Password == null)
+                throw new ArgumentNullException(nameof(userInvitationDto.Password));
 
-            if (!Guid.TryParse(acceptInvitationDto.Code, out Guid code))
+            if (!Guid.TryParse(userInvitationDto.Code, out Guid code))
                 throw new ArgumentException("Invalid code.");
 
             var invitation = await _context.UserInvitations.SingleOrDefaultAsync(ui =>
-                ui.UserEmail == acceptInvitationDto.Email &&
+                ui.UserEmail == userInvitationDto.Email &&
                 ui.InvitationCode == code &&
                 ui.Acceptted == false);
 
             if (invitation == null)
                 throw new Exception("Invalid invitation.");
 
-            var userId = await _identityService.RegisterAsync(acceptInvitationDto.Email, acceptInvitationDto.Password,
-                invitation.WorkspaceId, acceptInvitationDto.Name);
+            var userId = await _identityService.RegisterAsync(userInvitationDto.Email, userInvitationDto.Password,
+                invitation.WorkspaceId, userInvitationDto.Name);
 
             invitation.Acceptted = true;
             await _context.SaveChangesAsync();

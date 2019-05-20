@@ -77,9 +77,9 @@ namespace iChat.Api.Controllers {
         // POST api/users/acceptInvitation
         [HttpPost("acceptInvitation")]
         [AllowAnonymous]
-        public async Task<IActionResult> AcceptInvitation(AcceptInvitationDto acceptInvitationDto) {
+        public async Task<IActionResult> AcceptInvitation(UserInvitationDto userInvitationDto) {
             try {
-                var userId = await _userService.AcceptInvitationAsync(acceptInvitationDto);
+                var userId = await _userService.AcceptInvitationAsync(userInvitationDto);
                 var user = await _userService.GetUserByIdAsync(userId);
                 await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
 
