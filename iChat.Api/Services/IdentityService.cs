@@ -50,7 +50,7 @@ namespace iChat.Api.Services {
         }
 
         public async Task<int> RegisterAsync(string email, string password, int workspaceId, string name = null) {
-            await ValidateUserEmailAndPasswordAsync(email, password, workspaceId);
+            await ValidateUserEmailAndPasswordAsync(email, password);
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
             var identiconGuid = await GenerateUserIdenticon(email);
@@ -101,7 +101,7 @@ namespace iChat.Api.Services {
             return identiconGuid;
         }
 
-        public async Task ValidateUserEmailAndPasswordAsync(string email, string password, int? workspaceId = null) {
+        public async Task ValidateUserEmailAndPasswordAsync(string email, string password) {
             if (string.IsNullOrWhiteSpace(password)) {
                 throw new Exception("Password is required");
             }
@@ -114,8 +114,7 @@ namespace iChat.Api.Services {
                 throw new Exception("Password needs to have at least 6 characters");
             }
 
-            if (workspaceId.HasValue &&
-                await _context.Users.AnyAsync(u => u.Email == email && u.WorkspaceId == workspaceId.Value)) {
+            if (await _context.Users.AnyAsync(u => u.Email == email)) {
                 throw new Exception($"Email \"{email}\" is already taken");
             }
         }

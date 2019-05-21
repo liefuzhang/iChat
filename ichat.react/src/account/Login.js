@@ -1,8 +1,8 @@
 import React from "react";
 import "./Login.css";
 import "./AccountCommon.css";
-import AuthService from "../services/AuthService";
-import CloseButton from "../components/CloseButton";
+import AuthService from "services/AuthService";
+import CloseButton from "components/CloseButton";
 
 class Login extends React.Component {
   constructor(props) {

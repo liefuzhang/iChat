@@ -60,19 +60,11 @@ namespace iChat.Api.Services {
             if (workspace == null)
                 throw new ArgumentNullException(nameof(workspace));
 
+            validateEmails(emails.Distinct(), workspace);
+
             foreach (var email in emails.Distinct()) {
                 if (string.IsNullOrWhiteSpace(email))
                     continue;
-
-                if (_context.UserInvitations.Any(ui => ui.UserEmail == email && ui.WorkspaceId == workspace.Id)) {
-                    // user has already been invited
-                    continue;
-                }
-
-                if (_context.Users.Any(u => u.Email == email && u.WorkspaceId == workspace.Id)) {
-                    // user has already joined workspace
-                    continue;
-                }
 
                 var invitationCode = Guid.NewGuid();
                 var newUserInvitation = new UserInvitation {
@@ -93,6 +85,20 @@ namespace iChat.Api.Services {
                     WorkspaceName = workspace.Name,
                     InvitationCode = invitationCode
                 });
+            }
+        }
+
+        private void validateEmails(IEnumerable<string> emails, Workspace workspace) {
+            foreach (var email in emails) {
+                if (_context.UserInvitations.Any(ui => ui.UserEmail == email && ui.WorkspaceId == workspace.Id)) {
+                    // user has already been invited
+                    throw new Exception($"User with email \"{email}\" has already been invited.");
+                }
+
+                if (_context.Users.Any(u => u.Email == email && u.WorkspaceId == workspace.Id)) {
+                    // user has already joined workspace
+                    throw new Exception($"User with email \"{email}\" already exists.");
+                }
             }
         }
 
