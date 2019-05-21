@@ -51,12 +51,12 @@ namespace iChat.Api.Controllers {
 
         // POST api/channels
         [HttpPost]
-        public async Task<IActionResult> Post(ChannelCreateDto channelCreateDto) {
+        public async Task<ActionResult<int>> Post(ChannelCreateDto channelCreateDto) {
             try
             {
-                await _channelService.CreateChannelAsync(channelCreateDto.Name, User.GetWorkplaceId(), channelCreateDto.Topic);
+                var id = await _channelService.CreateChannelAsync(channelCreateDto.Name, User.GetWorkplaceId(), channelCreateDto.Topic);
                 
-                return Ok();
+                return Ok(id);
             }
             catch (Exception ex)
             {

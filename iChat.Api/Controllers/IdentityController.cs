@@ -44,7 +44,7 @@ namespace iChat.Api.Controllers
                     email = user.Email,
                     displayName = user.DisplayName,
                     workspaceName = workspace?.Name,
-                    identiconPath = Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
+                    identiconPath = "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
                     token = tokenString
                 });
             }

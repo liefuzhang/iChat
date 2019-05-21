@@ -46,7 +46,7 @@ namespace iChat.Api.Services
             return channel;
         }
 
-        public async Task CreateChannelAsync(string channelName, int workspaceId, string topic = "")
+        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "")
         {
             if (string.IsNullOrWhiteSpace(channelName) || workspaceId < 1)
             {
@@ -62,6 +62,8 @@ namespace iChat.Api.Services
 
             _context.Channels.Add(channel);
             await _context.SaveChangesAsync();
+
+            return channel.Id;
         }
 
         public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
