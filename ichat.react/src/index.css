@@ -129,7 +129,7 @@ blockquote {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.form-container{
+.form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,7 +156,7 @@ form .form-group label {
   display: block;
 }
 
-form .form-group label:hover{
+form .form-group label:hover {
   cursor: pointer;
 }
 
@@ -180,4 +180,33 @@ form button[type="submit"] {
 .secondary-text {
   font-weight: normal;
   color: #666;
+}
+
+.horizontal-divider {
+  position: relative;
+  margin: 20px 0;
+  width: 100%;
+  text-align: center;
+  height: 20px;
+}
+.horizontal-divider span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  z-index: 100;
+  padding: 0 20px;
+}
+
+.horizontal-divider::after {
+  content: "";
+  width: 100%;
+  position: absolute;
+  height: 1px;
+  top: 50%;
+  background-color: #ddd;
+}
+.horizontal-divider::after {
+  right: 0;
 }

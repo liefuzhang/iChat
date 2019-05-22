@@ -25,14 +25,14 @@
 }
 
 .login-page section {
-  width: 300px; 
+  width: 300px;
 }
 
-.login-page section .white-btn{
-  width: 100%;  
+.login-page section .white-btn {
+  width: 100%;
 }
 
-#workspaceContainer{
+#workspaceContainer {
   position: relative;
 }
 
@@ -42,24 +42,6 @@
   opacity: 0;
 }
 
-.horizontal-divider {
-  position: relative;
-  margin: 20px 0;
+.login-page .login-container .horizontal-divider{
   width: 300px;
-  text-align: center;
-}
-.horizontal-divider::before,
-.horizontal-divider::after {
-  content: "";
-  width: 40%;
-  position: absolute;
-  height: 1px;
-  top: 50%;
-  background-color: #ddd;
-}
-.horizontal-divider::before{
-  left: 0;
-}
-.horizontal-divider::after{
-  right: 0;
 }

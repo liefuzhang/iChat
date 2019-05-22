@@ -64,7 +64,9 @@ class ContentMessages extends React.Component {
         <SimpleBar className="message-scrollable">
           {this.state.messageGroups.map(g => (
             <div key={g.dateString} className="message-group">
-              <div className="message-group-header">{g.dateString}</div>
+              <div className="message-group-header horizontal-divider">
+                <span>{g.dateString}</span>
+              </div>
               {g.messages.map(m => (
                 <div key={m.id} className="message-item">
                   <div className="message-title">

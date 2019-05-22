@@ -92,7 +92,11 @@ class Login extends React.Component {
           <section>
             <div className="form-container">
               <h1>Login to your workspace</h1>
-              <form id="account" method="post" onSubmit={this.onAccountFormSubmit}>
+              <form
+                id="account"
+                method="post"
+                onSubmit={this.onAccountFormSubmit}
+              >
                 <p>Enter email address and password to log in.</p>
                 <input
                   className="form-control"
@@ -122,7 +126,9 @@ class Login extends React.Component {
               </form>
             </div>
           </section>
-          <div className="horizontal-divider">or</div>
+          <div className="horizontal-divider">
+            <span>or</span>
+          </div>
           <section>
             <button
               className="btn white-btn"
@@ -140,7 +146,11 @@ class Login extends React.Component {
           <section>
             <div className="form-container">
               <h1>Create a new workspace</h1>
-              <form id="workspace" method="post" onSubmit={this.onWorkspaceFormSubmit}>
+              <form
+                id="workspace"
+                method="post"
+                onSubmit={this.onWorkspaceFormSubmit}
+              >
                 <p>Enter details to create workspace.</p>
                 <input
                   className="form-control"
@@ -182,7 +192,11 @@ class Login extends React.Component {
               <h1>
                 Workspace <b>{this.state.createdWorkspaceName}</b> Created!
               </h1>
-              <form id="ownerAccount" method="post" onSubmit={this.onOwnerAccountFormSubmit}>
+              <form
+                id="ownerAccount"
+                method="post"
+                onSubmit={this.onOwnerAccountFormSubmit}
+              >
                 <p>
                   Click <b>Continue</b> to login as{" "}
                   <b>{this.state.createdWorkspaceOwnerEmail}</b>.
