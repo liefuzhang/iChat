@@ -12,5 +12,6 @@ namespace iChat.Api.Services {
         Task<Channel> GetChannelByIdAsync(int id, int workspaceId);
         Task<IEnumerable<Channel>> GetChannelsAsync(int userId, int workspaceId);
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
+        Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
     }
 }

@@ -21,15 +21,6 @@ class Content extends React.Component {
       .build();
     this.connection
       .start()
-      .then(() => {
-        //todo change: add connection to all the users' channels and private messages
-        if (props.match.params.section === "channel")
-          this.connection
-            .invoke("AddToChannelGroup", props.match.params.id)
-            .catch(function(err) {
-              return console.error(err.toString());
-            });
-      })
       .catch(function(err) {
         return console.error(err.toString());
       });

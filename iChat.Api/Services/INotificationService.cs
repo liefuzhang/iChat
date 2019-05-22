@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace iChat.Api.Services
 {
     public interface INotificationService
     {
-        Task SendUpdateChannelNotification(int channelId);
-        Task SendDirectMessageNotification(int receiverId);
+        Task SendUpdateChannelNotificationAsync(IEnumerable<int> userIds, int channelId);
+        Task SendDirectMessageNotificationAsync(int receiverId);
     }
 }

@@ -1,20 +1,30 @@
-﻿using System.Threading.Tasks;
-using iChat.Api.Hubs;
+﻿using iChat.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public class NotificationService : INotificationService {
+namespace iChat.Api.Services
+{
+    public class NotificationService : INotificationService
+    {
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public NotificationService(IHubContext<ChatHub> hubContext) {
+        public NotificationService(IHubContext<ChatHub> hubContext)
+        {
             _hubContext = hubContext;
         }
 
-        public async Task SendUpdateChannelNotification(int channelId) {
-            await _hubContext.Clients.Group(channelId.ToString()).SendAsync("UpdateChannel", channelId);
+        public async Task SendUpdateChannelNotificationAsync(IEnumerable<int> userIds, int channelId)
+        {
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannel", channelId);
+
+            }
         }
 
-        public async Task SendDirectMessageNotification(int userId) {
+        public async Task SendDirectMessageNotificationAsync(int userId)
+        {
             await _hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveMessage");
         }
     }

@@ -12,8 +12,8 @@ namespace iChat.Api.Hubs
         //    await Clients.All.SendAsync("ReceiveMessage", channelID);
         //}
 
-        public async Task AddToChannelGroup(string channelID) {
-            await Groups.AddToGroupAsync(Context.ConnectionId, channelID);
-        }
+        //public async Task AddToChannelGroups(string channelID) {
+        //    await Groups.AddToGroupAsync(Context.ConnectionId, channelID);
+        //}
     }
 }

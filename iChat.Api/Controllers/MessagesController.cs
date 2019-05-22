@@ -19,13 +19,15 @@ namespace iChat.Api.Controllers
     {
         private readonly INotificationService _notificationService;
         private IMessageService _messageService;
+        private IChannelService _channelService;
 
         public MessagesController(iChatContext context,
             INotificationService notificationService,
-            IMessageService messageService)
+            IMessageService messageService, IChannelService channelService)
         {
             _notificationService = notificationService;
             _messageService = messageService;
+            _channelService = channelService;
         }
 
         // GET api/messages/channel/1
@@ -66,8 +68,8 @@ namespace iChat.Api.Controllers
             {
                 await _messageService.PostMessageToUserAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
-                _notificationService.SendDirectMessageNotification(User.GetUserId());
-                _notificationService.SendDirectMessageNotification(id);
+                _notificationService.SendDirectMessageNotificationAsync(User.GetUserId());
+                _notificationService.SendDirectMessageNotificationAsync(id);
 
                 return Ok();
             }
@@ -84,8 +86,8 @@ namespace iChat.Api.Controllers
             try
             {
                 await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
-
-                _notificationService.SendUpdateChannelNotification(id);
+                var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
+                _notificationService.SendUpdateChannelNotificationAsync(userIds, id);
 
                 return Ok();
             }

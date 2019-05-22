@@ -71,6 +71,11 @@ namespace iChat.Api.Services
             return channel.Id;
         }
 
+        public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId)
+        {
+            return _context.ChannelSubscriptions.Where(cs => cs.ChannelId == channelId).Select(cs => cs.UserId);
+        }
+
         public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
         {
             if (channelId < 1 || userId < 1)
