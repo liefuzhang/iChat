@@ -3,32 +3,3 @@
   display: flex;
   align-content: center;
 }
-
-#emailForm .add-email:hover {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-#emailForm .email-row {
-  position: relative;
-  width: 100%;
-}
-
-#emailForm .icon-times {
-  font-size: 1rem;
-  margin-left: 10px;
-  position: absolute;
-  top: calc(50% - 6px);
-  transform: translateY(-50%);
-  color: #666;
-}
-
-#emailForm .icon-times:hover{
-  color: #333;
-  cursor: pointer;
-}
-
-.add-email .icon-circle {
-  font-size: 1.2rem;
-  margin-right: 5px;
-}

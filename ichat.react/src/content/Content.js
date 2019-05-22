@@ -44,7 +44,7 @@ class Content extends React.Component {
     let id = params.id ? +params.id : 0;
     return (
       <div id="contentContainer">
-        <Sidebar isChannel={isChannel} id={id} userProfile={this.userProfile} />
+        <Sidebar isChannel={isChannel} id={id} userProfile={this.userProfile} {...this.props}/>
         <div id="content">
           <ContentHeader isChannel={isChannel} id={id} />
           <ContentMessages

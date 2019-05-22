@@ -146,6 +146,20 @@ blockquote {
   text-align: center;
 }
 
+form .form-group {
+  margin-bottom: 10px;
+}
+
+form .form-group label {
+  font-weight: bold;
+  margin-bottom: 3px;
+  display: block;
+}
+
+form .form-group label:hover{
+  cursor: pointer;
+}
+
 form .form-control {
   margin-bottom: 12px;
   box-sizing: border-box;
@@ -161,4 +175,9 @@ form button[type="submit"] {
 .hide {
   display: none;
   opacity: 0;
+}
+
+.secondary-text {
+  font-weight: normal;
+  color: #666;
 }

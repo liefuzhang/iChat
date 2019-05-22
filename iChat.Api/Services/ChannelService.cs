@@ -53,6 +53,11 @@ namespace iChat.Api.Services
                 throw new ArgumentException("Invalid input");
             }
 
+            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName))
+            {
+                throw new ArgumentException($"Channel \"{channelName}\" already exists.");
+            }
+
             var channel = new Channel
             {
                 Name = channelName,

@@ -14,12 +14,13 @@
 
 .modal-panel {
   width: 600px;
-  height: 500px;
+  min-height: 400px;
+  max-height: cacl(100vh - 200px);
   color: #333;
   position: relative;
   margin-bottom: 100px;
   margin-top: 30px;
-  padding: 20px;
+  padding: 20px 20px 40px 20px;
   box-sizing: border-box;
   overflow-y: auto;
 }

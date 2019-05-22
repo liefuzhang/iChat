@@ -14,6 +14,7 @@ class Sidebar extends React.Component {
     this.authService = new AuthService(props);
     this.onCreateChannel = this.onCreateChannel.bind(this);
     this.onCloseCreateChannel = this.onCloseCreateChannel.bind(this);
+    this.onChannelCreated = this.onChannelCreated.bind(this);
 
     this.state = {
       channels: [],
@@ -34,6 +35,14 @@ class Sidebar extends React.Component {
     this.setState({
       isCreateChannelModalOpen: false
     });
+  }
+
+  onChannelCreated (){
+    this.onCloseCreateChannel();
+
+    this.authService
+      .fetch("/api/channels")
+      .then(channels => this.setState({ channels }));
   }
 
   fecthData() {
@@ -86,6 +95,8 @@ class Sidebar extends React.Component {
               <Modal onClose={this.onCloseCreateChannel}>
                 <CreateChannelForm
                   onClose={this.onCloseCreateChannel}
+                  onChannelCreated={this.onChannelCreated}
+                  {...this.props}
                 />
               </Modal>
             )}

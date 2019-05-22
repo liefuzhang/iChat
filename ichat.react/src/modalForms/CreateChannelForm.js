@@ -23,8 +23,8 @@ class CreateChannelForm extends React.Component {
           topic: topic
         })
       })
-      .then((id) => {
-        this.props.onClose();
+      .then(id => {
+        this.props.onChannelCreated();
         this.props.history.push(`/channel/${id}`);
       });
   }
@@ -36,22 +36,32 @@ class CreateChannelForm extends React.Component {
         <form
           id="createChannelForm"
           method="post"
-          onSubmit={this.ononCreateChannelFormSubmit}
+          onSubmit={this.onCreateChannelFormSubmit}
         >
           <p>Channels are where specific topics can be talked about.</p>
-          <input
-            className="form-control"
-            type="text"
-            name="name"
-            placeholder="Channel Name, e.g. meetings"
-            required
-          />
-          <input
-            className="form-control"
-            type="text"
-            name="topic"
-            placeholder="What this channel is about?"
-          />
+          <div className="form-group">
+            <label htmlFor="createChannelName">Name</label>
+            <input
+              className="form-control"
+              type="text"
+              id="createChannelName"
+              name="name"
+              placeholder="e.g. meetings"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="createChannelTopic">
+              Topic<span className="secondary-text">&nbsp;(optional)</span>
+            </label>
+            <input
+              className="form-control"
+              type="text"
+              id="createChannelTopic"
+              name="topic"
+              placeholder="What is this channel about?"
+            />
+          </div>
           <button type="submit" className="btn form-control">
             Create Channel
           </button>
