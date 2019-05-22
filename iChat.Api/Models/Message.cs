@@ -12,17 +12,5 @@ namespace iChat.Api.Models
         public int WorkspaceId { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        public MessageDto MapToMessageDto()
-        {
-            return new MessageDto
-            {
-                Id = Id,
-                WorkspaceId = WorkspaceId,
-                Content = Content,
-                SenderId = SenderId,
-                Sender = Sender,
-                TimeString = CreatedDate.ToShortTimeString()
-            };
-        }
     }
 }

@@ -14,7 +14,8 @@ namespace iChat.Api.Helpers
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
-            CreateMap<Message, MessageDto>();
+            CreateMap<Message, MessageDto>()
+                .ForMember(dest => dest.TimeString, m => m.MapFrom(src => src.CreatedDate.ToShortTimeString()));
             CreateMap<MessageDto, Message>();
         }
     }

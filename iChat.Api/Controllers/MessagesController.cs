@@ -87,6 +87,7 @@ namespace iChat.Api.Controllers
             try
             {
                 await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
+
                 var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
                 _notificationService.SendUpdateChannelNotificationAsync(userIds, id);
 

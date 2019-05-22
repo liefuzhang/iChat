@@ -1,4 +1,5 @@
-﻿using iChat.Api.Constants;
+﻿using AutoMapper;
+using iChat.Api.Constants;
 using iChat.Api.Dtos;
 using iChat.Api.Models;
 using iChat.Data;
@@ -15,12 +16,15 @@ namespace iChat.Api.Services
         private readonly iChatContext _context;
         private readonly IChannelService _channelService;
         private readonly IMessageParsingService _messageParsingService;
+        private readonly IMapper _mapper;
 
-        public MessageService(iChatContext context, IChannelService channelService, IMessageParsingService messageParsingService)
+        public MessageService(iChatContext context, IChannelService channelService, 
+            IMessageParsingService messageParsingService, IMapper mapper)
         {
             _context = context;
             _channelService = channelService;
             _messageParsingService = messageParsingService;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int workspaceId)
@@ -39,7 +43,7 @@ namespace iChat.Api.Services
                     new MessageGroupDto
                     {
                         DateString = group.Key.ToString("dddd, MMM d"),
-                        Messages = group.Select(m => m.MapToMessageDto())
+                        Messages = group.Select(m => _mapper.Map<MessageDto>(m))
                     })
                 .ToListAsync();
 
@@ -85,6 +89,10 @@ namespace iChat.Api.Services
 
         public async Task PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId)
         {
+            if (channelId == iChatConstants.DefaultChannelIdInRequest) {
+                channelId = await _channelService.GetDefaultChannelGeneralIdAsync(workspaceId);
+            }
+
             if (channelId < 1)
             {
                 throw new ArgumentException("invalid channel id");
