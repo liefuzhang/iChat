@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using iChat.Api.Dtos;
 
 namespace iChat.Api.Controllers
 {
@@ -32,12 +33,12 @@ namespace iChat.Api.Controllers
 
         // GET api/messages/channel/1
         [HttpGet("channel/{id}")]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForChannelAsync(int id)
+        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForChannelAsync(int id)
         {
             try
             {
-                var messages = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkplaceId());
-                return messages.ToList();
+                var messageGroups = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkplaceId());
+                return messageGroups.ToList();
             }
             catch (Exception ex)
             {

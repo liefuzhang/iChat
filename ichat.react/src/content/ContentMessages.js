@@ -19,14 +19,14 @@ class ContentMessages extends React.Component {
     }
 
     this.state = {
-      messages: []
+      messageGroups: []
     };
   }
 
   fetchData(props) {
     return this.authService
       .fetch(`/api/messages/${props.section}/${props.id}`)
-      .then(messages => this.setState({ messages }))
+      .then(messageGroups => this.setState({ messageGroups }))
       .then(() => scrollToBottom());
   }
 
@@ -46,7 +46,7 @@ class ContentMessages extends React.Component {
     }
   }
 
-  onUpdateChannel(channelId){
+  onUpdateChannel(channelId) {
     if (this.props.section === "channel" && this.props.id === channelId) {
       this.fetchData(this.props);
     }
@@ -62,12 +62,17 @@ class ContentMessages extends React.Component {
     return (
       <div className="message-container">
         <SimpleBar className="message-scrollable">
-          {this.state.messages.map(m => (
-            <div key={m.id} className="message-item">
-              <div className="message-title">
-                {m.sender.displayName} &nbsp; {m.createdDate}
-              </div>
-              <RawMessage content={m.content} />
+          {this.state.messageGroups.map(g => (
+            <div key={g.dateString} className="message-group">
+              <div className="message-group-header">{g.dateString}</div>
+              {g.messages.map(m => (
+                <div key={m.id} className="message-item">
+                  <div className="message-title">
+                    {m.sender.displayName} &nbsp; {m.timeString}
+                  </div>
+                  <RawMessage content={m.content} />
+                </div>
+              ))}
             </div>
           ))}
         </SimpleBar>

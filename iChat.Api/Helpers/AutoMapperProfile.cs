@@ -14,6 +14,8 @@ namespace iChat.Api.Helpers
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<Message, MessageDto>();
+            CreateMap<MessageDto, Message>();
         }
     }
 }

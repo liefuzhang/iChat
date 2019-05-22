@@ -1,4 +1,5 @@
 ﻿using System;
+using iChat.Api.Dtos;
 
 namespace iChat.Api.Models
 {
@@ -10,5 +11,18 @@ namespace iChat.Api.Models
         public string Content { get; set; }
         public int WorkspaceId { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        public MessageDto MapToMessageDto()
+        {
+            return new MessageDto
+            {
+                Id = Id,
+                WorkspaceId = WorkspaceId,
+                Content = Content,
+                SenderId = SenderId,
+                Sender = Sender,
+                TimeString = CreatedDate.ToShortTimeString()
+            };
+        }
     }
 }
