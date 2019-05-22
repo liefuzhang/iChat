@@ -1,5 +1,4 @@
 import React from "react";
-import "./CreateChannelForm.css";
 import AuthService from "services/AuthService";
 
 class CreateChannelForm extends React.Component {

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
+import AuthService from "services/AuthService";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -13,6 +14,8 @@ class SidebarHeader extends React.Component {
     this.onCloseDropdown = this.onCloseDropdown.bind(this);
     this.onInvitePeople = this.onInvitePeople.bind(this);
     this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
+    this.onLogout = this.onLogout.bind(this);
+    this.authService = new AuthService(props);
 
     this.state = {
       isInvitePeopleModalOpen: false,
@@ -43,6 +46,10 @@ class SidebarHeader extends React.Component {
     this.setState({
       isInvitePeopleModalOpen: false
     });
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 
   componentDidMount() {
@@ -91,7 +98,7 @@ class SidebarHeader extends React.Component {
                   </div>
                   <ul>
                     <li onClick={this.onInvitePeople}>Invite people</li>
-                    <li>Log out of {this.props.userProfile.workspaceName}</li>
+                    <li onClick={this.onLogout}>Log out of {this.props.userProfile.workspaceName}</li>
                   </ul>
                 </section>
               </div>

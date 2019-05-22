@@ -59,7 +59,7 @@ class Sidebar extends React.Component {
     return (
       <div id="sidebar">
         <section>
-          <SidebarHeader userProfile={this.props.userProfile} />
+          <SidebarHeader userProfile={this.props.userProfile} {...this.props}/>
         </section>
         <section>
           <div className="section-title">
