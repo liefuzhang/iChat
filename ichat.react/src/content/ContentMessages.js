@@ -21,6 +21,48 @@ class ContentMessages extends React.Component {
     this.state = {
       messageGroups: []
     };
+
+    this.scrollDetector = {
+      init: function() {
+        this.calculateMessageGroupOffsetTops();
+        this.scrollableElement = document.querySelector(
+          ".simplebar-content-wrapper"
+        );
+        this.scrollableElement.onscroll = this.handler.bind(this);
+        window.onresize = this.calculateMessageGroupOffsetTops;
+      },
+      scrollableElement: undefined,
+      lastGroupIndex: -1,
+      offsetTops: [],
+      messageGroupHeaders: [],
+      calculateMessageGroupOffsetTops: function() {
+        this.messageGroupHeaders = Array.from(document.querySelectorAll(
+          ".message-group-header"
+        ));
+        this.offsetTops = this.messageGroupHeaders.map(function(h) {
+          return h.offsetTop;
+        });
+      },
+      handler: function() {
+        var currentGroupIndex = -1;
+        var startIndex = this.lastGroupIndex - 1;
+        startIndex = startIndex < 0 ? 0 : startIndex;
+        for (var i = startIndex; i < this.offsetTops.length; i++) {
+          if (this.scrollableElement.scrollTop < this.offsetTops[i]) {
+            break;
+          }
+          currentGroupIndex = i;
+        }
+        if (this.lastGroupIndex !== currentGroupIndex) {
+          let currentHeader = document.querySelector(".message-group-header.sticky-on-top");
+          currentHeader && currentHeader.classList.remove("sticky-on-top");
+          if (currentGroupIndex !== -1) {
+            this.messageGroupHeaders[currentGroupIndex].classList.add("sticky-on-top");
+          }
+          this.lastSectionIndex = currentGroupIndex;
+        }
+      }
+    };
   }
 
   fetchData(props) {
@@ -44,6 +86,8 @@ class ContentMessages extends React.Component {
     ) {
       this.fetchData(this.props);
     }
+
+    if (this.state.messageGroups.length > 0) this.scrollDetector.init();
   }
 
   onUpdateChannel(channelId) {
