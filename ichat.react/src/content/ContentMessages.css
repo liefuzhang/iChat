@@ -14,11 +14,34 @@
   right: 3px;
 }
 
+.message-container .message-group:first-of-type{
+  margin-top: -30px;
+}
+
+.message-group-header-container {
+  position: relative;
+}
+
+.message-group-anchor {
+  height: 20px;
+  padding: 20px 0;
+}
+
+.message-group-anchor.sticky-on-top + .message-group-header-container .message-group-header {
+  position: fixed;
+  top: 28px;
+  left: 220px;
+  z-index: 100;
+  width: calc(100% - 220px);
+}
+
 .message-container .message-group-header {
   font-size: 0.85rem;
   font-weight: bold;
+  position: absolute;
+  top: -60px;
 }
 
-.message-container .message-scrollable .message-item{
+.message-container .message-scrollable .message-item {
   padding: 0 20px;
 }

@@ -184,7 +184,7 @@ form button[type="submit"] {
 
 .horizontal-divider {
   position: relative;
-  margin: 20px 0;
+  padding: 20px 0;
   width: 100%;
   text-align: center;
   height: 20px;

@@ -34,12 +34,12 @@ class ContentMessages extends React.Component {
       scrollableElement: undefined,
       lastGroupIndex: -1,
       offsetTops: [],
-      messageGroupHeaders: [],
+      messageGroupAnchors: [],
       calculateMessageGroupOffsetTops: function() {
-        this.messageGroupHeaders = Array.from(document.querySelectorAll(
-          ".message-group-header"
-        ));
-        this.offsetTops = this.messageGroupHeaders.map(function(h) {
+        this.messageGroupAnchors = Array.from(
+          document.querySelectorAll(".message-group-anchor")
+        );
+        this.offsetTops = this.messageGroupAnchors.map(function(h) {
           return h.offsetTop;
         });
       },
@@ -54,10 +54,14 @@ class ContentMessages extends React.Component {
           currentGroupIndex = i;
         }
         if (this.lastGroupIndex !== currentGroupIndex) {
-          let currentHeader = document.querySelector(".message-group-header.sticky-on-top");
-          currentHeader && currentHeader.classList.remove("sticky-on-top");
+          let currentAnchor = document.querySelector(
+            ".message-group-anchor.sticky-on-top"
+          );
+          currentAnchor && currentAnchor.classList.remove("sticky-on-top");
           if (currentGroupIndex !== -1) {
-            this.messageGroupHeaders[currentGroupIndex].classList.add("sticky-on-top");
+            this.messageGroupAnchors[currentGroupIndex].classList.add(
+              "sticky-on-top"
+            );
           }
           this.lastSectionIndex = currentGroupIndex;
         }
@@ -108,8 +112,11 @@ class ContentMessages extends React.Component {
         <SimpleBar className="message-scrollable">
           {this.state.messageGroups.map(g => (
             <div key={g.dateString} className="message-group">
-              <div className="message-group-header horizontal-divider">
-                <span>{g.dateString}</span>
+              <div className="message-group-anchor" />
+              <div className="message-group-header-container">
+                <div className="message-group-header horizontal-divider">
+                  <span>{g.dateString}</span>
+                </div>
               </div>
               {g.messages.map(m => (
                 <div key={m.id} className="message-item">
