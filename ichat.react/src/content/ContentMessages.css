@@ -3,6 +3,7 @@
   flex: 1 1;
   flex-basis: 0;
   min-height: 0;
+  min-width: 500px;
   margin: 0 -20px;
 }
 .message-container .message-scrollable {
@@ -12,6 +13,10 @@
 
 .message-container .simplebar-track.simplebar-vertical {
   right: 3px;
+}
+
+.message-container .simplebar-placeholder {
+  width: 100% !important;
 }
 
 .message-container .message-group:first-of-type{
@@ -33,6 +38,7 @@
   left: 220px;
   z-index: 100;
   width: calc(100% - 220px);
+  min-width: 540px;
 }
 
 .message-container .message-group-header {

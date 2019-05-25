@@ -39,8 +39,8 @@ class ContentMessages extends React.Component {
         this.messageGroupAnchors = Array.from(
           document.querySelectorAll(".message-group-anchor")
         );
-        this.offsetTops = this.messageGroupAnchors.map(function(h) {
-          return h.offsetTop;
+        this.offsetTops = this.messageGroupAnchors.map(function(a) {
+          return a.offsetTop;
         });
       },
       handler: function() {
