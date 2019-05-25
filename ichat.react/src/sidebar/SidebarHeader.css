@@ -60,9 +60,3 @@
   display: flex;
   align-items: center;
 }
-
-.sidebar-header-dropdown-section-header img {
-  height: 30px;
-  width: 30px;
-  margin-right: 10px;
-}

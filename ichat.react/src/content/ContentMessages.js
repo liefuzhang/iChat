@@ -49,7 +49,10 @@ class ContentMessages extends React.Component {
         var startIndex = this.lastGroupIndex - 1;
         startIndex = startIndex < 0 ? 0 : startIndex;
         for (var i = startIndex; i < this.offsetTops.length; i++) {
-          if (this.scrollableElement.scrollTop < this.offsetTops[i] + adjustHeight) {
+          if (
+            this.scrollableElement.scrollTop <
+            this.offsetTops[i] + adjustHeight
+          ) {
             break;
           }
           currentGroupIndex = i;
@@ -120,11 +123,17 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {g.messages.map(m => (
-                <div key={m.id} className="message-item">
-                  <div className="message-title">
-                    {m.sender.displayName} &nbsp; {m.timeString}
+                <div className="message-item-container" key={m.id}>
+                  <img
+                    className="user-identicon"
+                    src={this.props.userProfile.identiconPath}
+                  />
+                  <div className="message-item">
+                    <div className="message-title">
+                      <b>{m.sender.displayName}</b> <span className="message-time">&nbsp;{m.timeString}</span>
+                    </div>
+                    <RawMessage content={m.content} />
                   </div>
-                  <RawMessage content={m.content} />
                 </div>
               ))}
             </div>

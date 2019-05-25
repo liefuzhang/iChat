@@ -210,3 +210,9 @@ form button[type="submit"] {
 .horizontal-divider::after {
   right: 0;
 }
+
+.user-identicon {
+  height: 32px;
+  width: 32px;
+  margin-right: 10px;
+}

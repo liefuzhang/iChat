@@ -42,6 +42,7 @@ class Content extends React.Component {
             section={section}
             id={id}
             hubConnection={this.connection}
+            userProfile={this.userProfile}
           />
           <ContentFooter isChannel={isChannel} id={id} />
         </div>
