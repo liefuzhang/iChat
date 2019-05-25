@@ -1,10 +1,24 @@
-﻿namespace iChat.Api.Models
+﻿using System;
+
+namespace iChat.Api.Models
 {
     public class ChannelSubscription
     {
-        public int ChannelId { get; set; }
-        public Channel Channel { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
+        protected ChannelSubscription() {
+        }
+
+        public ChannelSubscription(int channelId, int userId) {
+            if (channelId < 1 || userId < 1) {
+                throw new ArgumentException("Invalid input");
+            }
+
+            ChannelId = channelId;
+            UserId = userId;
+        }
+
+        public int ChannelId { get; private set; }
+        public Channel Channel { get; private set; }
+        public int UserId { get; private set; }
+        public User User { get; private set; }
     }
 }

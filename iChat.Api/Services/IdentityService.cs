@@ -1,7 +1,7 @@
 ﻿using iChat.Api.Constants;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

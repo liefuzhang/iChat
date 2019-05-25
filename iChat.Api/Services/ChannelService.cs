@@ -1,27 +1,23 @@
 ﻿using iChat.Api.Constants;
 using iChat.Api.Models;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services
-{
-    public class ChannelService : IChannelService
-    {
+namespace iChat.Api.Services {
+    public class ChannelService : IChannelService {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
 
-        public ChannelService(iChatContext context, IUserService userService)
-        {
+        public ChannelService(iChatContext context, IUserService userService) {
             _context = context;
             _userService = userService;
         }
 
-        public async Task<IEnumerable<Channel>> GetChannelsAsync(int userId, int workspaceId)
-        {
+        public async Task<IEnumerable<Channel>> GetChannelsAsync(int userId, int workspaceId) {
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.ChannelSubscriptions.Any(cs => cs.UserId == userId &&
@@ -31,13 +27,7 @@ namespace iChat.Api.Services
             return channels;
         }
 
-        public async Task<Channel> GetChannelByIdAsync(int id, int workspaceId)
-        {
-            if (id == iChatConstants.DefaultChannelIdInRequest)
-            {
-                id = await GetDefaultChannelGeneralIdAsync(workspaceId);
-            }
-
+        public async Task<Channel> GetChannelByIdAsync(int id, int workspaceId) {
             var channel = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.Id == id)
@@ -46,24 +36,12 @@ namespace iChat.Api.Services
             return channel;
         }
 
-        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "")
-        {
-            if (string.IsNullOrWhiteSpace(channelName) || workspaceId < 1)
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
-            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName))
-            {
+        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "") {
+            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName)) {
                 throw new ArgumentException($"Channel \"{channelName}\" already exists.");
             }
 
-            var channel = new Channel
-            {
-                Name = channelName,
-                WorkspaceId = workspaceId,
-                Topic = topic
-            };
+            var channel = new Channel(channelName, workspaceId, topic);
 
             _context.Channels.Add(channel);
             await _context.SaveChangesAsync();
@@ -71,40 +49,26 @@ namespace iChat.Api.Services
             return channel.Id;
         }
 
-        public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId)
-        {
+        public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId) {
             return _context.ChannelSubscriptions.Where(cs => cs.ChannelId == channelId).Select(cs => cs.UserId);
         }
 
-        public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
-        {
-            if (channelId < 1 || userId < 1)
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
+        public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId) {
             var user = await _userService.GetUserByIdAsync(userId, workspaceId);
             var channel = await GetChannelByIdAsync(channelId, workspaceId);
 
-            if (user == null || channel == null)
-            {
+            if (user == null || channel == null) {
                 throw new ArgumentException("User and channel are not in the same workspace");
             }
 
-            var channelSubscription = new ChannelSubscription
-            {
-                ChannelId = channelId,
-                UserId = userId
-            };
+            var channelSubscription = new ChannelSubscription(channelId, userId);
 
             _context.ChannelSubscriptions.Add(channelSubscription);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId)
-        {
-            if (workspaceId < 1)
-            {
+        public async Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId) {
+            if (workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -112,10 +76,8 @@ namespace iChat.Api.Services
             await CreateChannelAsync(iChatConstants.DefaultChannelRandom, workspaceId, "Another random channel");
         }
 
-        public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId)
-        {
-            if (userId < 1 || workspaceId < 1)
-            {
+        public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId) {
+            if (userId < 1 || workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -126,8 +88,7 @@ namespace iChat.Api.Services
             await AddUserToChannelAsync(defaultChannelRandom.Id, userId, workspaceId);
         }
 
-        private async Task<Channel> GetChannelByNameAsync(string name, int workspaceId)
-        {
+        private async Task<Channel> GetChannelByNameAsync(string name, int workspaceId) {
             var channel = await _context.Channels.AsNoTracking()
                 .Where(c => c.Name == name &&
                     c.WorkspaceId == workspaceId)
@@ -136,10 +97,8 @@ namespace iChat.Api.Services
             return channel;
         }
 
-        public async Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId)
-        {
-            if (workspaceId < 1)
-            {
+        public async Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId) {
+            if (workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 

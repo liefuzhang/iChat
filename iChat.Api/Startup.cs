@@ -3,7 +3,7 @@ using AutoMapper;
 using iChat.Api.Helpers;
 using iChat.Api.Hubs;
 using iChat.Api.Services;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

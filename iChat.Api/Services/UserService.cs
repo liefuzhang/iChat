@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using iChat.Api.Contract;
 using iChat.Api.Dtos;
 using iChat.Api.Models;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

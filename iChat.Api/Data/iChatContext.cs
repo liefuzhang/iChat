@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace iChat.Data {
+namespace iChat.Api.Data {
     public class iChatContext : DbContext {
         public iChatContext(DbContextOptions<iChatContext> options) : base(options) {
         }

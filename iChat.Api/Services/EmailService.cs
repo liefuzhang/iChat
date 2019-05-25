@@ -2,7 +2,7 @@
 using iChat.Api.Contract;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

@@ -12,5 +12,6 @@ namespace iChat.Api.Dtos
         public string Content { get; set; }
         public int WorkspaceId { get; set; }
         public string TimeString { get; set; }
+        public bool IsConsecutiveMessage { get; set; }
     }
 }

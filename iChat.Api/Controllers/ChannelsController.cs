@@ -1,7 +1,7 @@
 ﻿using iChat.Api.Extensions;
 using iChat.Api.Models;
 using iChat.Api.Services;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using iChat.Api.Dtos;
+using iChat.Api.Constants;
 
 namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
@@ -38,6 +39,10 @@ namespace iChat.Api.Controllers {
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id) {
             try {
+                if (id == iChatConstants.DefaultChannelIdInRequest) {
+                    id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
+                }
+                
                 var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkplaceId());
                 if (channel == null) {
                     return NotFound();

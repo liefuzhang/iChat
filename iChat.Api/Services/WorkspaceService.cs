@@ -1,5 +1,5 @@
 ﻿using iChat.Api.Models;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

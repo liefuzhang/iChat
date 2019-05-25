@@ -1,6 +1,6 @@
 ﻿using iChat.Api.Dtos;
 using iChat.Api.Services;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;

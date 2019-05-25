@@ -1,7 +1,7 @@
 ﻿using iChat.Api.Extensions;
 using iChat.Api.Models;
 using iChat.Api.Services;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using iChat.Api.Dtos;
+using iChat.Api.Constants;
 
 namespace iChat.Api.Controllers
 {
@@ -37,6 +38,10 @@ namespace iChat.Api.Controllers
         {
             try
             {
+                if (id == iChatConstants.DefaultChannelIdInRequest) {
+                    id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
+                }
+                
                 var messageGroups = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkplaceId());
                 return messageGroups.ToList();
             }
@@ -48,7 +53,7 @@ namespace iChat.Api.Controllers
 
         // GET api/messages/user/1
         [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesForUserAsync(int id)
+        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForUserAsync(int id)
         {
             try
             {
@@ -86,6 +91,10 @@ namespace iChat.Api.Controllers
         {
             try
             {
+                if (id == iChatConstants.DefaultChannelIdInRequest) {
+                    id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
+                }
+
                 await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
                 var userIds = await _channelService.GetAllChannelUserIdsAsync(id);

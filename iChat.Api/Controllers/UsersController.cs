@@ -1,5 +1,5 @@
 ﻿using iChat.Api.Services;
-using iChat.Data;
+using iChat.Api.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,10 +36,9 @@ namespace iChat.Api.Controllers {
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAsync() {
             try {
-                var users = await _context.Users.AsNoTracking()
-                    .Where(u => u.WorkspaceId == User.GetWorkplaceId())
-                    .ToListAsync();
-                return users;
+                var users = await _userService
+                    .GetAllUsersAsync(User.GetWorkplaceId());
+                return users.ToList();
             } catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
