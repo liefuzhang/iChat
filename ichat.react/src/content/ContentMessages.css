@@ -23,6 +23,10 @@
   margin-top: -30px;
 }
 
+.message-container .message-group:last-of-type {
+  margin-bottom: 20px;
+}
+
 .message-group-header-container {
   position: relative;
 }
@@ -69,6 +73,6 @@
   font-size: 0.8rem;
 }
 
-.message-container .message-scrollable .message-content {
-  margin-top: -15px;
+.message-item-container + .message-item-container {
+  margin-top: 12px;
 }
