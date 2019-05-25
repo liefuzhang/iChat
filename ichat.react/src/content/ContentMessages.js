@@ -44,11 +44,12 @@ class ContentMessages extends React.Component {
         });
       },
       handler: function() {
+        var adjustHeight = this.messageGroupAnchors[0].offsetHeight / 2;
         var currentGroupIndex = -1;
         var startIndex = this.lastGroupIndex - 1;
         startIndex = startIndex < 0 ? 0 : startIndex;
         for (var i = startIndex; i < this.offsetTops.length; i++) {
-          if (this.scrollableElement.scrollTop < this.offsetTops[i]) {
+          if (this.scrollableElement.scrollTop < this.offsetTops[i] + adjustHeight) {
             break;
           }
           currentGroupIndex = i;
