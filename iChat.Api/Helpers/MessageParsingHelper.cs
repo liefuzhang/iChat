@@ -3,9 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace iChat.Api.Services
-{
-    public class MessageParsingService : IMessageParsingService
+namespace iChat.Api.Helpers {
+    public class MessageParsingHelper: IMessageParsingHelper
     {
         private class Token
         {

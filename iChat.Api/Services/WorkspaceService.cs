@@ -18,21 +18,12 @@ namespace iChat.Api.Services
 
         public async Task<int> RegisterAsync(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Workspace name cannot be empty");
-            }
-
             if (_context.Workspaces.Any(w => w.Name == name))
             {
                 throw new Exception($"Workspace \"{name}\" is already taken");
             }
 
-            var workspace = new Workspace
-            {
-                Name = name,
-                CreatedDate = DateTime.Now
-            };
+            var workspace = new Workspace(name);
 
             _context.Workspaces.Add(workspace);
             await _context.SaveChangesAsync();
@@ -42,13 +33,8 @@ namespace iChat.Api.Services
 
         public async Task UpdateOwnerIdAsync(int workspaceId, int userId)
         {
-            if (workspaceId < 1 || userId < 1)
-            {
-                throw new ArgumentException("Invalid workspaceId or userId");
-            }
-
-            var workspace = _context.Workspaces.Single(w => w.Id == workspaceId);
-            workspace.OwnerId = userId;
+            var workspace = await _context.Workspaces.SingleAsync(w => w.Id == workspaceId);
+            workspace.SetOwner(userId);
             await _context.SaveChangesAsync();
         }
 

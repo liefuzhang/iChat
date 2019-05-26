@@ -9,19 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Globalization;
+using iChat.Api.Helpers;
 
 namespace iChat.Api.Services {
     public class MessageService : IMessageService {
         private readonly iChatContext _context;
         private readonly IChannelService _channelService;
-        private readonly IMessageParsingService _messageParsingService;
+        private readonly IMessageParsingHelper _messageParsingHelper;
         private readonly IMapper _mapper;
 
         public MessageService(iChatContext context, IChannelService channelService,
-            IMessageParsingService messageParsingService, IMapper mapper) {
+            IMessageParsingHelper messageParsingHelper, IMapper mapper) {
             _context = context;
             _channelService = channelService;
-            _messageParsingService = messageParsingService;
+            _messageParsingHelper = messageParsingHelper;
             _mapper = mapper;
         }
 
@@ -82,35 +83,16 @@ namespace iChat.Api.Services {
         }
 
         public async Task PostMessageToUserAsync(string newMessage, int userId, int currentUserId, int workspaceId) {
-            if (userId < 1) {
-                throw new ArgumentException("invalid user id");
-            }
-
-            var message = new DirectMessage {
-                ReceiverId = userId,
-                Content = _messageParsingService.Parse(newMessage),
-                CreatedDate = DateTime.Now,
-                SenderId = currentUserId,
-                WorkspaceId = workspaceId
-            };
+            var content = _messageParsingHelper.Parse(newMessage);
+            var message = new DirectMessage(userId, content, currentUserId, workspaceId);
 
             _context.DirectMessages.Add(message);
-
             await _context.SaveChangesAsync();
         }
 
         public async Task PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId) {
-            if (channelId < 1) {
-                throw new ArgumentException("invalid channel id");
-            }
-
-            var message = new ChannelMessage {
-                ChannelId = channelId,
-                Content = _messageParsingService.Parse(newMessage),
-                CreatedDate = DateTime.Now,
-                SenderId = currentUserId,
-                WorkspaceId = workspaceId
-            };
+            var content = _messageParsingHelper.Parse(newMessage);
+            var message = new ChannelMessage(channelId, content, currentUserId, workspaceId);
 
             _context.ChannelMessages.Add(message);
             await _context.SaveChangesAsync();

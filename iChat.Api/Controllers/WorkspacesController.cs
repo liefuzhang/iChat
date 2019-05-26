@@ -39,7 +39,7 @@ namespace iChat.Api.Controllers
                 }
 
                 var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
-                var userId = await _identityService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
+                var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
                 await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
 
                 await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);

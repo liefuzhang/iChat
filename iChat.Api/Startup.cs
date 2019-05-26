@@ -31,7 +31,7 @@ namespace iChat.Api {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<IMessageParsingService, MessageParsingService>();
+            services.AddScoped<IMessageParsingHelper, MessageParsingHelper>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();

@@ -1,17 +1,17 @@
-using iChat.Api.Services;
+using iChat.Api.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace iChat.UnitTests.Services
+namespace iChat.UnitTests.Helpers
 {
     [TestClass]
     public class MessageParsingServiceTest
     {
-        private MessageParsingService _messageParsingService;
+        private MessageParsingHelper _messageParsingService;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _messageParsingService = new MessageParsingService();
+            _messageParsingService = new MessageParsingHelper();
         }
 
         [DataTestMethod]
