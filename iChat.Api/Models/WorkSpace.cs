@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace iChat.Api.Models
-{
-    public class Workspace
-    {
-        protected Workspace() {        }
+namespace iChat.Api.Models {
+    public class Workspace {
+        protected Workspace() { }
 
         public Workspace(string name) {
             if (string.IsNullOrWhiteSpace(name)) {
