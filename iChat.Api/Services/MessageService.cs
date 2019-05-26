@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace iChat.Api.Services {
     public class MessageService : IMessageService {
@@ -29,7 +30,7 @@ namespace iChat.Api.Services {
                 .OrderBy(group => group.Key)
                 .Select(group =>
                     new MessageGroupDto {
-                        DateString = group.Key.ToString("dddd, MMM d"),
+                        DateString = group.Key.ToString("dddd, MMM d", CultureInfo.InvariantCulture),
                         Messages = group.Select(m => _mapper.Map<MessageDto>(m))
                     })
                 .ToListAsync();

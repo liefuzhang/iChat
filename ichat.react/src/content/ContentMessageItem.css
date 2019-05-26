@@ -1,0 +1,63 @@
+.message-container .message-scrollable .message-item-container:hover {
+  background-color: #f4f4f4;
+}
+
+.message-container .message-scrollable .message-item-container {
+  padding: 6px 20px 3px 20px;
+  display: flex;
+}
+
+.message-container .message-scrollable .message-item-container .message-title {
+  line-height: 1;
+  padding-bottom: 3px;
+}
+
+.message-container .message-scrollable .message-item-container .message-time {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.message-item-container .user-identicon {
+  position: relative;
+  top: 2px;
+}
+
+.message-container .message-item-container.following-message {
+  margin: 0;
+}
+
+.message-container .following-message .user-identicon,
+.message-container .following-message .message-title {
+  display: none;
+}
+
+.message-item-container .message-content-container {
+  display: flex;
+}
+
+.message-item-container .message-content-container .message-content {
+  flex: 1 1 auto;
+}
+
+.message-item-container .message-content-time {
+  flex: 0 0 42px;
+  position: relative;
+  display: none;
+}
+
+.message-item-container.following-message .message-content-time{
+  display: block;
+  visibility: hidden;
+} 
+
+.message-item-container.following-message.message-hover .message-content-time{
+  visibility: visible;
+} 
+
+.message-item-container .message-content-container .message-time {
+  position: absolute;
+  right: 10px;
+  display: inline-block;
+  width: 60px;
+  text-align: right;
+}

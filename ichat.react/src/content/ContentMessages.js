@@ -1,6 +1,7 @@
 import React from "react";
 import "./ContentMessages.css";
 import "lib/simplebar.css";
+import ContentMessageItem from "./ContentMessageItem";
 import SimpleBar from "simplebar-react";
 import AuthService from "services/AuthService";
 
@@ -123,18 +124,7 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {g.messages.map(m => (
-                <div className="message-item-container" key={m.id}>
-                  <img
-                    className="user-identicon"
-                    src={this.props.userProfile.identiconPath}
-                  />
-                  <div className="message-item">
-                    <div className="message-title">
-                      <b>{m.sender.displayName}</b> <span className="message-time">&nbsp;{m.timeString}</span>
-                    </div>
-                    <RawMessage content={m.content} />
-                  </div>
-                </div>
+                <ContentMessageItem key={m.id} message={m} userProfile={this.props.userProfile} />
               ))}
             </div>
           ))}
@@ -142,15 +132,6 @@ class ContentMessages extends React.Component {
       </div>
     );
   }
-}
-
-function RawMessage(props) {
-  return (
-    <div
-      className="message-content"
-      dangerouslySetInnerHTML={{ __html: props.content }}
-    />
-  );
 }
 
 function scrollToBottom() {
