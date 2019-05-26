@@ -17,12 +17,12 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace iChat.Api.Services {
-    public class EmailService : IEmailService {
+namespace iChat.Api.Helpers {
+    public class EmailHelper : IEmailHelper {
         private readonly AppSettings _appSettings;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public EmailService(IOptions<AppSettings> appSettings, IHostingEnvironment hostingEnvironment) {
+        public EmailHelper(IOptions<AppSettings> appSettings, IHostingEnvironment hostingEnvironment) {
             _appSettings = appSettings.Value;
             _hostingEnvironment = hostingEnvironment;
         }

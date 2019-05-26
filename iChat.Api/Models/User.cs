@@ -3,16 +3,74 @@ using System.Collections.Generic;
 
 namespace iChat.Api.Models {
     public class User {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public UserStatus Status { get; set; }
-        public string DisplayName { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public Guid IdenticonGuid { get; set; }
-        public int WorkspaceId { get; set; }
-        public Workspace Workspace { get; set; }
-        public ICollection<ChannelSubscription> ChannelSubscriptions { get; set; }
+        protected User() { }
+
+        public User(string email, string password, int workspaceId, 
+            string displayName, Guid identiconGuid) {
+            if (string.IsNullOrWhiteSpace(password)) {
+                throw new Exception("Password is required");
+            }
+
+            if (string.IsNullOrWhiteSpace(email)) {
+                throw new Exception("Email is required");
+            }
+
+            if (password.Length < 6) {
+                throw new Exception("Password needs to have at least 6 characters");
+            }
+
+            Email = email;
+            Status = UserStatus.Active;
+            DisplayName = displayName ?? email;
+            CreatedDate = DateTime.Now;
+            IdenticonGuid = identiconGuid;
+            WorkspaceId = workspaceId;
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
+                PasswordSalt = hmac.Key;
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        public int Id { get; private set; }
+        public string Email { get; private set; }
+        public UserStatus Status { get; private set; }
+        public string DisplayName { get; private set; }
+        public byte[] PasswordHash { get; private set; }
+        public byte[] PasswordSalt { get; private set; }
+        public DateTime CreatedDate { get; private set; }
+        public Guid IdenticonGuid { get; private set; }
+        public int WorkspaceId { get; private set; }
+        public Workspace Workspace { get; private set; }
+        public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
+
+        public bool VerifyPassword(string password) {
+            if (password == null) {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            if (string.IsNullOrWhiteSpace(password)) {
+                throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            }
+
+            if (PasswordHash.Length != 64) {
+                throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
+            }
+
+            if (PasswordSalt.Length != 128) {
+                throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+            }
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(PasswordSalt)) {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++) {
+                    if (computedHash[i] != PasswordHash[i]) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

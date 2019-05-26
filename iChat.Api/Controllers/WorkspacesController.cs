@@ -34,7 +34,10 @@ namespace iChat.Api.Controllers
         {
             try
             {
-                await _identityService.ValidateUserEmailAndPasswordAsync(workspaceDto.Email, workspaceDto.Password);
+                if (await _userService.IsEmailRegisteredAsync(workspaceDto.Email)) {
+                    throw new Exception($"Email \"{workspaceDto.Email}\" is already taken");
+                }
+
                 var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
                 var userId = await _identityService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
                 await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);

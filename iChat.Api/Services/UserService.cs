@@ -8,18 +8,21 @@ using iChat.Api.Models;
 using iChat.Api.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using iChat.Api.Helpers;
 
 namespace iChat.Api.Services {
     public class UserService : IUserService {
         private readonly iChatContext _context;
-        private readonly IEmailService _emailService;
+        private readonly IEmailHelper _emailService;
         private readonly IIdentityService _identityService;
+        private readonly IUserIdenticonHelper _userIdenticonHelper;
 
-        public UserService(iChatContext context, IIdentityService identityService, 
-            IEmailService emailService) {
+        public UserService(iChatContext context, IIdentityService identityService,
+            IEmailHelper emailService, IUserIdenticonHelper userIdenticonHelper) {
             _context = context;
             _identityService = identityService;
             _emailService = emailService;
+            _userIdenticonHelper = userIdenticonHelper;
         }
 
         // when workspace is not available (e.g. onTokenValidated)
@@ -54,6 +57,24 @@ namespace iChat.Api.Services {
             return users;
         }
 
+        public async Task<bool> IsEmailRegisteredAsync(string email) {
+            return await _context.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<int> RegisterAsync(string email, string password, int workspaceId, string name = null) {
+            if (await IsEmailRegisteredAsync(email)) {
+                throw new Exception($"Email \"{email}\" is already taken");
+            }
+
+            var identiconGuid = await _userIdenticonHelper.GenerateUserIdenticon(email);
+            var user = new User(email, password, workspaceId, name, identiconGuid);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return user.Id;
+        }
+
         public async Task InviteUsersAsync(User user, Workspace workspace, List<string> emails) {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -63,29 +84,25 @@ namespace iChat.Api.Services {
             validateEmails(emails.Distinct(), workspace);
 
             foreach (var email in emails.Distinct()) {
-                if (string.IsNullOrWhiteSpace(email))
-                    continue;
-
-                var invitationCode = Guid.NewGuid();
-                var newUserInvitation = new UserInvitation {
-                    InvitedByUserId = user.Id,
-                    WorkspaceId = workspace.Id,
-                    UserEmail = email,
-                    InviteDate = DateTime.Now,
-                    InvitationCode = invitationCode,
-                    Acceptted = false
-                };
-                _context.UserInvitations.Add(newUserInvitation);
-                await _context.SaveChangesAsync();
-
-                await _emailService.SendUserInvitationEmailAsync(new UserInvitationData {
-                    ReceiverAddress = email,
-                    InviterName = user.DisplayName,
-                    InviterEmail = user.Email,
-                    WorkspaceName = workspace.Name,
-                    InvitationCode = invitationCode
-                });
+                await InviteUserAsync(user, workspace, email);
             }
+        }
+
+        private async Task InviteUserAsync(User user, Workspace workspace, string email) {
+            if (string.IsNullOrWhiteSpace(email))
+                return;
+
+            var newUserInvitation = new UserInvitation(email, user.Id, workspace.Id);
+            _context.UserInvitations.Add(newUserInvitation);
+            await _context.SaveChangesAsync();
+
+            await _emailService.SendUserInvitationEmailAsync(new UserInvitationData {
+                ReceiverAddress = email,
+                InviterName = user.DisplayName,
+                InviterEmail = user.Email,
+                WorkspaceName = workspace.Name,
+                InvitationCode = newUserInvitation.InvitationCode
+            });
         }
 
         private void validateEmails(IEnumerable<string> emails, Workspace workspace) {
@@ -120,10 +137,10 @@ namespace iChat.Api.Services {
             if (invitation == null)
                 throw new Exception("Invalid invitation.");
 
-            var userId = await _identityService.RegisterAsync(userInvitationDto.Email, userInvitationDto.Password,
+            var userId = await RegisterAsync(userInvitationDto.Email, userInvitationDto.Password,
                 invitation.WorkspaceId, userInvitationDto.Name);
 
-            invitation.Acceptted = true;
+            invitation.Accept();
             await _context.SaveChangesAsync();
 
             return userId;
