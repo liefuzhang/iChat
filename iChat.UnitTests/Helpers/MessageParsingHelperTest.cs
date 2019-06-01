@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace iChat.UnitTests.Helpers
 {
     [TestClass]
-    public class MessageParsingServiceTest
+    public class MessageParsingHelperTest
     {
         private MessageParsingHelper _messageParsingService;
 

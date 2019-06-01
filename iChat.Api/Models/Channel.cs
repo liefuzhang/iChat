@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace iChat.Api.Models {
-    public class Channel {
-        public Channel(string name, int workspaceId, string topic) {
-            if (string.IsNullOrWhiteSpace(name) || workspaceId < 1) {
+namespace iChat.Api.Models
+{
+    public class Channel
+    {
+        public Channel(string name, int workspaceId, string topic) : this()
+        {
+            if (string.IsNullOrWhiteSpace(name) || workspaceId < 1)
+            {
                 throw new ArgumentException("Invalid argument");
             }
+
+            Name = name;
+            WorkspaceId = workspaceId;
+            Topic = topic;
         }
 
-        protected Channel() { }
+        protected Channel()
+        {
+            ChannelSubscriptions = new HashSet<ChannelSubscription>();
+        }
 
         public int Id { get; private set; }
         public string Name { get; private set; }
