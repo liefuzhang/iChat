@@ -23,13 +23,16 @@ namespace iChat.Api.Controllers {
         private readonly IUserService _userService;
         private readonly IChannelService _channelService;
         private readonly IWorkspaceService _workspaceService;
+        private ICacheService _cacheService;
 
         public UsersController(iChatContext context, IUserService userService,
-            IWorkspaceService workspaceService, IChannelService channelService) {
+            IWorkspaceService workspaceService, IChannelService channelService,
+            ICacheService cacheService) {
             _context = context;
             _userService = userService;
             _workspaceService = workspaceService;
             _channelService = channelService;
+            _cacheService = cacheService;
         }
 
         // GET api/users

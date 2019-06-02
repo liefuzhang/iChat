@@ -14,5 +14,7 @@ namespace iChat.Api.Constants
         public static readonly string IdenticonExt = ".svg";
         public static readonly string DefaultIdenticonName = "Default.svg";
         public static readonly string EmailTemplatePath = "Data\\EmailTemplates";
+
+        public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
     }
 }

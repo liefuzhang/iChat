@@ -39,6 +39,7 @@ namespace iChat.Api {
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IEmailHelper, EmailHelper>();
             services.AddScoped<IUserIdenticonHelper, UserIdenticonHelper>();
+            services.AddScoped<ICacheService, CacheService>();
 
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
 
@@ -57,6 +58,12 @@ namespace iChat.Api {
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost";
+                options.InstanceName = "iChatInstance";
+            });
 
             services.AddDbContext<iChatContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));

@@ -84,6 +84,7 @@ class Sidebar extends React.Component {
               <SidebarItem
                 key={c.id}
                 section="channel"
+                isChannel={true}
                 name={c.name}
                 id={c.id}
                 active={active}
@@ -112,6 +113,7 @@ class Sidebar extends React.Component {
               <SidebarItem
                 key={c.id}
                 section="user"
+                isChannel={false}
                 name={c.displayName}
                 id={c.id}
                 active={active}

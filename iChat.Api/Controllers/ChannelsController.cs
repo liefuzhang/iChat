@@ -18,17 +18,21 @@ namespace iChat.Api.Controllers {
     [Authorize]
     public class ChannelsController : ControllerBase {
         private IChannelService _channelService;
+        private ICacheService _cacheService;
 
         public ChannelsController(iChatContext context,
-            IChannelService channelService) {
+            IChannelService channelService,
+            ICacheService cacheService) {
             _channelService = channelService;
+            _cacheService = cacheService;
         }
 
         // GET api/channels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Channel>>> GetAsync() {
             try {
-                var channels = await _channelService.GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
+                var channels = await _channelService
+                    .GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
                 return channels.ToList();
             } catch (Exception ex) {
                 return BadRequest(ex.Message);
@@ -68,6 +72,6 @@ namespace iChat.Api.Controllers {
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }        
     }
 }
