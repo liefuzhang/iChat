@@ -9,34 +9,35 @@ using iChat.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using iChat.Api.Contract;
 
-namespace iChat.Api.Controllers
-{
+namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AppController : ControllerBase
-    {
+    public class AppController : ControllerBase {
         private ICacheService _cacheService;
+        private IUserService _userService;
 
-        public AppController(ICacheService cacheService)
-        {
+        public AppController(ICacheService cacheService, IUserService userService) {
             _cacheService = cacheService;
+            _userService = userService;
         }
 
-        // GET api/app/activeSidebarItem
-        [HttpGet("activeSidebarItem")]
-        public async Task<ActionResult<ActiveSidebarItem>> GetActiveSidebarItemAsync()
-        {
-            var item = await _cacheService.GetActiveSidebarItemAsync(User.GetWorkplaceId(), User.GetUserId());
+        // GET api/app/userSesstionData
+        [HttpGet("userSessionData")]
+        public async Task<ActionResult<UserSessionData>> GetUserSessionDataAsync() {
+            var sessionData = new UserSessionData {
+                ActiveSidebarItem = await _cacheService.GetActiveSidebarItemAsync(User.GetUserId(), User.GetWorkplaceId()),
+                UserStatus = await _userService.GetUserStatus(User.GetUserId(), User.GetWorkplaceId())
+            };
 
-            return Ok(item);
+            return Ok(sessionData);
         }
 
         // POST api/app/activeSidebarItem
         [HttpPost("activeSidebarItem")]
         public async Task<IActionResult> SetActiveSidebarItemAsync(ActiveSidebarItem item) {
             await _cacheService.SetActiveSidebarItemAsync(item.IsChannel, item.ItemId,
-                User.GetWorkplaceId(), User.GetUserId());
+                User.GetUserId(), User.GetWorkplaceId());
 
             return Ok();
         }

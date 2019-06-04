@@ -47,8 +47,7 @@ namespace iChat.Api.Controllers {
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetAsync(int id) {
             var user = await _userService.GetUserByIdAsync(id, User.GetWorkplaceId());
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound();
             }
 
@@ -78,9 +77,9 @@ namespace iChat.Api.Controllers {
 
         // POST api/users/status
         [HttpPost("status")]
-        public async Task<IActionResult> SetStatus(UserStatus status)
-        {
-            await _userService.SetUserStatusAsync(User.GetUserId(), User.GetWorkplaceId(), status);
+        public async Task<IActionResult> SetStatus([FromBody]string status) {
+            var statusEnum = (UserStatus)Enum.Parse(typeof(UserStatus), status);
+            await _userService.SetUserStatusAsync(User.GetUserId(), User.GetWorkplaceId(), statusEnum);
 
             return Ok();
         }

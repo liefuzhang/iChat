@@ -17,7 +17,7 @@ namespace iChat.Api.Services {
             _cache = cache;
         }
 
-        public async Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int workspaceId, int userId) {
+        public async Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int userId, int workspaceId) {
             var item = new ActiveSidebarItem {
                 IsChannel = isChannel,
                 ItemId = itemId
@@ -27,7 +27,7 @@ namespace iChat.Api.Services {
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(item));
         }
 
-        public async Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int workspaceId, int userId) {
+        public async Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId) {
             var key = GetRedisKeyForActiveSidebarItem(workspaceId, userId);
             var value = await _cache.GetStringAsync(key);
 

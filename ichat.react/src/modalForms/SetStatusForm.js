@@ -29,11 +29,12 @@ class SetStatusForm extends React.Component {
     this.authService
       .fetch(`/api/users/status`, {
         method: "POST",
-        body: this.state.selectedStatus
+        body: JSON.stringify(this.state.selectedStatus)
       })
       .then(id => {
         alert("status set!")
         this.props.onClose();
+        this.props.onSelect();
       });
   }
 

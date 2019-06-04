@@ -3,7 +3,7 @@ import "./MainPage.css";
 import Sidebar from "sidebar/Sidebar";
 import * as signalR from "@aspnet/signalr";
 import AuthService from "services/AuthService";
-import Content from "content/Content"
+import Content from "content/Content";
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -23,17 +23,25 @@ class MainPage extends React.Component {
 
     this.userProfile = this.authService.getProfile();
 
+    this.onUserSessionDataChange = this.onUserSessionDataChange.bind(this);
+
     this.state = {
-      savedActiveSidebarItem: undefined
+      savedActiveSidebarItem: undefined,
+      userStatus: undefined
     };
   }
 
-  componentDidMount() {
-    this.authService.fetch(`/api/app/activeSidebarItem`).then(item => {
-      if (item) {
-        this.setState({ savedActiveSidebarItem: item });
+  onUserSessionDataChange() {
+    this.authService.fetch(`/api/app/userSessionData`).then(data => {
+      if (data) {
+        this.setState({ savedActiveSidebarItem: data.activeSidebarItem });
+        this.setState({ userStatus: data.userStatus });
       }
     });
+  }
+
+  componentDidMount() {
+    this.onUserSessionDataChange();
   }
 
   render() {
@@ -57,6 +65,8 @@ class MainPage extends React.Component {
           isChannel={isChannel}
           id={id}
           userProfile={this.userProfile}
+          userStatus={this.state.userStatus}
+          onUserSessionDataChange={this.onUserSessionDataChange}
           {...this.props}
         />
         <Content

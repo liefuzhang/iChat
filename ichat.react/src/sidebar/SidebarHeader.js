@@ -94,6 +94,7 @@ class SidebarHeader extends React.Component {
             </div>
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
+              {this.props.userStatus}
             </div>
           </div>
           {this.state.isDropdownModalOpen && (
@@ -101,7 +102,10 @@ class SidebarHeader extends React.Component {
               <div className="sidebar-header-dropdown panel">
                 <section className="sidebar-header-dropdown-section">
                   <div className="sidebar-header-dropdown-section-header">
-                    <img className="user-identicon" src={this.props.userProfile.identiconPath} />
+                    <img
+                      className="user-identicon"
+                      src={this.props.userProfile.identiconPath}
+                    />
                     {this.props.userProfile.displayName}
                   </div>
                   <ul>
@@ -115,7 +119,9 @@ class SidebarHeader extends React.Component {
                   </div>
                   <ul>
                     <li onClick={this.onInvitePeople}>Invite people</li>
-                    <li onClick={this.onLogout}>Log out of {this.props.userProfile.workspaceName}</li>
+                    <li onClick={this.onLogout}>
+                      Log out of {this.props.userProfile.workspaceName}
+                    </li>
                   </ul>
                 </section>
               </div>
@@ -127,6 +133,7 @@ class SidebarHeader extends React.Component {
             <Modal onClose={this.onCloseSetStatus}>
               <SetStatusForm
                 onClose={this.onCloseSetStatus}
+                onSelect={this.props.onUserSessionDataChange}
               />
             </Modal>
           )}
