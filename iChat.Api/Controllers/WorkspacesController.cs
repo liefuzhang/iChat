@@ -32,40 +32,27 @@ namespace iChat.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] WorkspaceDto workspaceDto)
         {
-            try
+            if (await _userService.IsEmailRegisteredAsync(workspaceDto.Email))
             {
-                if (await _userService.IsEmailRegisteredAsync(workspaceDto.Email)) {
-                    throw new Exception($"Email \"{workspaceDto.Email}\" is already taken");
-                }
-
-                var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
-                var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
-                await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
-
-                await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
-                await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
-
-                return Ok();
+                throw new Exception($"Email \"{workspaceDto.Email}\" is already taken");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
+            var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
+            await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
+
+            await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
+            await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
+
+            return Ok();
         }
 
         // GET api/workspaces
         public async Task<ActionResult<Workspace>> GetWorkspaceAsync()
         {
-            try
-            {
-                var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
 
-                return Ok(workspace);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(workspace);
         }
     }
 }

@@ -24,34 +24,27 @@ namespace iChat.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> AuthenticateAsync(UserDto userDto)
         {
-            try
+            var user = await _identityService.AuthenticateAsync(userDto.Email, userDto.Password);
+
+            if (user == null)
             {
-                var user = await _identityService.AuthenticateAsync(userDto.Email, userDto.Password);
-
-                if (user == null)
-                {
-                    return BadRequest("Email or password is incorrect");
-                }
-
-                var workspace = await _workspaceService.GetWorkspaceByIdAsync(user.WorkspaceId);
-
-                var tokenString = _identityService.GenerateAccessToken(user.Id);
-
-                // return basic user info (without password) and token to store on client side
-                return Ok(new
-                {
-                    id = user.Id,
-                    email = user.Email,
-                    displayName = user.DisplayName,
-                    workspaceName = workspace?.Name,
-                    identiconPath = "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
-                    token = tokenString
-                });
+                return BadRequest("Email or password is incorrect");
             }
-            catch (Exception ex)
+
+            var workspace = await _workspaceService.GetWorkspaceByIdAsync(user.WorkspaceId);
+
+            var tokenString = _identityService.GenerateAccessToken(user.Id);
+
+            // return basic user info (without password) and token to store on client side
+            return Ok(new
             {
-                return BadRequest(ex.Message);
-            }
+                id = user.Id,
+                email = user.Email,
+                displayName = user.DisplayName,
+                workspaceName = workspace?.Name,
+                identiconPath = "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
+                token = tokenString
+            });
         }        
     }
 }

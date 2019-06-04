@@ -38,57 +38,42 @@ namespace iChat.Api.Controllers {
         // GET api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAsync() {
-            try {
-                var users = await _userService
-                    .GetAllUsersAsync(User.GetWorkplaceId());
-                return users.ToList();
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
+            var users = await _userService
+                .GetAllUsersAsync(User.GetWorkplaceId());
+            return users.ToList();
         }
 
         // GET api/users/1
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetAsync(int id) {
-            try {
-                var user = await _userService.GetUserByIdAsync(id, User.GetWorkplaceId());
-                if (user == null) {
-                    return NotFound();
-                }
-
-                return user;
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
+            var user = await _userService.GetUserByIdAsync(id, User.GetWorkplaceId());
+            if (user == null)
+            {
+                return NotFound();
             }
+
+            return user;
         }
 
         // POST api/users/invite
         [HttpPost("invite")]
         public async Task<IActionResult> InviteUsers(List<string> emails) {
-            try {
-                var user = await _userService.GetUserByIdAsync(User.GetUserId());
-                var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
-                await _userService.InviteUsersAsync(user, workspace, emails);
+            var user = await _userService.GetUserByIdAsync(User.GetUserId());
+            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+            await _userService.InviteUsersAsync(user, workspace, emails);
 
-                return Ok();
-            } catch (Exception ex) {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok();
         }
 
         // POST api/users/acceptInvitation
         [HttpPost("acceptInvitation")]
         [AllowAnonymous]
         public async Task<IActionResult> AcceptInvitation(UserInvitationDto userInvitationDto) {
-            try {
-                var userId = await _userService.AcceptInvitationAsync(userInvitationDto);
-                var user = await _userService.GetUserByIdAsync(userId);
-                await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
+            var userId = await _userService.AcceptInvitationAsync(userInvitationDto);
+            var user = await _userService.GetUserByIdAsync(userId);
+            await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
 
-                return Ok();
-            } catch (Exception ex) {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok();
         }
     }
 }

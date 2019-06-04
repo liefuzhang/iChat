@@ -30,48 +30,35 @@ namespace iChat.Api.Controllers {
         // GET api/channels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Channel>>> GetAsync() {
-            try {
-                var channels = await _channelService
-                    .GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
-                return channels.ToList();
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
+            var channels = await _channelService
+                .GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
+            return channels.ToList();
         }
 
         // GET api/channels/1
         [HttpGet("{id}")]
         public async Task<ActionResult<Channel>> GetAsync(int id) {
-            try {
-                if (id == iChatConstants.DefaultChannelIdInRequest) {
-                    id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
-                }
-                
-                var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkplaceId());
-                if (channel == null) {
-                    return NotFound();
-                }
-
-                return channel;
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
+            if (id == iChatConstants.DefaultChannelIdInRequest)
+            {
+                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
             }
+
+            var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkplaceId());
+            if (channel == null)
+            {
+                return NotFound();
+            }
+
+            return channel;
         }
 
         // POST api/channels
         [HttpPost]
         public async Task<ActionResult<int>> CreateChannelAsync(ChannelCreateDto channelCreateDto) {
-            try
-            {
-                var id = await _channelService.CreateChannelAsync(channelCreateDto.Name, User.GetWorkplaceId(), channelCreateDto.Topic);
-                await _channelService.AddUserToChannelAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            var id = await _channelService.CreateChannelAsync(channelCreateDto.Name, User.GetWorkplaceId(), channelCreateDto.Topic);
+            await _channelService.AddUserToChannelAsync(id, User.GetUserId(), User.GetWorkplaceId());
 
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(id);
         }        
     }
 }

@@ -27,26 +27,18 @@ namespace iChat.Api.Controllers
         [HttpGet("activeSidebarItem")]
         public async Task<ActionResult<ActiveSidebarItem>> GetActiveSidebarItemAsync()
         {
-            try {
-                var item = await _cacheService.GetActiveSidebarItemAsync(User.GetWorkplaceId(), User.GetUserId());
+            var item = await _cacheService.GetActiveSidebarItemAsync(User.GetWorkplaceId(), User.GetUserId());
 
-                return Ok(item);
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
+            return Ok(item);
         }
 
         // POST api/app/activeSidebarItem
         [HttpPost("activeSidebarItem")]
         public async Task<IActionResult> SetActiveSidebarItemAsync(ActiveSidebarItem item) {
-            try {
-                await _cacheService.SetActiveSidebarItemAsync(item.IsChannel, item.ItemId,
-                    User.GetWorkplaceId(), User.GetUserId());
+            await _cacheService.SetActiveSidebarItemAsync(item.IsChannel, item.ItemId,
+                User.GetWorkplaceId(), User.GetUserId());
 
-                return Ok();
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
+            return Ok();
         }
     }
 }
