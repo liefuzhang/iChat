@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import Content from "./content/Content";
+import MainPage from "./MainPage";
 import Login from "account/Login";
 import AcceptInvitation from "./account/AcceptInvitation";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -26,8 +26,8 @@ function App() {
         <Switch>
           <Route path={"/login"} component={Login} />
           <Route path={"/user/acceptinvitation"} component={AcceptInvitation} />
-          <PrivateRoute path="/" exact component={Content} />
-          <PrivateRoute path={"/:section/:id"} component={Content} />
+          <PrivateRoute path="/" exact component={MainPage} />
+          <PrivateRoute path={"/:section/:id"} component={MainPage} />
         </Switch>
       </BrowserRouter>
     </div>

@@ -10,7 +10,6 @@ class SetStatusForm extends React.Component {
     this.onSetStatusFormSubmit = this.onSetStatusFormSubmit.bind(this);
     this.authService = new AuthService(props);
     this.statusList = [
-      { name: "Active", value: "Active" },
       { name: "In A Meeting", value: "InAMeeting" },
       { name: "Commuting", value: "Commuting" },
       { name: "Out Sick", value: "OutSick" },
