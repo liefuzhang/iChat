@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace iChat.Api.Models {
-    public class User {
+namespace iChat.Api.Models
+{
+    public class User
+    {
         protected User() { }
 
-        public User(string email, string password, int workspaceId, 
-            string displayName, Guid identiconGuid) {
-            if (string.IsNullOrWhiteSpace(password)) {
+        public User(string email, string password, int workspaceId,
+            string displayName, Guid identiconGuid)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
                 throw new Exception("Password is required");
             }
 
-            if (string.IsNullOrWhiteSpace(email)) {
+            if (string.IsNullOrWhiteSpace(email))
+            {
                 throw new Exception("Email is required");
             }
 
-            if (password.Length < 6) {
+            if (password.Length < 6)
+            {
                 throw new Exception("Password needs to have at least 6 characters");
             }
 
@@ -26,7 +32,8 @@ namespace iChat.Api.Models {
             IdenticonGuid = identiconGuid;
             WorkspaceId = workspaceId;
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
                 PasswordSalt = hmac.Key;
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
@@ -44,33 +51,51 @@ namespace iChat.Api.Models {
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
 
-        public bool VerifyPassword(string password) {
-            if (password == null) {
+        public bool VerifyPassword(string password)
+        {
+            if (password == null)
+            {
                 throw new ArgumentNullException(nameof(password));
             }
 
-            if (string.IsNullOrWhiteSpace(password)) {
+            if (string.IsNullOrWhiteSpace(password))
+            {
                 throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
             }
 
-            if (PasswordHash.Length != 64) {
+            if (PasswordHash.Length != 64)
+            {
                 throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
             }
 
-            if (PasswordSalt.Length != 128) {
+            if (PasswordSalt.Length != 128)
+            {
                 throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
             }
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(PasswordSalt)) {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(PasswordSalt))
+            {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++) {
-                    if (computedHash[i] != PasswordHash[i]) {
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != PasswordHash[i])
+                    {
                         return false;
                     }
                 }
             }
 
             return true;
+        }
+
+        public void SetStatus(UserStatus status)
+        {
+            if (!Enum.IsDefined(typeof(UserStatus), status))
+            {
+                throw new Exception("Invalid status");
+            }
+
+            Status = status;
         }
     }
 }

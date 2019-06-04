@@ -152,6 +152,7 @@ blockquote {
 
 form .form-group {
   margin-bottom: 10px;
+  width: 100%;
 }
 
 form .form-group label {

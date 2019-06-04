@@ -1,0 +1,35 @@
+form#setStatusForm {
+  width: 600px;
+}
+
+form#setStatusForm button {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+form#setStatusForm .form-description {
+  margin-left: 100px;
+}
+
+.status-list {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.status-list li {
+  font-weight: 600;
+  padding: 6px 100px;
+  box-sizing: border-box;
+}
+
+.status-list li:hover {
+  background-color: #259;
+  color: white;
+  cursor: pointer;
+}
+
+.status-list li.selected-status {
+  background-color: #259;
+  color: white;
+}

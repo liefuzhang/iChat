@@ -15,5 +15,6 @@ namespace iChat.Api.Services
         Task<int> RegisterAsync(string email, string password, int workspaceId, string name = null);
         Task InviteUsersAsync(User user, Workspace workspace, List<string> emails);
         Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto);
+        Task SetUserStatusAsync(int userId, int workplaceId, UserStatus status);
     }
 }

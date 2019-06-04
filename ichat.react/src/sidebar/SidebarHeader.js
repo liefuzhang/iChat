@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
+import SetStatusForm from "modalForms/SetStatusForm";
 import AuthService from "services/AuthService";
 
 class SidebarHeader extends React.Component {
@@ -14,11 +15,14 @@ class SidebarHeader extends React.Component {
     this.onCloseDropdown = this.onCloseDropdown.bind(this);
     this.onInvitePeople = this.onInvitePeople.bind(this);
     this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
+    this.onSetStatus = this.onSetStatus.bind(this);
+    this.onCloseSetStatus = this.onCloseSetStatus.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.authService = new AuthService(props);
 
     this.state = {
       isInvitePeopleModalOpen: false,
+      isSetStatusModalOpen: false,
       isDropdownModalOpen: false
     };
   }
@@ -45,6 +49,19 @@ class SidebarHeader extends React.Component {
   onCloseInvitePeople(event) {
     this.setState({
       isInvitePeopleModalOpen: false
+    });
+  }
+
+  onSetStatus(event) {
+    this.setState({
+      isSetStatusModalOpen: true,
+      isDropdownModalOpen: false
+    });
+  }
+
+  onCloseSetStatus(event) {
+    this.setState({
+      isSetStatusModalOpen: false
     });
   }
 
@@ -88,7 +105,7 @@ class SidebarHeader extends React.Component {
                     {this.props.userProfile.displayName}
                   </div>
                   <ul>
-                    <li>Set status</li>
+                    <li onClick={this.onSetStatus}>Set status</li>
                     <li>Profile</li>
                   </ul>
                 </section>
@@ -103,6 +120,15 @@ class SidebarHeader extends React.Component {
                 </section>
               </div>
             </DropdownModal>
+          )}
+        </div>
+        <div>
+          {this.state.isSetStatusModalOpen && (
+            <Modal onClose={this.onCloseSetStatus}>
+              <SetStatusForm
+                onClose={this.onCloseSetStatus}
+              />
+            </Modal>
           )}
         </div>
         <div>

@@ -75,5 +75,14 @@ namespace iChat.Api.Controllers {
 
             return Ok();
         }
+
+        // POST api/users/status
+        [HttpPost("status")]
+        public async Task<IActionResult> SetStatus(UserStatus status)
+        {
+            await _userService.SetUserStatusAsync(User.GetUserId(), User.GetWorkplaceId(), status);
+
+            return Ok();
+        }
     }
 }
