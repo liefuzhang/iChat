@@ -9,7 +9,7 @@ form#setStatusForm button {
 }
 
 form#setStatusForm .form-description {
-  margin-left: 100px;
+  margin-left: 150px;
 }
 
 .status-list {
@@ -19,7 +19,7 @@ form#setStatusForm .form-description {
 
 .status-list li {
   font-weight: 600;
-  padding: 6px 100px;
+  padding: 6px 150px;
   box-sizing: border-box;
 }
 

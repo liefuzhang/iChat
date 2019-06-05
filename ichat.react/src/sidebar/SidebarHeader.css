@@ -8,6 +8,11 @@
   padding: 15px 15px 8px 15px;
 }
 
+.sidebar-header-user-name .status-icon{
+  margin-left: 5px;
+  color: #b81f3e;
+}
+
 .sidebar-header-workspace-name {
   font-weight: 600;
   color: white;

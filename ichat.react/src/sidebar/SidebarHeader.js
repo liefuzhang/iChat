@@ -6,6 +6,7 @@ import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
 import SetStatusForm from "modalForms/SetStatusForm";
 import AuthService from "services/AuthService";
+import UserStatus from "services/UserStatusService";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -16,9 +17,11 @@ class SidebarHeader extends React.Component {
     this.onInvitePeople = this.onInvitePeople.bind(this);
     this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
     this.onSetStatus = this.onSetStatus.bind(this);
+    this.onClearStatus = this.onClearStatus.bind(this);
     this.onCloseSetStatus = this.onCloseSetStatus.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.authService = new AuthService(props);
+    this.userStatus = new UserStatus();
 
     this.state = {
       isInvitePeopleModalOpen: false,
@@ -59,6 +62,19 @@ class SidebarHeader extends React.Component {
     });
   }
 
+  onClearStatus(event) {
+    this.authService
+      .fetch(`/api/users/clearStatus`, {
+        method: "POST"
+      })
+      .then(id => {
+        this.props.onUserSessionDataChange();
+        this.setState({
+          isDropdownModalOpen: false
+        });
+      });
+  }
+
   onCloseSetStatus(event) {
     this.setState({
       isSetStatusModalOpen: false
@@ -94,7 +110,20 @@ class SidebarHeader extends React.Component {
             </div>
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
-              {this.props.userStatus}
+              {(() => {
+                if (!this.userStatus.isActive(this.props.userStatus)) {
+                  let statusName = this.userStatus.getStatusName(
+                    this.props.userStatus
+                  );
+                  return (
+                    <FontAwesomeIcon
+                      icon="flag"
+                      className="status-icon"
+                      title={statusName}
+                    />
+                  );
+                }
+              })()}
             </div>
           </div>
           {this.state.isDropdownModalOpen && (
@@ -109,7 +138,12 @@ class SidebarHeader extends React.Component {
                     {this.props.userProfile.displayName}
                   </div>
                   <ul>
-                    <li onClick={this.onSetStatus}>Set status</li>
+                    {this.userStatus.isActive(this.props.userStatus) ? (
+                      <li onClick={this.onSetStatus}>Set status</li>
+                    ) : (
+                      <li onClick={this.onClearStatus}>Clear status</li>
+                    )}
+
                     <li>Profile</li>
                   </ul>
                 </section>

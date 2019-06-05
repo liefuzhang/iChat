@@ -9,7 +9,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faTimes,
   faChevronDown,
-  faPlusCircle
+  faPlusCircle,
+  faFlag
 } from "@fortawesome/free-solid-svg-icons";
 {
   /* usage: <FontAwesomeIcon icon="chevron-down" /> */
@@ -19,6 +20,7 @@ function App() {
   library.add(faTimes);
   library.add(faChevronDown);
   library.add(faPlusCircle);
+  library.add(faFlag);
 
   return (
     <div id="container">

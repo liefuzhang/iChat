@@ -163,6 +163,16 @@ namespace iChat.Api.Services {
             await _context.SaveChangesAsync();
         }
 
+        public async Task ClearUserStatusAsync(int userId, int workspaceId) {
+            var user = await GetUserByIdAsync(userId, workspaceId);
+            if (user == null) {
+                throw new Exception("User cannot be found.");
+            }
+
+            user.SetStatus(UserStatus.Active);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<string> GetUserStatus(int userId, int workspaceId) {
             var user = await GetUserByIdAsync(userId);
             if (user == null) {

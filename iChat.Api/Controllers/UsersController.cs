@@ -83,5 +83,13 @@ namespace iChat.Api.Controllers {
 
             return Ok();
         }
+
+        // POST api/users/clearStatus
+        [HttpPost("clearStatus")]
+        public async Task<IActionResult> ClearStatus() {
+            await _userService.ClearUserStatusAsync(User.GetUserId(), User.GetWorkplaceId());
+
+            return Ok();
+        }
     }
 }

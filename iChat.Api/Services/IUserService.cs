@@ -17,5 +17,6 @@ namespace iChat.Api.Services
         Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto);
         Task SetUserStatusAsync(int userId, int workspaceId, UserStatus status);
         Task<string> GetUserStatus(int userId, int workspaceId);
+        Task ClearUserStatusAsync(int userId, int workspaceId);
     }
 }

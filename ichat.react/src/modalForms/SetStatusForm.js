@@ -1,7 +1,7 @@
 import React from "react";
 import AuthService from "services/AuthService";
 import "./SetStatusForm.css";
-import { stat } from "fs";
+import UserStatus from "services/UserStatusService";
 
 class SetStatusForm extends React.Component {
   constructor(props) {
@@ -9,13 +9,7 @@ class SetStatusForm extends React.Component {
 
     this.onSetStatusFormSubmit = this.onSetStatusFormSubmit.bind(this);
     this.authService = new AuthService(props);
-    this.statusList = [
-      { name: "In A Meeting", value: "InAMeeting" },
-      { name: "Commuting", value: "Commuting" },
-      { name: "Out Sick", value: "OutSick" },
-      { name: "Vacationing", value: "Vacationing" },
-      { name: "Working Remotely", value: "WorkingRemotely" }
-    ];
+    this.statusList = new UserStatus().getStatusList();
 
     this.state = {
       selectedStatus: undefined
@@ -32,7 +26,6 @@ class SetStatusForm extends React.Component {
         body: JSON.stringify(this.state.selectedStatus)
       })
       .then(id => {
-        alert("status set!")
         this.props.onClose();
         this.props.onSelect();
       });
