@@ -1,16 +1,18 @@
 import React from "react";
-import "./OpenDirectMessageForm.css";
+import "./StartConversationForm.css";
 import AuthService from "services/AuthService";
 
-class OpenDirectMessageForm extends React.Component {
+class StartConversationForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onOpenDirectMessageFormSubmit = this.onOpenDirectMessageFormSubmit.bind(this);
+    this.onStartConversationFormSubmit = this.onStartConversationFormSubmit.bind(
+      this
+    );
     this.authService = new AuthService(props);
   }
 
-  onOpenDirectMessageFormSubmit(event) {
+  onStartConversationFormSubmit(event) {
     event.preventDefault();
     // let name = event.target.elements["name"].value;
     // let topic = event.target.elements["topic"].value;
@@ -29,14 +31,18 @@ class OpenDirectMessageForm extends React.Component {
     //   });
   }
 
+  componentDidMount() {
+  }
+
   render() {
     return (
       <div className="form-container">
-        <h1 style={{ textAlign: "center" }}>Direct messages</h1>
+        <h1 style={{ textAlign: "center" }}>Start conversation</h1>
+
         {/* <form
-          id="OpenDirectMessageForm"
+          id="StartConversationForm"
           method="post"
-          onSubmit={this.onOpenDirectMessageFormSubmit}
+          onSubmit={this.onStartConversationFormSubmit}
         >
           <p>Channels are where specific topics can be talked about.</p>
           <div className="form-group">
@@ -71,4 +77,4 @@ class OpenDirectMessageForm extends React.Component {
   }
 }
 
-export default OpenDirectMessageForm;
+export default StartConversationForm;

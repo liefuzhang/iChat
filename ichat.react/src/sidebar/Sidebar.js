@@ -6,6 +6,7 @@ import AuthService from "services/AuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "modals/Modal";
 import CreateChannelForm from "modalForms/CreateChannelForm";
+import StartConversationForm from "modalForms/StartConversationForm";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -15,6 +16,8 @@ class Sidebar extends React.Component {
     this.onCreateChannel = this.onCreateChannel.bind(this);
     this.onCloseCreateChannel = this.onCloseCreateChannel.bind(this);
     this.onChannelCreated = this.onChannelCreated.bind(this);
+    this.onStartConversation = this.onStartConversation.bind(this);
+    this.onCloseStartConversation = this.onCloseStartConversation.bind(this);
 
     this.state = {
       channels: [],
@@ -44,6 +47,19 @@ class Sidebar extends React.Component {
       .fetch("/api/channels")
       .then(channels => this.setState({ channels }));
   }
+
+  onStartConversation(event) {
+    this.setState({
+      isStartConversationModalOpen: true,
+    });
+  }
+
+  onCloseStartConversation(){
+    this.setState({
+      isStartConversationModalOpen: false
+    });
+  }
+
 
   fecthData() {
     this.authService
@@ -105,7 +121,15 @@ class Sidebar extends React.Component {
         </section>
 
         <section>
-          <div className="section-title">DIRECT MESSAGES</div>
+          <div className="section-title">
+            <span>DIRECT MESSAGES</span>
+            <FontAwesomeIcon
+              icon="plus-circle"
+              title="Start a conversation"
+              className="icon-circle"
+              onClick={this.onStartConversation}
+            />
+          </div>
           {this.state.directMessageUsers.map(c => {
             let active = false;
             if (!this.props.isChannel && this.props.id === c.id) active = true;
@@ -120,6 +144,15 @@ class Sidebar extends React.Component {
               />
             );
           })}
+          <div>
+            {this.state.isStartConversationModalOpen && (
+              <Modal onClose={this.onCloseStartConversation}>
+                <StartConversationForm
+                  onClose={this.onCloseStartConversation}
+                />
+              </Modal>
+            )}
+          </div>
         </section>
       </div>
     );
