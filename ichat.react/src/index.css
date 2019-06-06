@@ -5,6 +5,7 @@ body {
   line-height: 1.5;
   font-family: "Roboto", sans-serif;
   font-size: 15px;
+  overflow: hidden;
 }
 
 code,
@@ -32,6 +33,11 @@ h1 {
   font-size: 1.5em;
   margin-block-start: 0.83em;
   margin-block-end: 0.83em;
+}
+
+*, :after, :before {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
 }
 
 textarea,
@@ -148,6 +154,10 @@ blockquote {
 
 .form-container h1 {
   text-align: center;
+}
+
+.form-description {
+  margin-bottom: 15px;
 }
 
 form .form-group {

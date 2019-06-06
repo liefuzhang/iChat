@@ -1,0 +1,23 @@
+.start-conversation-form {
+  min-height: 400px;
+}
+
+
+.start-conversation-form form {
+    width: 400px;
+}
+
+.start-conversation-form .dropdown {
+    box-sizing: border-box;
+    width: 400px;
+}
+
+.start-conversation-form .menu {
+    box-sizing: border-box;
+}
+
+.start-conversation-form button[type="submit"]{
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}

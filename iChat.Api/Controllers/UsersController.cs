@@ -37,7 +37,7 @@ namespace iChat.Api.Controllers {
 
         // GET api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAsync() {
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync() {
             var users = await _userService
                 .GetAllUsersAsync(User.GetWorkplaceId());
             return users.ToList();
@@ -89,6 +89,15 @@ namespace iChat.Api.Controllers {
         public async Task<IActionResult> ClearStatus() {
             await _userService.ClearUserStatusAsync(User.GetUserId(), User.GetWorkplaceId());
 
+            return Ok();
+        }
+
+
+        [AllowAnonymous]
+        // TODO remove after development
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAsync([FromBody]UserDto userDto) {
+            await _userService.RegisterAsync(userDto.Email, userDto.Password, 10);
             return Ok();
         }
     }

@@ -1,6 +1,7 @@
 import React from "react";
 import "./StartConversationForm.css";
 import AuthService from "services/AuthService";
+import { Dropdown } from "semantic-ui-react";
 
 class StartConversationForm extends React.Component {
   constructor(props) {
@@ -10,6 +11,10 @@ class StartConversationForm extends React.Component {
       this
     );
     this.authService = new AuthService(props);
+
+    this.state = {
+      userList: undefined
+    };
   }
 
   onStartConversationFormSubmit(event) {
@@ -32,46 +37,42 @@ class StartConversationForm extends React.Component {
   }
 
   componentDidMount() {
+    this.authService.fetch("/api/users").then(users => {
+      let userList = users.map(u => {
+        return { key: u.id, text: u.displayName, value: u.id };
+      });
+      this.setState({ userList: userList });
+    });
   }
 
   render() {
     return (
-      <div className="form-container">
+      <div className="form-container start-conversation-form">
         <h1 style={{ textAlign: "center" }}>Start conversation</h1>
 
-        {/* <form
+        <form
           id="StartConversationForm"
           method="post"
           onSubmit={this.onStartConversationFormSubmit}
         >
-          <p>Channels are where specific topics can be talked about.</p>
-          <div className="form-group">
-            <label htmlFor="OpenDirectMessageName">Name</label>
-            <input
-              className="form-control"
-              type="text"
-              id="OpenDirectMessageName"
-              name="name"
-              placeholder="e.g. meetings"
-              required
+          <p className="form-description">
+            Select people you want to have a conversation with.
+          </p>
+
+          {this.state.userList && (
+            <Dropdown
+              placeholder="Search user"
+              fluid
+              multiple
+              search
+              selection
+              options={this.state.userList}
             />
-          </div>
-          <div className="form-group">
-            <label htmlFor="OpenDirectMessageTopic">
-              Topic<span className="secondary-text">&nbsp;(optional)</span>
-            </label>
-            <input
-              className="form-control"
-              type="text"
-              id="OpenDirectMessageTopic"
-              name="topic"
-              placeholder="What is this channel about?"
-            />
-          </div>
+          )}
           <button type="submit" className="btn form-control">
-            Create Channel
+            Go
           </button>
-        </form> */}
+        </form>
       </div>
     );
   }

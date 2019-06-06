@@ -37,7 +37,7 @@ class CreateChannelForm extends React.Component {
           method="post"
           onSubmit={this.onCreateChannelFormSubmit}
         >
-          <p>Channels are where specific topics can be talked about.</p>
+          <p className="form-description">Channels are where specific topics can be talked about.</p>
           <div className="form-group">
             <label htmlFor="createChannelName">Name</label>
             <input

@@ -61,7 +61,7 @@ class InvitePeopleForm extends React.Component {
           Invite People to {this.props.userProfile.workspaceName}
         </h1>
         <form id="emailForm" method="post" onSubmit={this.onEmailFormSubmit}>
-          <p>Enter email addresses to invite.</p>
+          <p className="form-description">Enter email addresses to invite.</p>
           {this.state.emailsToInvite.map((e, index) => {
             return (
               <div key={index} className="email-row">

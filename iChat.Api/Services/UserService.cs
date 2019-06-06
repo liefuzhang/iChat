@@ -1,4 +1,5 @@
-﻿using iChat.Api.Contract;
+﻿using AutoMapper;
+using iChat.Api.Contract;
 using iChat.Api.Data;
 using iChat.Api.Dtos;
 using iChat.Api.Helpers;
@@ -15,13 +16,15 @@ namespace iChat.Api.Services {
         private readonly IEmailHelper _emailService;
         private readonly IIdentityService _identityService;
         private readonly IUserIdenticonHelper _userIdenticonHelper;
+        private readonly IMapper _mapper;
 
         public UserService(iChatContext context, IIdentityService identityService,
-            IEmailHelper emailService, IUserIdenticonHelper userIdenticonHelper) {
+            IEmailHelper emailService, IUserIdenticonHelper userIdenticonHelper, IMapper mapper) {
             _context = context;
             _identityService = identityService;
             _emailService = emailService;
             _userIdenticonHelper = userIdenticonHelper;
+            _mapper = mapper;
         }
 
         // when workspace is not available (e.g. onTokenValidated)
@@ -48,9 +51,10 @@ namespace iChat.Api.Services {
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync(int workspaceId) {
+        public async Task<IEnumerable<UserDto>> GetAllUsersAsync(int workspaceId) {
             var users = await _context.Users.AsNoTracking()
                 .Where(u => u.WorkspaceId == workspaceId)
+                .Select(u => _mapper.Map<UserDto>(u))
                 .ToListAsync();
 
             return users;

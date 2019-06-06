@@ -27,7 +27,6 @@ namespace iChat.Api.Controllers
             _channelService = channelService;
         }
 
-        // TODO remove this after development
         // POST api/workspaces
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] WorkspaceDto workspaceDto)

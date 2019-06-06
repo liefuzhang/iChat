@@ -45,6 +45,6 @@ namespace iChat.Api.Controllers
                 identiconPath = "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
                 token = tokenString
             });
-        }        
+        }
     }
 }
