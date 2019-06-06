@@ -8,6 +8,7 @@ using iChat.Api.Extensions;
 using iChat.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using iChat.Api.Contract;
+using System.Collections.Generic;
 
 namespace iChat.Api.Controllers {
     [Route("api/[controller]")]

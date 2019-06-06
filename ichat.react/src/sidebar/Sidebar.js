@@ -18,7 +18,8 @@ class Sidebar extends React.Component {
     this.onChannelCreated = this.onChannelCreated.bind(this);
     this.onStartConversation = this.onStartConversation.bind(this);
     this.onCloseStartConversation = this.onCloseStartConversation.bind(this);
-
+    this.onConversationStarted = this.onCloseStartConversation.bind(this);
+    
     this.state = {
       channels: [],
       directMessageUsers: [],
@@ -58,6 +59,10 @@ class Sidebar extends React.Component {
     this.setState({
       isStartConversationModalOpen: false
     });
+  }
+
+  onConversationStarted() {
+    this.onCloseStartConversation();
   }
 
 
@@ -149,6 +154,7 @@ class Sidebar extends React.Component {
               <Modal onClose={this.onCloseStartConversation}>
                 <StartConversationForm
                   onClose={this.onCloseStartConversation}
+                  onConversationStarted={this.onConversationStarted}
                 />
               </Modal>
             )}

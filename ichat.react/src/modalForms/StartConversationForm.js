@@ -15,25 +15,30 @@ class StartConversationForm extends React.Component {
     this.state = {
       userList: undefined
     };
+
+    this.conversationUserIds = [];
   }
 
   onStartConversationFormSubmit(event) {
     event.preventDefault();
-    // let name = event.target.elements["name"].value;
-    // let topic = event.target.elements["topic"].value;
+    if (!this.conversationUserIds || this.conversationUserIds.length === 0)
+      return;
 
-    // this.authService
-    //   .fetch(`/api/channels`, {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       name: name,
-    //       topic: topic
-    //     })
-    //   })
-    //   .then(id => {
-    //     this.props.onChannelCreated();
-    //     this.props.history.push(`/channel/${id}`);
-    //   });
+    this.authService
+      .fetch(`/api/conversation/start`, {
+        method: "POST",
+        body: JSON.stringify({
+          userIds: this.conversationUserIds
+        })
+      })
+      .then(id => {
+        this.props.onConversationStarted();
+        // this.props.history.push(`/channel/${id}`);
+      });
+  }
+
+  changeConversationUser(event, item) {
+    this.conversationUserIds = item.value;
   }
 
   componentDidMount() {
@@ -67,6 +72,7 @@ class StartConversationForm extends React.Component {
               search
               selection
               options={this.state.userList}
+              onChange={this.changeConversationUser}
             />
           )}
           <button type="submit" className="btn form-control">
