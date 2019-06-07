@@ -21,7 +21,8 @@ a {
   color: inherit;
 }
 a:active,
-a:visited {
+a:visited,
+a:hover {
   color: inherit;
 }
 

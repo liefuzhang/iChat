@@ -50,6 +50,7 @@ namespace iChat.Api.Models
         public int WorkspaceId { get; private set; }
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
+        public ICollection<ConversationUser> ConversationUsers { get; private set; }
 
         public bool VerifyPassword(string password)
         {

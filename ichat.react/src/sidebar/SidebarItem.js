@@ -18,7 +18,7 @@ function SidebarItem(props) {
 
   return (
     <Link to={`/${props.section}/${props.id}`} onClick={setActiveSidebarItem}>
-      <div className={"sidebar-item " + (props.active ? "active-item" : "")}>
+      <div title={props.name} className={"sidebar-item " + (props.active ? "active-item" : "")}>
         #&nbsp;
         {props.name}
       </div>

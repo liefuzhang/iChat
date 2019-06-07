@@ -50,7 +50,7 @@ class MainPage extends React.Component {
       params.section ||
       (this.state.savedActiveSidebarItem &&
       !this.state.savedActiveSidebarItem.isChannel
-        ? "user"
+        ? "conversation"
         : "channel");
     let isChannel = section === "channel";
     let id =

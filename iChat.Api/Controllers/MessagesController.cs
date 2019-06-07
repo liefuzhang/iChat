@@ -20,16 +20,18 @@ namespace iChat.Api.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly INotificationService _notificationService;
-        private IMessageService _messageService;
-        private IChannelService _channelService;
+        private readonly IMessageService _messageService;
+        private readonly IChannelService _channelService;
+        private readonly IConversationService _conversationService;
 
         public MessagesController(iChatContext context,
             INotificationService notificationService,
-            IMessageService messageService, IChannelService channelService)
+            IMessageService messageService, IChannelService channelService, IConversationService conversationService)
         {
             _notificationService = notificationService;
             _messageService = messageService;
             _channelService = channelService;
+            _conversationService = conversationService;
         }
 
         // GET api/messages/channel/1
@@ -45,22 +47,22 @@ namespace iChat.Api.Controllers
             return messageGroups.ToList();
         }
 
-        // GET api/messages/user/1
-        [HttpGet("user/{id}")]
-        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForUserAsync(int id)
+        // GET api/messages/conversation/1
+        [HttpGet("conversation/{id}")]
+        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id)
         {
-            var messages = await _messageService.GetMessagesForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            var messages = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
             return messages.ToList();
         }
 
-        // POST api/messages/user/1
-        [HttpPost("user/{id}")]
-        public async Task<IActionResult> PostMessageToUserAsync(int id, [FromBody] string newMessage)
+        // POST api/messages/conversation/1
+        [HttpPost("conversation/{id}")]
+        public async Task<IActionResult> PostMessageToConversationAsync(int id, [FromBody] string newMessage)
         {
-            await _messageService.PostMessageToUserAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
+            await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
-            _notificationService.SendDirectMessageNotificationAsync(User.GetUserId());
-            _notificationService.SendDirectMessageNotificationAsync(id);
+            var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+            _notificationService.SendUpdateConversationNotificationAsync(userIds, id);
 
             return Ok();
         }

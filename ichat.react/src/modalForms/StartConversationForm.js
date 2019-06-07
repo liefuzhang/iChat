@@ -10,6 +10,7 @@ class StartConversationForm extends React.Component {
     this.onStartConversationFormSubmit = this.onStartConversationFormSubmit.bind(
       this
     );
+    this.changeConversationUser = this.changeConversationUser.bind(this);
     this.authService = new AuthService(props);
 
     this.state = {
@@ -25,11 +26,9 @@ class StartConversationForm extends React.Component {
       return;
 
     this.authService
-      .fetch(`/api/conversation/start`, {
+      .fetch(`/api/conversations/start`, {
         method: "POST",
-        body: JSON.stringify({
-          userIds: this.conversationUserIds
-        })
+        body: JSON.stringify(this.conversationUserIds)
       })
       .then(id => {
         this.props.onConversationStarted();

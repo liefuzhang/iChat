@@ -51,12 +51,12 @@ class ContentFooter extends React.Component {
       this.quill.root.innerHTML = "";
 
       if (this.props.isChannel) {
-        this.authService.fetch(`/api/messages/channel/${this.props.id}`, {
+        this.authService.fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
           method: "POST",
           body: JSON.stringify(message)
         });
       } else {
-        this.authService.fetch(`/api/messages/user/${this.props.id}`, {
+        this.authService.fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
           method: "POST",
           body: JSON.stringify(message)
         });

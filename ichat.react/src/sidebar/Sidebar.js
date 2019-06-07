@@ -22,7 +22,7 @@ class Sidebar extends React.Component {
     
     this.state = {
       channels: [],
-      directMessageUsers: [],
+      conversations: [],
       isCreateChannelModalOpen: false
     };
 
@@ -72,8 +72,8 @@ class Sidebar extends React.Component {
       .then(channels => this.setState({ channels }));
 
     this.authService
-      .fetch("/api/users")
-      .then(directMessageUsers => this.setState({ directMessageUsers }));
+      .fetch("/api/conversations")
+      .then(conversations => this.setState({ conversations: conversations }));
   }
 
   render() {
@@ -135,15 +135,15 @@ class Sidebar extends React.Component {
               onClick={this.onStartConversation}
             />
           </div>
-          {this.state.directMessageUsers.map(c => {
+          {this.state.conversations.map(c => {
             let active = false;
             if (!this.props.isChannel && this.props.id === c.id) active = true;
             return (
               <SidebarItem
                 key={c.id}
-                section="user"
+                section="conversation"
                 isChannel={false}
-                name={c.displayName}
+                name={c.name}
                 id={c.id}
                 active={active}
               />

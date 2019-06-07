@@ -6,6 +6,6 @@ namespace iChat.Api.Services
     public interface INotificationService
     {
         Task SendUpdateChannelNotificationAsync(IEnumerable<int> userIds, int channelId);
-        Task SendDirectMessageNotificationAsync(int receiverId);
+        Task SendUpdateConversationNotificationAsync(IEnumerable<int> userIds, int conversationId);
     }
 }

@@ -19,13 +19,15 @@ namespace iChat.Api.Services
             foreach (var userId in userIds)
             {
                 await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannel", channelId);
-
             }
         }
 
-        public async Task SendDirectMessageNotificationAsync(int userId)
+        public async Task SendUpdateConversationNotificationAsync(IEnumerable<int> userIds, int conversationId)
         {
-            await _hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveMessage");
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversation", conversationId);
+            }
         }
     }
 }

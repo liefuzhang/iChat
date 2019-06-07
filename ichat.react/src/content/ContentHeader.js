@@ -11,7 +11,7 @@ class ContentHeader extends React.Component {
 
     this.state = {
       selectedChannel: {},
-      selectedUser: {}
+      selectedConversation: {}
     };
 
     this.fetchData(this.props);
@@ -22,8 +22,8 @@ class ContentHeader extends React.Component {
       this.authService.fetch(`/api/channels/${props.id}`)
         .then(channel => this.setState({ selectedChannel: channel }));
     } else {
-      this.authService.fetch(`/api/users/${props.id}`)
-        .then(user => this.setState({ selectedUser: user }));
+      this.authService.fetch(`/api/conversations/${props.id}`)
+        .then(conversation => this.setState({ selectedConversation: conversation }));
     }
   }
  
@@ -40,7 +40,7 @@ class ContentHeader extends React.Component {
         <div className="content-header-name">
           {this.props.isChannel
             ? "#" + this.state.selectedChannel.name
-            : this.state.selectedUser.displayName}
+            : this.state.selectedConversation.name}
         </div>
         <div className="content-header-topic">
           {this.props.isChannel ? this.state.selectedChannel.topic : ""}

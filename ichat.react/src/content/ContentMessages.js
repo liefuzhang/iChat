@@ -11,12 +11,12 @@ class ContentMessages extends React.Component {
 
     this.fetchData = this.fetchData.bind(this);
     this.onUpdateChannel = this.onUpdateChannel.bind(this);
-    this.onReceiveMessage = this.onReceiveMessage.bind(this);
+    this.onUpdateConversation = this.onUpdateConversation.bind(this);
     this.authService = new AuthService(props);
 
     if (props.hubConnection) {
       props.hubConnection.on("UpdateChannel", this.onUpdateChannel);
-      props.hubConnection.on("ReceiveMessage", this.onReceiveMessage);
+      props.hubConnection.on("UpdateConversation", this.onUpdateConversation);
     }
 
     this.state = {
@@ -90,7 +90,7 @@ class ContentMessages extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.section !== prevProps.section ||
+      this.props.section !== prevProps.section || 
       this.props.id !== prevProps.id
     ) {
       this.fetchData(this.props);
@@ -105,8 +105,8 @@ class ContentMessages extends React.Component {
     }
   }
 
-  onReceiveMessage() {
-    if (this.props.section === "user") {
+  onUpdateConversation() {
+    if (this.props.section === "conversation") {
       this.fetchData(this.props);
     }
   }

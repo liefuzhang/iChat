@@ -11,10 +11,14 @@ function Content(props) {
       <ContentMessages
         section={props.section}
         id={props.id}
-        hubConnection={props.connection}
+        hubConnection={props.hubConnection}
         userProfile={props.userProfile}
       />
-      <ContentFooter isChannel={props.isChannel} id={props.id} />
+      <ContentFooter
+        isChannel={props.isChannel}
+        section={props.section}
+        id={props.id}
+      />
     </div>
   );
 }

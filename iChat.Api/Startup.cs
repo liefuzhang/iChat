@@ -44,6 +44,7 @@ namespace iChat.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
             services.AddScoped<IChannelService, ChannelService>();
+            services.AddScoped<IConversationService, ConversationService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IEmailHelper, EmailHelper>();
             services.AddScoped<IUserIdenticonHelper, UserIdenticonHelper>();

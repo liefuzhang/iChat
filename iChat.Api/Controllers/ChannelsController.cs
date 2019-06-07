@@ -20,8 +20,7 @@ namespace iChat.Api.Controllers {
         private IChannelService _channelService;
         private ICacheService _cacheService;
 
-        public ChannelsController(iChatContext context,
-            IChannelService channelService,
+        public ChannelsController(IChannelService channelService,
             ICacheService cacheService) {
             _channelService = channelService;
             _cacheService = cacheService;

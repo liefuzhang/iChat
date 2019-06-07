@@ -1,19 +1,21 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace iChat.Api.Models
 {
-    public class ChannelMessage : Message
+    public class ConversationMessage : Message
     {
-        protected ChannelMessage() { }
-        public ChannelMessage(int channelId, string content, int senderId, int workspaceId)
+        protected ConversationMessage() { }
+        public ConversationMessage(int conversationId, string content, int senderId, int workspaceId)
         {
             if (string.IsNullOrWhiteSpace(content))
             {
                 throw new Exception("Content cannot be empty");
             }
-            if (channelId < 1)
+            if (conversationId < 1)
             {
-                throw new Exception("Invalid channel");
+                throw new Exception("Invalid conversation");
             }
             if (senderId < 1)
             {
@@ -24,13 +26,13 @@ namespace iChat.Api.Models
                 throw new Exception("Invalid workspace");
             }
 
-            ChannelId = channelId;
+            ConversationId = conversationId;
             Content = content;
             SenderId = senderId;
             WorkspaceId = workspaceId;
             CreatedDate = DateTime.Now;
         }
-        public int ChannelId { get; private set; }
-        public Channel Channel { get; private set; }
+        public int ConversationId { get; private set; }
+        public Conversation Conversation { get; private set; }
     }
 }
