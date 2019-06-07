@@ -15,6 +15,9 @@ namespace iChat.Api.Constants
         public static readonly string DefaultIdenticonName = "Default.svg";
         public static readonly string EmailTemplatePath = "Data\\EmailTemplates";
 
+        public static readonly int RedisRecentConversationMaxNumber = 10;
+
         public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
+        public static readonly string RedisKeyRecentConversationPrefix = "RecentConversation";
     }
 }

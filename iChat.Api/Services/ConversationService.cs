@@ -11,35 +11,44 @@ namespace iChat.Api.Services {
     public class ConversationService : IConversationService {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
-        private readonly IDistributedCache _cache;
+        private ICacheService _cacheService;
 
-        public ConversationService(iChatContext context, IUserService userService, IDistributedCache cache) {
+        public ConversationService(iChatContext context, IUserService userService,
+            IDistributedCache cache, ICacheService cacheService) {
             _context = context;
             _userService = userService;
-            _cache = cache;
+            _cacheService = cacheService;
         }
 
-        public async Task<int> StartConversationAsync(List<int> userIds, int workspaceId) {
-            if (userIds == null || userIds.Count < 2) {
+        public async Task<int> StartConversationAsync(List<int> withUserIds, int userId, int workspaceId) {
+            if (withUserIds == null || withUserIds.Count < 1) {
                 throw new ArgumentException("Invalid users");
             }
 
-            var conversationId = GetConversationIdIfExists(userIds, workspaceId);
-            if (conversationId != null)
-                return conversationId.Value;
+            var userIds = withUserIds;
+            userIds.Add(userId);
 
-            var userDisplayNames = await _context.Users.Where(u => userIds.Contains(u.Id))
-                .OrderBy(u => u.Id).Select(u => u.DisplayName).ToListAsync();
-            var conversationName = string.Join(", ", userDisplayNames);
-            var newConversation = new Conversation(conversationName, workspaceId);
+            int conversationId;
+            var existingConversationId = GetConversationIdIfExists(userIds, workspaceId);
+            if (existingConversationId != null) {
+                conversationId = existingConversationId.Value;
+            } else {
+                var userDisplayNames = await _context.Users.Where(u => userIds.Contains(u.Id))
+                    .OrderBy(u => u.Id).Select(u => u.DisplayName).ToListAsync();
+                var conversationName = string.Join(", ", userDisplayNames);
+                var newConversation = new Conversation(conversationName, workspaceId);
 
-            _context.Conversations.Add(newConversation);
-            await _context.SaveChangesAsync();
+                _context.Conversations.Add(newConversation);
+                await _context.SaveChangesAsync();
 
-            AddUsersToConversation(userIds, newConversation.Id);
-            await _context.SaveChangesAsync();
+                AddUsersToConversation(userIds, newConversation.Id);
+                await _context.SaveChangesAsync();
+                conversationId = newConversation.Id;
+            }
 
-            return newConversation.Id;
+            await _cacheService.AddRecentConversationIdForUserAsync(conversationId, userId, workspaceId);
+
+            return conversationId;
         }
 
         private int? GetConversationIdIfExists(List<int> userIds, int workspaceId) {
@@ -70,10 +79,10 @@ namespace iChat.Api.Services {
         }
 
         public async Task<IEnumerable<Conversation>> GetConversationsForUserAsync(int userId, int workspaceId) {
+            var recentConversationIds = await _cacheService.GetRecentConversationIdsForUserAsync(userId, workspaceId);
             var conversations = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
-                    c.ConversationUsers.Any(cu => cu.UserId == userId &&
-                        cu.ConversationId == c.Id))
+                    recentConversationIds.Contains(c.Id))
                 .ToListAsync();
 
             return conversations;
