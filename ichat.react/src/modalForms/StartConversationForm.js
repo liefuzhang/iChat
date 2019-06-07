@@ -32,7 +32,7 @@ class StartConversationForm extends React.Component {
       })
       .then(id => {
         this.props.onConversationStarted();
-        // this.props.history.push(`/channel/${id}`);
+        this.props.history.push(`/conversation/${id}`);
       });
   }
 
@@ -42,9 +42,12 @@ class StartConversationForm extends React.Component {
 
   componentDidMount() {
     this.authService.fetch("/api/users").then(users => {
-      let userList = users.map(u => {
-        return { key: u.id, text: u.displayName, value: u.id };
-      });
+      let currentUserId = this.props.userProfile.id;
+      let userList = users
+        .filter(u => u.id !== currentUserId)
+        .map(u => {
+          return { key: u.id, text: u.displayName, value: u.id };
+        });
       this.setState({ userList: userList });
     });
   }

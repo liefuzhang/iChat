@@ -18,8 +18,11 @@ function SidebarItem(props) {
 
   return (
     <Link to={`/${props.section}/${props.id}`} onClick={setActiveSidebarItem}>
-      <div title={props.name} className={"sidebar-item " + (props.active ? "active-item" : "")}>
-        #&nbsp;
+      <div
+        title={props.name}
+        className={"sidebar-item " + (props.active ? "active-item" : "")}
+      >
+        {props.isChannel && <span># </span>}
         {props.name}
       </div>
     </Link>

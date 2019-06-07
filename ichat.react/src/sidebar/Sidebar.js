@@ -18,7 +18,7 @@ class Sidebar extends React.Component {
     this.onChannelCreated = this.onChannelCreated.bind(this);
     this.onStartConversation = this.onStartConversation.bind(this);
     this.onCloseStartConversation = this.onCloseStartConversation.bind(this);
-    this.onConversationStarted = this.onCloseStartConversation.bind(this);
+    this.onConversationStarted = this.onConversationStarted.bind(this);
     
     this.state = {
       channels: [],
@@ -43,10 +43,7 @@ class Sidebar extends React.Component {
 
   onChannelCreated (){
     this.onCloseCreateChannel();
-
-    this.authService
-      .fetch("/api/channels")
-      .then(channels => this.setState({ channels }));
+    this.fetchChannels();
   }
 
   onStartConversation(event) {
@@ -62,18 +59,25 @@ class Sidebar extends React.Component {
   }
 
   onConversationStarted() {
-    this.onCloseStartConversation();
+    this.onCloseStartConversation(); 
+    this.fetchConversations();
   }
 
-
-  fecthData() {
+  fetchChannels() {
     this.authService
       .fetch("/api/channels")
       .then(channels => this.setState({ channels }));
+  }
 
+  fetchConversations() {
     this.authService
       .fetch("/api/conversations")
       .then(conversations => this.setState({ conversations: conversations }));
+  }
+
+  fecthData() {
+    this.fetchChannels();
+    this.fetchConversations();
   }
 
   render() {
@@ -155,6 +159,7 @@ class Sidebar extends React.Component {
                 <StartConversationForm
                   onClose={this.onCloseStartConversation}
                   onConversationStarted={this.onConversationStarted}
+                  {...this.props}
                 />
               </Modal>
             )}
