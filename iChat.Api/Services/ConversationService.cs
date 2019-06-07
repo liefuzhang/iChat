@@ -1,4 +1,5 @@
-﻿using iChat.Api.Data;
+﻿using AutoMapper;
+using iChat.Api.Data;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -12,12 +13,14 @@ namespace iChat.Api.Services {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
         private ICacheService _cacheService;
+        private readonly IMapper _mapper;
 
         public ConversationService(iChatContext context, IUserService userService,
-            IDistributedCache cache, ICacheService cacheService) {
+            ICacheService cacheService, IMapper mapper) {
             _context = context;
             _userService = userService;
             _cacheService = cacheService;
+            _mapper = mapper;
         }
 
         public async Task<int> StartConversationAsync(List<int> withUserIds, int userId, int workspaceId) {
@@ -33,11 +36,7 @@ namespace iChat.Api.Services {
             if (existingConversationId != null) {
                 conversationId = existingConversationId.Value;
             } else {
-                var userDisplayNames = await _context.Users.Where(u => userIds.Contains(u.Id))
-                    .OrderBy(u => u.Id).Select(u => u.DisplayName).ToListAsync();
-                var conversationName = string.Join(", ", userDisplayNames);
-                var newConversation = new Conversation(conversationName, workspaceId);
-
+                var newConversation = new Conversation(workspaceId);
                 _context.Conversations.Add(newConversation);
                 await _context.SaveChangesAsync();
 
@@ -69,23 +68,40 @@ namespace iChat.Api.Services {
             });
         }
 
-        public async Task<Conversation> GetConversationByIdAsync(int id, int workspaceId) {
+        private async Task<string> GetConversationNameAsync(int conversationId, int currentUserId) {
+            var userIds = (await GetAllConversationUserIdsAsync(conversationId)).ToList();
+            userIds.Remove(currentUserId);
+            var userDisplayNames = await _context.Users.Where(u => userIds.Contains(u.Id))
+                    .OrderBy(u => u.Id).Select(u => u.DisplayName).ToListAsync();
+            var conversationName = string.Join(", ", userDisplayNames);
+            return conversationName;
+        }
+
+        public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId) {
             var conversation = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                             c.Id == id)
                 .SingleOrDefaultAsync();
 
-            return conversation;
+            var conversationDto = _mapper.Map<ConversationDto>(conversation);
+            conversationDto.Name = await GetConversationNameAsync(id, userId);
+            return conversationDto;
         }
 
-        public async Task<IEnumerable<Conversation>> GetConversationsForUserAsync(int userId, int workspaceId) {
+        public async Task<IEnumerable<ConversationDto>> GetConversationsForUserAsync(int userId, int workspaceId) {
             var recentConversationIds = await _cacheService.GetRecentConversationIdsForUserAsync(userId, workspaceId);
             var conversations = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     recentConversationIds.Contains(c.Id))
                 .ToListAsync();
 
-            return conversations;
+            var conversationDtos = conversations.Select(async c => {
+                var dto = _mapper.Map<ConversationDto>(c);
+                dto.Name = await GetConversationNameAsync(c.Id, userId);
+                return dto;
+            });
+
+            return await Task.WhenAll(conversationDtos);
         }
 
         public async Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId) {

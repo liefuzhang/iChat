@@ -25,7 +25,7 @@ namespace iChat.Api.Controllers {
 
         // GET api/conversations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Conversation>>> GetAsync() {
+        public async Task<ActionResult<IEnumerable<ConversationDto>>> GetAsync() {
             var conversations = await _conversationService
                 .GetConversationsForUserAsync(User.GetUserId(), User.GetWorkplaceId());
             return conversations.ToList();
@@ -33,8 +33,8 @@ namespace iChat.Api.Controllers {
 
         // GET api/conversations/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Conversation>> GetAsync(int id) {
-            var conversation = await _conversationService.GetConversationByIdAsync(id, User.GetWorkplaceId());
+        public async Task<ActionResult<ConversationDto>> GetAsync(int id) {
+            var conversation = await _conversationService.GetConversationByIdAsync(id, User.GetUserId(), User.GetWorkplaceId());
             if (conversation == null) {
                 return NotFound();
             }

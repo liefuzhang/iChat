@@ -66,17 +66,15 @@ class StartConversationForm extends React.Component {
             Select people you want to have a conversation with.
           </p>
 
-          {this.state.userList && (
-            <Dropdown
+          <Dropdown
               placeholder="Search user"
               fluid
               multiple
               search
               selection
-              options={this.state.userList}
+              options={this.state.userList || []}
               onChange={this.changeConversationUser}
             />
-          )}
           <button type="submit" className="btn form-control">
             Go
           </button>

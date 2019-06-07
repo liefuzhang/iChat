@@ -5,14 +5,13 @@ namespace iChat.Api.Models
 {
     public class Conversation
     {
-        public Conversation(string name, int workspaceId) : this()
+        public Conversation(int workspaceId) : this()
         {
-            if (string.IsNullOrWhiteSpace(name) || workspaceId < 1)
+            if (workspaceId < 1)
             {
                 throw new ArgumentException("Invalid argument");
             }
 
-            Name = name;
             WorkspaceId = workspaceId;
 
         }
@@ -23,7 +22,6 @@ namespace iChat.Api.Models
         }
 
         public int Id { get; private set; }
-        public string Name { get; private set; }
         public int WorkspaceId { get; private set; }
         public Workspace Workspace { get; private set; }
         public ICollection<ConversationUser> ConversationUsers { get; private set; }
