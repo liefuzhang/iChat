@@ -89,6 +89,10 @@ blockquote {
   margin-left: 0;
 }
 
+button{
+  padding: 0;
+}
+
 .btn {
   border-radius: 2px;
   background-color: #297fa3;

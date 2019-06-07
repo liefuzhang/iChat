@@ -45,11 +45,11 @@ namespace iChat.Api.Controllers {
 
         // POST api/conversation
         [HttpPost("start")]
-        public async Task<ActionResult<int>> StartConversation(List<int> withUserIds)
+        public async Task<ActionResult<int>> StartConversationAsync(List<int> withUserIds)
         {
             var userIds = withUserIds;
             userIds.Add(User.GetUserId());
-            var id = await _conversationService.StartConversation(userIds, User.GetWorkplaceId());
+            var id = await _conversationService.StartConversationAsync(userIds, User.GetWorkplaceId());
 
             return Ok(id);
         }        
