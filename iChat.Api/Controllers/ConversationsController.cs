@@ -45,7 +45,7 @@ namespace iChat.Api.Controllers {
         // POST api/conversation
         [HttpPost("start")]
         public async Task<ActionResult<int>> StartConversationAsync(List<int> withUserIds) {
-            var id = await _conversationService.StartConversationAsync(withUserIds, User.GetUserId(), User.GetWorkplaceId());
+            var id = await _conversationService.StartConversationWithOthersAsync(withUserIds, User.GetUserId(), User.GetWorkplaceId());
             
             return Ok(id);
         }

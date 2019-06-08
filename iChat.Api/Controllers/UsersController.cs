@@ -22,17 +22,19 @@ namespace iChat.Api.Controllers {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
         private readonly IChannelService _channelService;
+        private readonly IConversationService _conversationService;
         private readonly IWorkspaceService _workspaceService;
         private ICacheService _cacheService;
 
         public UsersController(iChatContext context, IUserService userService,
             IWorkspaceService workspaceService, IChannelService channelService,
-            ICacheService cacheService) {
+            ICacheService cacheService, IConversationService conversationService) {
             _context = context;
             _userService = userService;
             _workspaceService = workspaceService;
             _channelService = channelService;
             _cacheService = cacheService;
+            _conversationService = conversationService;
         }
 
         // GET api/users
@@ -71,6 +73,7 @@ namespace iChat.Api.Controllers {
             var userId = await _userService.AcceptInvitationAsync(userInvitationDto);
             var user = await _userService.GetUserByIdAsync(userId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
+            await _conversationService.StartSelfConversationAsync(userId, user.WorkspaceId);
 
             return Ok();
         }
@@ -97,7 +100,10 @@ namespace iChat.Api.Controllers {
         // TODO remove after development
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto) {
-            await _userService.RegisterAsync(loginDto.Email, loginDto.Password, 1);
+            var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, 10);
+            await _channelService.AddUserToDefaultChannelsAsync(userId, 10);
+            await _conversationService.StartSelfConversationAsync(userId, 10);
+
             return Ok();
         }
     }

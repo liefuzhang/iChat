@@ -15,16 +15,19 @@ namespace iChat.Api.Controllers
     {
         private readonly IWorkspaceService _workspaceService;
         private readonly IChannelService _channelService;
+        private readonly IConversationService _conversationService;
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
 
         public WorkspacesController(iChatContext context, IWorkspaceService workspaceService,
-            IIdentityService identityService, IUserService userService, IChannelService channelService)
+            IIdentityService identityService, IUserService userService, 
+            IChannelService channelService, IConversationService conversationService)
         {
             _workspaceService = workspaceService;
             _identityService = identityService;
             _userService = userService;
             _channelService = channelService;
+            _conversationService = conversationService;
         }
 
         // POST api/workspaces
@@ -42,6 +45,8 @@ namespace iChat.Api.Controllers
 
             await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
+
+            await _conversationService.StartSelfConversationAsync(userId, workspaceId);
 
             return Ok();
         }

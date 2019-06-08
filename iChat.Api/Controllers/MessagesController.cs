@@ -54,7 +54,9 @@ namespace iChat.Api.Controllers {
         [HttpGet("conversation/{id}")]
         public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id) {
             var messageGroups = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
-            await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            if (!await _conversationService.IsSelfConversationAsync(id, User.GetUserId())) {
+                await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            }
             _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, id);
 
             return messageGroups.ToList();
@@ -66,7 +68,9 @@ namespace iChat.Api.Controllers {
             await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
-            await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkplaceId());
+            if (!await _conversationService.IsSelfConversationAsync(id, User.GetUserId())) {
+                await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkplaceId());
+            }
             _notificationService.SendNewConversationMessageNotificationAsync(userIds, id);
 
             return Ok();
