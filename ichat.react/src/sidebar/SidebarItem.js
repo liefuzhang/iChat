@@ -20,10 +20,19 @@ function SidebarItem(props) {
     <Link to={`/${props.section}/${props.id}`} onClick={setActiveSidebarItem}>
       <div
         title={props.name}
-        className={"sidebar-item " + (props.active ? "active-item" : "")}
+        className={
+          "sidebar-item" +
+          (props.active ? " active-item" : "") +
+          (props.unreadMessageCount && !props.active ? " unread-item" : "")
+        }
       >
-        {props.isChannel && <span># </span>}
-        {props.name}
+        <span>
+          {props.isChannel && <span># </span>}
+          {props.name}
+        </span>
+        {props.unreadMessageCount && !props.active && (
+          <span className="unread-badge">{props.unreadMessageCount}</span>
+        )}
       </div>
     </Link>
   );

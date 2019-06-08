@@ -6,6 +6,8 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
 }
 .sidebar-item:hover {
   cursor: pointer;
@@ -14,4 +16,21 @@
 
 .sidebar-item.active-item {
   background: #259;
+}
+
+.sidebar-item.unread-item {
+  font-weight: 600;
+  color: white;
+}
+
+.sidebar-item .unread-badge {
+  background-color: rgb(207, 35, 81);
+  width: 26px;
+  height: 18px;
+  border-radius: 18px;
+  text-align: center;
+  line-height: 18px;
+  margin-left: auto;
+  flex: 0 0 26px;
+  font-size: 14px;
 }

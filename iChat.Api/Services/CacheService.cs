@@ -42,26 +42,32 @@ namespace iChat.Api.Services {
             return $"{iChatConstants.RedisKeyActiveSidebarItemPrefix}-{workspaceId}/{userId}";
         }
 
-        public async Task AddRecentConversationIdForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId) {
+        public async Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId) {
             foreach (var userId in userIds) {
-                await AddRecentConversationIdForUserAsync(conversationId, userId, workspaceId);
+                await AddRecentConversationForUserAsync(conversationId, userId, workspaceId, incrementUnreadMessage: true);
             }
         }
 
-        public async Task AddRecentConversationIdForUserAsync(int conversationId, int userId, int workspaceId) {
+        public async Task AddRecentConversationForUserAsync(int conversationId, int userId,
+            int workspaceId, bool incrementUnreadMessage = false) {
+            ConversationItem item = null;
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
-            if (items == null) {
-                items = new List<ConversationItem>(new[] { new ConversationItem(conversationId) });
-            } else {
-                var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
+            if (items.Any()) {
+                item = items.SingleOrDefault(i => i.ConversationId == conversationId);
                 if (item != null) {
                     // move to end of list
                     items.Remove(item);
                 } else if (items.Count >= iChatConstants.RedisRecentConversationMaxNumber) {
                     items.RemoveAt(0);
                 }
-                items.Add(new ConversationItem(conversationId));
             }
+            if (item == null) {
+                item = new ConversationItem(conversationId);
+            }
+            if (incrementUnreadMessage) {
+                item.IncrementUnreadMessage();
+            }
+            items.Add(item);
 
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));

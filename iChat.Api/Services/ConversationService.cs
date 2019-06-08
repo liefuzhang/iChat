@@ -45,7 +45,7 @@ namespace iChat.Api.Services {
                 conversationId = newConversation.Id;
             }
 
-            await _cacheService.AddRecentConversationIdForUserAsync(conversationId, userId, workspaceId);
+            await _cacheService.AddRecentConversationForUserAsync(conversationId, userId, workspaceId);
 
             return conversationId;
         }

@@ -160,6 +160,7 @@ class Sidebar extends React.Component {
                 name={c.name}
                 id={c.id}
                 active={active}
+                unreadMessageCount={c.unreadMessageCount}
               />
             );
           })}

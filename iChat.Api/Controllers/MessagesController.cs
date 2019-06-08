@@ -67,7 +67,7 @@ namespace iChat.Api.Controllers
             await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
-            await _cacheService.AddRecentConversationIdForUsersAsync(id, userIds, User.GetWorkplaceId());
+            await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkplaceId());
             _notificationService.SendUpdateConversationNotificationAsync(userIds, id);
 
             return Ok();
