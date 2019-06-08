@@ -27,7 +27,7 @@ class ContentMessageItem extends React.Component {
       >
         <img
           className="user-identicon"
-          src={this.props.userProfile.identiconPath}
+          src={this.props.message.sender.identiconPath}
         />
         <div className="message-item">
           <div className="message-title">

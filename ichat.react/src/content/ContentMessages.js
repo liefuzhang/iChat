@@ -105,8 +105,8 @@ class ContentMessages extends React.Component {
     }
   }
 
-  onUpdateConversation() {
-    if (this.props.section === "conversation") {
+  onUpdateConversation(conversationId) {
+    if (this.props.section === "conversation" && this.props.id === conversationId) {
       this.fetchData(this.props);
     }
   }

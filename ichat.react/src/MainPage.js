@@ -67,6 +67,7 @@ class MainPage extends React.Component {
           userProfile={this.userProfile}
           userStatus={this.state.userStatus}
           onUserSessionDataChange={this.onUserSessionDataChange}
+          hubConnection={this.connection}
           {...this.props}
         />
         <Content

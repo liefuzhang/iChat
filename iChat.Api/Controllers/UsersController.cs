@@ -96,8 +96,8 @@ namespace iChat.Api.Controllers {
         [AllowAnonymous]
         // TODO remove after development
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody]UserDto userDto) {
-            await _userService.RegisterAsync(userDto.Email, userDto.Password, 1);
+        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto) {
+            await _userService.RegisterAsync(loginDto.Email, loginDto.Password, 1);
             return Ok();
         }
     }

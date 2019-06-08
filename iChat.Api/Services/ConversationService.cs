@@ -89,7 +89,8 @@ namespace iChat.Api.Services {
         }
 
         public async Task<IEnumerable<ConversationDto>> GetConversationsForUserAsync(int userId, int workspaceId) {
-            var recentConversationIds = await _cacheService.GetRecentConversationIdsForUserAsync(userId, workspaceId);
+            var recentConversationItems = await _cacheService.GetRecentConversationItemsForUserAsync(userId, workspaceId);
+            var recentConversationIds = recentConversationItems.Select(i => i.ConversationId);
             var conversations = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     recentConversationIds.Contains(c.Id))
@@ -98,6 +99,7 @@ namespace iChat.Api.Services {
             var conversationDtos = conversations.Select(async c => {
                 var dto = _mapper.Map<ConversationDto>(c);
                 dto.Name = await GetConversationNameAsync(c.Id, userId);
+                dto.UnreadMessageCount = recentConversationItems.Single(i => i.ConversationId == c.Id).UnreadMessageCount;
                 return dto;
             });
 

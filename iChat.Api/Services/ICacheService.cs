@@ -7,6 +7,7 @@ namespace iChat.Api.Services {
         Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int userId, int workspaceId);
         Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId);
         Task AddRecentConversationIdForUserAsync(int conversationId, int userId, int workspaceId);
-        Task<List<int>> GetRecentConversationIdsForUserAsync(int userId, int workspaceId);
+        Task AddRecentConversationIdForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId);
+        Task<List<ConversationItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId);
     }
 }

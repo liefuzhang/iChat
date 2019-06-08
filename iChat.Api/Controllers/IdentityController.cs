@@ -22,9 +22,9 @@ namespace iChat.Api.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync(UserDto userDto)
+        public async Task<IActionResult> AuthenticateAsync(UserLoginDto loginDto)
         {
-            var user = await _identityService.AuthenticateAsync(userDto.Email, userDto.Password);
+            var user = await _identityService.AuthenticateAsync(loginDto.Email, loginDto.Password);
 
             if (user == null)
             {
@@ -42,7 +42,7 @@ namespace iChat.Api.Controllers
                 email = user.Email,
                 displayName = user.DisplayName,
                 workspaceName = workspace?.Name,
-                identiconPath = "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{user.IdenticonGuid}{iChatConstants.IdenticonExt}"),
+                identiconPath = user.IdenticonPath,
                 token = tokenString
             });
         }

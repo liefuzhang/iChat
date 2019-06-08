@@ -42,32 +42,39 @@ namespace iChat.Api.Services {
             return $"{iChatConstants.RedisKeyActiveSidebarItemPrefix}-{workspaceId}/{userId}";
         }
 
+        public async Task AddRecentConversationIdForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId) {
+            foreach (var userId in userIds) {
+                await AddRecentConversationIdForUserAsync(conversationId, userId, workspaceId);
+            }
+        }
+
         public async Task AddRecentConversationIdForUserAsync(int conversationId, int userId, int workspaceId) {
-            var ids = await GetRecentConversationIdsForUserAsync(userId, workspaceId);
-            if (ids == null) {
-                ids = new List<int>(new[] { conversationId });
+            var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
+            if (items == null) {
+                items = new List<ConversationItem>(new[] { new ConversationItem(conversationId) });
             } else {
-                if (ids.Contains(conversationId)) {
+                var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
+                if (item != null) {
                     // move to end of list
-                    ids.Remove(conversationId);
-                } else if (ids.Count >= iChatConstants.RedisRecentConversationMaxNumber) {
-                    ids.RemoveAt(0);
+                    items.Remove(item);
+                } else if (items.Count >= iChatConstants.RedisRecentConversationMaxNumber) {
+                    items.RemoveAt(0);
                 }
-                ids.Add(conversationId);
+                items.Add(new ConversationItem(conversationId));
             }
 
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
-            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(ids));
+            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task<List<int>> GetRecentConversationIdsForUserAsync(int userId, int workspaceId) {
+        public async Task<List<ConversationItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId) {
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);
 
             if (value == null)
-                return new List<int>();
+                return new List<ConversationItem>();
 
-            return JsonConvert.DeserializeObject<List<int>>(value);
+            return JsonConvert.DeserializeObject<List<ConversationItem>>(value);
         }
 
         private string GetRedisKeyForRecentConversation(int userId, int workspaceId) {

@@ -23,15 +23,20 @@ namespace iChat.Api.Controllers
         private readonly IMessageService _messageService;
         private readonly IChannelService _channelService;
         private readonly IConversationService _conversationService;
+        private readonly ICacheService _cacheService;
 
         public MessagesController(iChatContext context,
             INotificationService notificationService,
-            IMessageService messageService, IChannelService channelService, IConversationService conversationService)
+            IMessageService messageService,
+            IChannelService channelService,
+            IConversationService conversationService,
+            ICacheService cacheService)
         {
             _notificationService = notificationService;
             _messageService = messageService;
             _channelService = channelService;
             _conversationService = conversationService;
+            _cacheService = cacheService;
         }
 
         // GET api/messages/channel/1
@@ -62,6 +67,7 @@ namespace iChat.Api.Controllers
             await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+            await _cacheService.AddRecentConversationIdForUsersAsync(id, userIds, User.GetWorkplaceId());
             _notificationService.SendUpdateConversationNotificationAsync(userIds, id);
 
             return Ok();
