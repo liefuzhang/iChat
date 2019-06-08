@@ -15,5 +15,9 @@ namespace iChat.Api.Contract {
         public void IncrementUnreadMessage() {
             UnreadMessageCount++;
         }
+
+        internal void ClearUnreadMessage() {
+            UnreadMessageCount = 0;
+        }
     }
 }

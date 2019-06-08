@@ -14,19 +14,31 @@ namespace iChat.Api.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendUpdateChannelNotificationAsync(IEnumerable<int> userIds, int channelId)
+        public async Task SendNewChannelMessageNotificationAsync(IEnumerable<int> userIds, int channelId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannel", channelId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("NewChannelMessage", channelId);
             }
         }
 
-        public async Task SendUpdateConversationNotificationAsync(IEnumerable<int> userIds, int conversationId)
+        public async Task SendNewConversationMessageNotificationAsync(IEnumerable<int> userIds, int conversationId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversation", conversationId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("NewConversationMessage", conversationId);
+            }
+        }
+
+        public async Task SendUpdateChannelListNotificationAsync(IEnumerable<int> userIds, int channelId) {
+            foreach (var userId in userIds) {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannelList", channelId);
+            }
+        }
+
+        public async Task SendUpdateConversationListNotificationAsync(IEnumerable<int> userIds, int conversationId) {
+            foreach (var userId in userIds) {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversationList", conversationId);
             }
         }
     }

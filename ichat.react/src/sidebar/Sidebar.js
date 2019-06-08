@@ -19,11 +19,12 @@ class Sidebar extends React.Component {
     this.onStartConversation = this.onStartConversation.bind(this);
     this.onCloseStartConversation = this.onCloseStartConversation.bind(this);
     this.onConversationStarted = this.onConversationStarted.bind(this);
-    this.onUpdateConversation = this.onUpdateConversation.bind(this);
+    this.onUpdateConversationList = this.onUpdateConversationList.bind(this);
     
     if (props.hubConnection) {
-      // props.hubConnection.on("UpdateChannel", this.onUpdateChannel);
-      props.hubConnection.on("UpdateConversation", this.onUpdateConversation);
+      // props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
+      props.hubConnection.on("NewConversationMessage", this.onUpdateConversationList);
+      props.hubConnection.on("UpdateConversationList", this.onUpdateConversationList);
     }
 
     this.state = {
@@ -69,7 +70,7 @@ class Sidebar extends React.Component {
     this.fetchConversations();
   }
 
-  onUpdateConversation() {
+  onUpdateConversationList() {
     this.fetchConversations();
   }
 

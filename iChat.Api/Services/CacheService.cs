@@ -73,6 +73,23 @@ namespace iChat.Api.Services {
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
+        public async Task ClearUnreadMessageForUserAsync(int conversationId, int userId, int workspaceId) {
+            var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
+            if (!items.Any()) {
+                return;
+            }
+
+            var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
+            if (item == null) {
+                return;
+            }
+
+            item.ClearUnreadMessage();
+
+            var key = GetRedisKeyForRecentConversation(userId, workspaceId);
+            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
+        }
+
         public async Task<List<ConversationItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId) {
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);

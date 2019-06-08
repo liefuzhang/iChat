@@ -12,13 +12,11 @@ using System.Threading.Tasks;
 using iChat.Api.Dtos;
 using iChat.Api.Constants;
 
-namespace iChat.Api.Controllers
-{
+namespace iChat.Api.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MessagesController : ControllerBase
-    {
+    public class MessagesController : ControllerBase {
         private readonly INotificationService _notificationService;
         private readonly IMessageService _messageService;
         private readonly IChannelService _channelService;
@@ -30,8 +28,7 @@ namespace iChat.Api.Controllers
             IMessageService messageService,
             IChannelService channelService,
             IConversationService conversationService,
-            ICacheService cacheService)
-        {
+            ICacheService cacheService) {
             _notificationService = notificationService;
             _messageService = messageService;
             _channelService = channelService;
@@ -41,10 +38,8 @@ namespace iChat.Api.Controllers
 
         // GET api/messages/channel/1
         [HttpGet("channel/{id}")]
-        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForChannelAsync(int id)
-        {
-            if (id == iChatConstants.DefaultChannelIdInRequest)
-            {
+        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForChannelAsync(int id) {
+            if (id == iChatConstants.DefaultChannelIdInRequest) {
                 id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
             }
 
@@ -54,38 +49,37 @@ namespace iChat.Api.Controllers
 
         // GET api/messages/conversation/1
         [HttpGet("conversation/{id}")]
-        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id)
-        {
+        public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id) {
             var messages = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
+            await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, id);
+
             return messages.ToList();
         }
 
         // POST api/messages/conversation/1
         [HttpPost("conversation/{id}")]
-        public async Task<IActionResult> PostMessageToConversationAsync(int id, [FromBody] string newMessage)
-        {
+        public async Task<IActionResult> PostMessageToConversationAsync(int id, [FromBody] string newMessage) {
             await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
             await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkplaceId());
-            _notificationService.SendUpdateConversationNotificationAsync(userIds, id);
+            _notificationService.SendNewConversationMessageNotificationAsync(userIds, id);
 
             return Ok();
         }
 
         // POST api/messages/channel/1
         [HttpPost("channel/{id}")]
-        public async Task<IActionResult> PostMessageToChannelAsync(int id, [FromBody] string newMessage)
-        {
-            if (id == iChatConstants.DefaultChannelIdInRequest)
-            {
+        public async Task<IActionResult> PostMessageToChannelAsync(int id, [FromBody] string newMessage) {
+            if (id == iChatConstants.DefaultChannelIdInRequest) {
                 id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
             }
 
             await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
-            _notificationService.SendUpdateChannelNotificationAsync(userIds, id);
+            _notificationService.SendNewChannelMessageNotificationAsync(userIds, id);
 
             return Ok();
         }

@@ -30,7 +30,7 @@ function SidebarItem(props) {
           {props.isChannel && <span># </span>}
           {props.name}
         </span>
-        {props.unreadMessageCount && !props.active && (
+        {!!props.unreadMessageCount && !props.active && (
           <span className="unread-badge">{props.unreadMessageCount}</span>
         )}
       </div>

@@ -10,13 +10,13 @@ class ContentMessages extends React.Component {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
-    this.onUpdateChannel = this.onUpdateChannel.bind(this);
-    this.onUpdateConversation = this.onUpdateConversation.bind(this);
+    this.onNewChannelMessage = this.onNewChannelMessage.bind(this);
+    this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
     this.authService = new AuthService(props);
 
     if (props.hubConnection) {
-      props.hubConnection.on("UpdateChannel", this.onUpdateChannel);
-      props.hubConnection.on("UpdateConversation", this.onUpdateConversation);
+      props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
+      props.hubConnection.on("NewConversationMessage", this.onNewConversationMessage);
     }
 
     this.state = {
@@ -99,13 +99,13 @@ class ContentMessages extends React.Component {
     if (this.state.messageGroups.length > 0) this.scrollDetector.init();
   }
 
-  onUpdateChannel(channelId) {
+  onNewChannelMessage(channelId) {
     if (this.props.section === "channel" && this.props.id === channelId) {
       this.fetchData(this.props);
     }
   }
 
-  onUpdateConversation(conversationId) {
+  onNewConversationMessage(conversationId) {
     if (this.props.section === "conversation" && this.props.id === conversationId) {
       this.fetchData(this.props);
     }
