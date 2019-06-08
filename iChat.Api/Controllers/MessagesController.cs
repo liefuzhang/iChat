@@ -44,17 +44,20 @@ namespace iChat.Api.Controllers {
             }
 
             var messageGroups = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkplaceId());
+            await _cacheService.RemoveUnreadChannelIdForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            _notificationService.SendUpdateChannelListNotificationAsync(new[] { User.GetUserId() }, id);
+
             return messageGroups.ToList();
         }
 
         // GET api/messages/conversation/1
         [HttpGet("conversation/{id}")]
         public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id) {
-            var messages = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
+            var messageGroups = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
             await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
             _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, id);
 
-            return messages.ToList();
+            return messageGroups.ToList();
         }
 
         // POST api/messages/conversation/1
@@ -79,6 +82,7 @@ namespace iChat.Api.Controllers {
             await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
 
             var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
+            await _cacheService.AddUnreadChannelIdForUsersAsync(id, userIds, User.GetWorkplaceId());
             _notificationService.SendNewChannelMessageNotificationAsync(userIds, id);
 
             return Ok();

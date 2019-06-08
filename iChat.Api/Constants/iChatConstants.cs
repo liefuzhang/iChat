@@ -19,5 +19,6 @@ namespace iChat.Api.Constants
 
         public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
         public static readonly string RedisKeyRecentConversationPrefix = "RecentConversation";
+        public static readonly string RedisKeyRecentUnreadChannelIdsPrefix = "UnreadChannels";
     }
 }

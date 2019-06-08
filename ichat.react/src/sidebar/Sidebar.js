@@ -1,6 +1,7 @@
 import React from "react";
 import "./Sidebar.css";
-import SidebarItem from "./SidebarItem";
+import SidebarItemConversation from "./SidebarItem.Conversation";
+import SidebarItemChannel from "./SidebarItem.Channel";
 import SidebarHeader from "./SidebarHeader";
 import AuthService from "services/AuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,12 +20,20 @@ class Sidebar extends React.Component {
     this.onStartConversation = this.onStartConversation.bind(this);
     this.onCloseStartConversation = this.onCloseStartConversation.bind(this);
     this.onConversationStarted = this.onConversationStarted.bind(this);
+    this.onUpdateChannelList = this.onUpdateChannelList.bind(this);
     this.onUpdateConversationList = this.onUpdateConversationList.bind(this);
-    
+
     if (props.hubConnection) {
-      // props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
-      props.hubConnection.on("NewConversationMessage", this.onUpdateConversationList);
-      props.hubConnection.on("UpdateConversationList", this.onUpdateConversationList);
+      props.hubConnection.on("NewChannelMessage", this.onUpdateChannelList);
+      props.hubConnection.on("UpdateChannelList", this.onUpdateChannelList);
+      props.hubConnection.on(
+        "NewConversationMessage",
+        this.onUpdateConversationList
+      );
+      props.hubConnection.on(
+        "UpdateConversationList",
+        this.onUpdateConversationList
+      );
     }
 
     this.state = {
@@ -38,35 +47,39 @@ class Sidebar extends React.Component {
 
   onCreateChannel(event) {
     this.setState({
-      isCreateChannelModalOpen: true,
+      isCreateChannelModalOpen: true
     });
   }
 
-  onCloseCreateChannel(){
+  onCloseCreateChannel() {
     this.setState({
       isCreateChannelModalOpen: false
     });
   }
 
-  onChannelCreated (){
+  onChannelCreated() {
     this.onCloseCreateChannel();
+    this.fetchChannels();
+  }
+
+  onUpdateChannelList() {
     this.fetchChannels();
   }
 
   onStartConversation(event) {
     this.setState({
-      isStartConversationModalOpen: true,
+      isStartConversationModalOpen: true
     });
   }
 
-  onCloseStartConversation(){
+  onCloseStartConversation() {
     this.setState({
       isStartConversationModalOpen: false
     });
   }
 
   onConversationStarted() {
-    this.onCloseStartConversation(); 
+    this.onCloseStartConversation();
     this.fetchConversations();
   }
 
@@ -95,7 +108,7 @@ class Sidebar extends React.Component {
     return (
       <div id="sidebar">
         <section>
-          <SidebarHeader {...this.props}/>
+          <SidebarHeader {...this.props} />
         </section>
         <section>
           <div className="section-title">
@@ -117,14 +130,7 @@ class Sidebar extends React.Component {
             )
               active = true;
             return (
-              <SidebarItem
-                key={c.id}
-                section="channel"
-                isChannel={true}
-                name={c.name}
-                id={c.id}
-                active={active}
-              />
+              <SidebarItemChannel key={c.id} channel={c} active={active} />
             );
           })}
           <div>
@@ -154,14 +160,10 @@ class Sidebar extends React.Component {
             let active = false;
             if (!this.props.isChannel && this.props.id === c.id) active = true;
             return (
-              <SidebarItem
+              <SidebarItemConversation
                 key={c.id}
-                section="conversation"
-                isChannel={false}
-                name={c.name}
-                id={c.id}
+                conversation={c}
                 active={active}
-                unreadMessageCount={c.unreadMessageCount}
               />
             );
           })}

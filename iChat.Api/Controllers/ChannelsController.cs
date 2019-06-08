@@ -28,7 +28,7 @@ namespace iChat.Api.Controllers {
 
         // GET api/channels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Channel>>> GetAsync() {
+        public async Task<ActionResult<IEnumerable<ChannelDto>>> GetAsync() {
             var channels = await _channelService
                 .GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
             return channels.ToList();
@@ -36,7 +36,7 @@ namespace iChat.Api.Controllers {
 
         // GET api/channels/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Channel>> GetAsync(int id) {
+        public async Task<ActionResult<ChannelDto>> GetAsync(int id) {
             if (id == iChatConstants.DefaultChannelIdInRequest)
             {
                 id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());

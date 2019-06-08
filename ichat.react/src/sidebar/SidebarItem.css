@@ -23,6 +23,15 @@
   color: white;
 }
 
+.sidebar-item .sidebar-item-name {
+  flex: 1 1 auto;
+  min-width: 0px;
+  overflow: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .sidebar-item .unread-badge {
   background-color: rgb(207, 35, 81);
   width: 26px;

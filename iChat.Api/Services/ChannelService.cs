@@ -1,4 +1,5 @@
-﻿using iChat.Api.Constants;
+﻿using AutoMapper;
+using iChat.Api.Constants;
 using iChat.Api.Data;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,30 +13,41 @@ namespace iChat.Api.Services {
     public class ChannelService : IChannelService {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
-        private readonly IDistributedCache _cache;
+        private ICacheService _cacheService;
+        private readonly IMapper _mapper;
 
-        public ChannelService(iChatContext context, IUserService userService) {
+        public ChannelService(iChatContext context, IUserService userService,
+            ICacheService cacheService, IMapper mapper) {
             _context = context;
             _userService = userService;
+            _cacheService = cacheService;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Channel>> GetChannelsAsync(int userId, int workspaceId) {
+        public async Task<IEnumerable<ChannelDto>> GetChannelsAsync(int userId, int workspaceId) {
+            var unreadChannelIds = await _cacheService.GetUnreadChannelIdsForUserAsync(userId, workspaceId);
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.ChannelSubscriptions.Any(cs => cs.UserId == userId &&
                         cs.ChannelId == c.Id))
                 .ToListAsync();
 
-            return channels;
+            var channelDtos = channels.Select(async c => {
+                var dto = _mapper.Map<ChannelDto>(c);
+                dto.HasUnreadMessage = unreadChannelIds.Contains(c.Id);
+                return dto;
+            });
+
+            return await Task.WhenAll(channelDtos);
         }
 
-        public async Task<Channel> GetChannelByIdAsync(int id, int workspaceId) {
+        public async Task<ChannelDto> GetChannelByIdAsync(int id, int workspaceId) {
             var channel = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.Id == id)
                 .SingleOrDefaultAsync();
 
-            return channel;
+            return _mapper.Map<ChannelDto>(channel);
         }
 
         public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "") {
