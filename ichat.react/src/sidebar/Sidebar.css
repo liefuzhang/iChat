@@ -7,10 +7,14 @@
   flex: 0 0 auto;
   box-sizing: border-box;
 }
+
+#sidebar section+section {
+  margin: 25px 0 5px;
+}
+
 #sidebar .section-title {
   line-height: 2;
   font-weight: 500;
-  margin: 25px 0 5px;
   display: flex;
   align-items: center;
 }
@@ -29,8 +33,7 @@
   flex: 0 0 auto;
 }
 
-#sidebar .icon-circle:hover{
+#sidebar .icon-circle:hover {
   cursor: pointer;
   color: #eee;
 }
-

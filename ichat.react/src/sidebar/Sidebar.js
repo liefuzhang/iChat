@@ -2,6 +2,7 @@ import React from "react";
 import "./Sidebar.css";
 import SidebarItemConversation from "./SidebarItem.Conversation";
 import SidebarItemChannel from "./SidebarItem.Channel";
+import SidebarItemJoinChannel from "./SidebarItem.JoinChannel";
 import SidebarHeader from "./SidebarHeader";
 import AuthService from "services/AuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -89,13 +90,13 @@ class Sidebar extends React.Component {
 
   fetchChannels() {
     this.authService
-      .fetch("/api/channels")
+      .fetch("/api/channels/forUser")
       .then(channels => this.setState({ channels }));
   }
 
   fetchConversations() {
     this.authService
-      .fetch("/api/conversations")
+      .fetch("/api/conversations/recent")
       .then(conversations => this.setState({ conversations: conversations }));
   }
 
@@ -137,13 +138,16 @@ class Sidebar extends React.Component {
             {this.state.isCreateChannelModalOpen && (
               <Modal onClose={this.onCloseCreateChannel}>
                 <CreateChannelForm
-                  onClose={this.onCloseCreateChannel}
                   onChannelCreated={this.onChannelCreated}
                   {...this.props}
                 />
               </Modal>
             )}
           </div>
+        </section>
+
+        <section>
+          <SidebarItemJoinChannel onUpdateChannelList={this.onUpdateChannelList} {...this.props}/>
         </section>
 
         <section>
@@ -171,7 +175,6 @@ class Sidebar extends React.Component {
             {this.state.isStartConversationModalOpen && (
               <Modal onClose={this.onCloseStartConversation}>
                 <StartConversationForm
-                  onClose={this.onCloseStartConversation}
                   onConversationStarted={this.onConversationStarted}
                   {...this.props}
                 />

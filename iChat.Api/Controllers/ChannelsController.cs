@@ -26,25 +26,31 @@ namespace iChat.Api.Controllers {
             _cacheService = cacheService;
         }
 
-        // GET api/channels
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChannelDto>>> GetAsync() {
+        // GET api/channels/forUser
+        [HttpGet("forUser")]
+        public async Task<ActionResult<IEnumerable<ChannelDto>>> GetChannelsForUserAsync() {
             var channels = await _channelService
-                .GetChannelsAsync(User.GetUserId(), User.GetWorkplaceId());
+                .GetChannelsForUserAsync(User.GetUserId(), User.GetWorkplaceId());
+            return channels.ToList();
+        }
+
+        // GET api/channels/allUnsubscribed
+        [HttpGet("allUnsubscribed")]
+        public async Task<ActionResult<IEnumerable<ChannelDto>>> GetAllUnsubscribedChannelsAsync() {
+            var channels = await _channelService
+                .GetAllUnsubscribedChannelsForUserAsync(User.GetUserId(), User.GetWorkplaceId());
             return channels.ToList();
         }
 
         // GET api/channels/1
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDto>> GetAsync(int id) {
-            if (id == iChatConstants.DefaultChannelIdInRequest)
-            {
+            if (id == iChatConstants.DefaultChannelIdInRequest) {
                 id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
             }
 
             var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkplaceId());
-            if (channel == null)
-            {
+            if (channel == null) {
                 return NotFound();
             }
 
@@ -58,6 +64,14 @@ namespace iChat.Api.Controllers {
             await _channelService.AddUserToChannelAsync(id, User.GetUserId(), User.GetWorkplaceId());
 
             return Ok(id);
-        }        
+        }
+
+        // POST api/channels/join
+        [HttpPost("join")]
+        public async Task<IActionResult> JoinChannelAsync([FromBody] int channelId) {
+            await _channelService.AddUserToChannelAsync(channelId, User.GetUserId(), User.GetWorkplaceId());
+
+            return Ok();
+        }
     }
 }

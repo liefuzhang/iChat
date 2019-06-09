@@ -10,7 +10,8 @@ namespace iChat.Api.Services {
         Task AddUserToDefaultChannelsAsync(int userId, int workspaceId);
         Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "");
         Task<ChannelDto> GetChannelByIdAsync(int id, int workspaceId);
-        Task<IEnumerable<ChannelDto>> GetChannelsAsync(int userId, int workspaceId);
+        Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId);
+        Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId);
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
         Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
     }

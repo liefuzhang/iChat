@@ -26,7 +26,7 @@ namespace iChat.UnitTests.Services {
         public async Task GetChannelsAsync_WhenCalled_ReturnChannels() {
             _context.SeedTestData();
 
-            var result = await _channelService.GetChannelsAsync(SeedData.TestUser1Id, SeedData.TestWorkspaceId);
+            var result = await _channelService.GetChannelsForUserAsync(SeedData.TestUser1Id, SeedData.TestWorkspaceId);
 
             Assert.AreEqual(1, result.Count());
         }

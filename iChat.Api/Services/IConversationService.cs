@@ -9,7 +9,7 @@ namespace iChat.Api.Services {
         Task<int> StartConversationWithOthersAsync(List<int> withUserIds, int userId, int workspaceId);
         Task<int> StartSelfConversationAsync(int userId, int workspaceId);
         Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId);
-        Task<IEnumerable<ConversationDto>> GetConversationsForUserAsync(int userId, int workspaceId);
+        Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId);
         Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId);
         Task<bool> IsSelfConversationAsync(int conversationId, int userId);
     }

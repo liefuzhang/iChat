@@ -24,7 +24,7 @@ namespace iChat.Api.Services {
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetChannelsAsync(int userId, int workspaceId) {
+        public async Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId) {
             var unreadChannelIds = await _cacheService.GetUnreadChannelIdsForUserAsync(userId, workspaceId);
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
@@ -32,13 +32,32 @@ namespace iChat.Api.Services {
                         cs.ChannelId == c.Id))
                 .ToListAsync();
 
-            var channelDtos = channels.Select(async c => {
+            var channelDtos = channels.Select(c => {
                 var dto = _mapper.Map<ChannelDto>(c);
                 dto.HasUnreadMessage = unreadChannelIds.Contains(c.Id);
                 return dto;
             });
 
+            return channelDtos;
+        }
+
+        public async Task<IEnumerable<ChannelDto>> GetAllChannelsAsync(int workspaceId) {
+            var channels = await _context.Channels.AsNoTracking()
+                .Where(c => c.WorkspaceId == workspaceId)
+                .ToListAsync();
+
+            var channelDtos = channels.Select(async c => {
+                var dto = _mapper.Map<ChannelDto>(c);
+                return dto;
+            });
+
             return await Task.WhenAll(channelDtos);
+        }
+
+        public async Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId) {
+            var allChannels = await GetAllChannelsAsync(workspaceId);
+            var subscribedChannels = await GetChannelsForUserAsync(userId, workspaceId);
+            return allChannels.Where(c => !subscribedChannels.Any(sc => sc.Id == c.Id));
         }
 
         public async Task<ChannelDto> GetChannelByIdAsync(int id, int workspaceId) {

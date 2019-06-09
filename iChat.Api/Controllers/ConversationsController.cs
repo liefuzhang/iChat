@@ -23,11 +23,11 @@ namespace iChat.Api.Controllers {
             _conversationService = conversationService;
         }
 
-        // GET api/conversations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ConversationDto>>> GetAsync() {
+        // GET api/conversations/recent
+        [HttpGet("recent")]
+        public async Task<ActionResult<IEnumerable<ConversationDto>>> GetRecentConversationsAsync() {
             var conversations = await _conversationService
-                .GetConversationsForUserAsync(User.GetUserId(), User.GetWorkplaceId());
+                .GetRecentConversationsForUserAsync(User.GetUserId(), User.GetWorkplaceId());
             return conversations.ToList();
         }
 

@@ -6,7 +6,6 @@ import AuthService from "services/AuthService";
 function SidebarItemConversation(props) {
   function setActiveSidebarItem() {
     var authService = new AuthService(props);
-
     authService.fetch(`/api/app/activeSidebarItem`, {
       method: "POST",
       body: JSON.stringify({
