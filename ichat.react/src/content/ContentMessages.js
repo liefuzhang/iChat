@@ -27,7 +27,7 @@ class ContentMessages extends React.Component {
       init: function() {
         this.calculateMessageGroupOffsetTops();
         this.scrollableElement = document.querySelector(
-          ".simplebar-content-wrapper"
+          ".message-container .simplebar-content-wrapper"
         );
         this.scrollableElement.onscroll = this.handler.bind(this);
         window.onresize = this.calculateMessageGroupOffsetTops;

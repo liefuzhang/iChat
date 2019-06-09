@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "modals/Modal";
 import CreateChannelForm from "modalForms/CreateChannelForm";
 import StartConversationForm from "modalForms/StartConversationForm";
+import SimpleBar from "simplebar-react";
+import "lib/simplebar.css";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -107,7 +109,7 @@ class Sidebar extends React.Component {
 
   render() {
     return (
-      <div id="sidebar">
+      <SimpleBar id="sidebar">
         <section>
           <SidebarHeader {...this.props} />
         </section>
@@ -182,7 +184,7 @@ class Sidebar extends React.Component {
             )}
           </div>
         </section>
-      </div>
+      </SimpleBar>
     );
   }
 }
