@@ -8,7 +8,6 @@
 }
 .message-container .message-scrollable {
   max-height: 100%;
-  visibility: hidden;
 }
 
 .message-container .simplebar-track.simplebar-vertical {

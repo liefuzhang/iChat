@@ -4,13 +4,11 @@
   color: #ddd;
   min-height: 100vh;
   max-height: 100vh;
-  padding: 15px;
+  padding: 15px 0;
   flex: 0 0 auto;
   box-sizing: border-box;
-}
-
-#sidebar section+section {
-  margin: 25px 0 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 #sidebar .section-title {
@@ -18,6 +16,7 @@
   font-weight: 500;
   display: flex;
   align-items: center;
+  padding: 0 15px;
 }
 
 #sidebar .section-title span {
@@ -37,4 +36,22 @@
 #sidebar .icon-circle:hover {
   cursor: pointer;
   color: #eee;
+}
+
+#sidebar .simplebar-scrollbar:before {
+  background: white;
+}
+
+.sidebar-header {
+  flex: 0 0 auto;
+}
+
+.sidebar-scrollable{
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+
+.sidebar-scrollable section {
+  margin: 25px 0 5px;
 }

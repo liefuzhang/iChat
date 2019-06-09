@@ -31,6 +31,8 @@ class ContentMessages extends React.Component {
         );
         this.scrollableElement.onscroll = this.handler.bind(this);
         window.onresize = this.calculateMessageGroupOffsetTops;
+        this.lastGroupIndex = -1;
+        this.handler();
       },
       scrollableElement: undefined,
       lastGroupIndex: -1,
@@ -68,24 +70,26 @@ class ContentMessages extends React.Component {
               "sticky-on-top"
             );
           }
-          this.lastSectionIndex = currentGroupIndex;
+          this.lastGroupIndex = currentGroupIndex;
         }
       }
     };
+  }
+
+  scrollToBottom() {
+    var scrollable = document.querySelector(".message-container .simplebar-content-wrapper");
+    scrollable.scrollTop = scrollable.scrollHeight;
   }
 
   fetchData(props) {
     return this.authService
       .fetch(`/api/messages/${props.section}/${props.id}`)
       .then(messageGroups => this.setState({ messageGroups }))
-      .then(() => scrollToBottom());
+      .then(() => this.scrollToBottom());
   }
 
   componentDidMount() {
-    this.fetchData(this.props).then(() => {
-      var messageScrollable = document.querySelector(".message-scrollable");
-      messageScrollable.style.visibility = "visible"; // show now to avoid flickering
-    });
+    this.fetchData(this.props);
   }
 
   componentDidUpdate(prevProps) {
@@ -132,11 +136,6 @@ class ContentMessages extends React.Component {
       </div>
     );
   }
-}
-
-function scrollToBottom() {
-  var scrollable = document.querySelector(".simplebar-content-wrapper");
-  scrollable.scrollTop = scrollable.scrollHeight;
 }
 
 export default ContentMessages;

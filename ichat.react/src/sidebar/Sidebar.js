@@ -109,82 +109,88 @@ class Sidebar extends React.Component {
 
   render() {
     return (
-      <SimpleBar id="sidebar">
-        <section>
+      <div id="sidebar">
+        <section className="sidebar-header">
           <SidebarHeader {...this.props} />
         </section>
-        <section>
-          <div className="section-title">
-            <span>CHANNELS</span>
-            <FontAwesomeIcon
-              icon="plus-circle"
-              title="Create a channel"
-              className="icon-circle"
-              onClick={this.onCreateChannel}
-            />
-          </div>
-          {this.state.channels.map(c => {
-            let active = false;
-            if (this.props.isChannel && this.props.id === c.id) active = true;
-            if (
-              this.props.isChannel &&
-              this.props.id === 0 &&
-              c.name === "general"
-            )
-              active = true;
-            return (
-              <SidebarItemChannel key={c.id} channel={c} active={active} />
-            );
-          })}
-          <div>
-            {this.state.isCreateChannelModalOpen && (
-              <Modal onClose={this.onCloseCreateChannel}>
-                <CreateChannelForm
-                  onChannelCreated={this.onChannelCreated}
-                  {...this.props}
-                />
-              </Modal>
-            )}
-          </div>
-        </section>
-
-        <section>
-          <SidebarItemJoinChannel onUpdateChannelList={this.onUpdateChannelList} {...this.props}/>
-        </section>
-
-        <section>
-          <div className="section-title">
-            <span>DIRECT MESSAGES</span>
-            <FontAwesomeIcon
-              icon="plus-circle"
-              title="Start a conversation"
-              className="icon-circle"
-              onClick={this.onStartConversation}
-            />
-          </div>
-          {this.state.conversations.map(c => {
-            let active = false;
-            if (!this.props.isChannel && this.props.id === c.id) active = true;
-            return (
-              <SidebarItemConversation
-                key={c.id}
-                conversation={c}
-                active={active}
+        <SimpleBar className="sidebar-scrollable">
+          <section>
+            <div className="section-title">
+              <span>CHANNELS</span>
+              <FontAwesomeIcon
+                icon="plus-circle"
+                title="Create a channel"
+                className="icon-circle"
+                onClick={this.onCreateChannel}
               />
-            );
-          })}
-          <div>
-            {this.state.isStartConversationModalOpen && (
-              <Modal onClose={this.onCloseStartConversation}>
-                <StartConversationForm
-                  onConversationStarted={this.onConversationStarted}
-                  {...this.props}
+            </div>
+            {this.state.channels.map(c => {
+              let active = false;
+              if (this.props.isChannel && this.props.id === c.id) active = true;
+              if (
+                this.props.isChannel &&
+                this.props.id === 0 &&
+                c.name === "general"
+              )
+                active = true;
+              return (
+                <SidebarItemChannel key={c.id} channel={c} active={active} />
+              );
+            })}
+            <div>
+              {this.state.isCreateChannelModalOpen && (
+                <Modal onClose={this.onCloseCreateChannel}>
+                  <CreateChannelForm
+                    onChannelCreated={this.onChannelCreated}
+                    {...this.props}
+                  />
+                </Modal>
+              )}
+            </div>
+          </section>
+
+          <section>
+            <SidebarItemJoinChannel
+              onUpdateChannelList={this.onUpdateChannelList}
+              {...this.props}
+            />
+          </section>
+
+          <section>
+            <div className="section-title">
+              <span>DIRECT MESSAGES</span>
+              <FontAwesomeIcon
+                icon="plus-circle"
+                title="Start a conversation"
+                className="icon-circle"
+                onClick={this.onStartConversation}
+              />
+            </div>
+            {this.state.conversations.map(c => {
+              let active = false;
+              if (!this.props.isChannel && this.props.id === c.id)
+                active = true;
+              return (
+                <SidebarItemConversation
+                  key={c.id}
+                  conversation={c}
+                  active={active}
                 />
-              </Modal>
-            )}
-          </div>
-        </section>
-      </SimpleBar>
+              );
+            })}
+            <div>
+              {this.state.isStartConversationModalOpen && (
+                <Modal onClose={this.onCloseStartConversation}>
+                  <StartConversationForm
+                    onConversationStarted={this.onConversationStarted}
+                    {...this.props}
+                  />
+                </Modal>
+              )}
+            </div>
+          </section>
+        </SimpleBar>
+      </div>
     );
   }
 }
