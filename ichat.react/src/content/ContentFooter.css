@@ -36,6 +36,10 @@
   font-weight: 600;
 }
 
+.footer .user-mention-container {
+  position: relative;
+}
+
 /* overrides for quill editor */
 .ql-container {
   border: none !important;

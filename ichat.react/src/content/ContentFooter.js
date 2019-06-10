@@ -2,6 +2,7 @@ import React from "react";
 import "./ContentFooter.css";
 import Quill from "quill";
 import AuthService from "services/AuthService";
+import UserMention from "./UserMention";
 
 class ContentFooter extends React.Component {
   constructor(props) {
@@ -22,13 +23,17 @@ class ContentFooter extends React.Component {
 
     this.state = {
       showOtherTypingInfo: false,
-      otherTypingUserName: undefined
+      otherTypingUserName: undefined,
+      showMention: true,
+      userList: [],
+      mentionUserList: []
     };
   }
 
   componentDidMount() {
     this.initQuill();
     this.registerEventHandlers();
+    this.fecthUsers();
   }
 
   componentWillUnmount() {
@@ -43,6 +48,19 @@ class ContentFooter extends React.Component {
       this.otherTypingNames = [];
       this.toggleOtherTypingInfo(false);
     }
+  }
+
+  fecthUsers() {
+    this.authService.fetch("/api/users").then(users => {
+      let currentUserId = this.props.userProfile.id;
+      let userList = users
+        .filter(u => u.id !== currentUserId)
+        .map(u => {
+          return { displayName: u.displayName, id: u.id };
+        });
+      this.setState({ userList: userList });
+      this.setState({mentionUserList: userList.slice(0, 7)}); // move to evnet handler later
+    });
   }
 
   configPlainClipboard() {
@@ -238,13 +256,19 @@ class ContentFooter extends React.Component {
     return (
       <div className="footer">
         <form id="messageForm" method="post">
+          {this.state.showMention && (
+            <div className="user-mention-container">
+              <UserMention userList={this.state.mentionUserList} />
+            </div>
+          )}
           <div className="message-box">
             <div id="messageEditor" />
           </div>
         </form>
         {this.state.showOtherTypingInfo && (
           <div className="message-typing-info">
-            <span>{this.state.otherTypingUserName}</span> {this.otherTypingNames.length > 1 ? "are" : "is"} typing
+            <span>{this.state.otherTypingUserName}</span>{" "}
+            {this.otherTypingNames.length > 1 ? "are" : "is"} typing
           </div>
         )}
         <div className="message-prompt">

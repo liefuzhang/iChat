@@ -45,6 +45,7 @@ class Content extends React.Component {
           section={this.props.section}
           id={this.props.id}
           hubConnection={this.props.hubConnection}
+          userProfile={this.props.userProfile}
         />
       </div>
     );

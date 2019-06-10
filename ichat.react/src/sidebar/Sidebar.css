@@ -15,12 +15,15 @@
 #sidebar .segment {
   position: absolute;
   top: 0;
+  left: 0;
   border-radius: 0;
   height: 100%;
+  width: 100%;
   z-index: 100;
   background: #206890;
   box-shadow: none;
   border: 0;
+  box-sizing: border-box;
 }
 
 #sidebar .segment img + img {

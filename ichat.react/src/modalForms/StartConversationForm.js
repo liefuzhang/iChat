@@ -14,7 +14,7 @@ class StartConversationForm extends React.Component {
     this.authService = new AuthService(props);
 
     this.state = {
-      userList: undefined
+      userList: []
     };
 
     this.conversationUserIds = [];
@@ -72,7 +72,7 @@ class StartConversationForm extends React.Component {
               multiple
               search
               selection
-              options={this.state.userList || []}
+              options={this.state.userList}
               onChange={this.changeConversationUser}
             />
           <button type="submit" className="btn form-control">
