@@ -7,3 +7,23 @@
   padding: 0 20px;
   overflow: hidden;
 }
+
+#content .segment {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+  box-shadow: none;
+  border: 0;
+}
+
+#content .segment img:first-of-type {
+  height: 30px;
+}
+
+#content .segment img + img {
+  margin-top: 56px;
+}

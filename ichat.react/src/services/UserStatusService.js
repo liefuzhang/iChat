@@ -15,8 +15,8 @@ class UserStatusService {
     return status ? status.name : "";
   }
 
-  isActive(status) {
-    return status === "Active";
+  isNotActive(status) {
+    return status !== "Active";
   }
 }
 

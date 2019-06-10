@@ -16,7 +16,10 @@ class ContentMessages extends React.Component {
 
     if (props.hubConnection) {
       props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
-      props.hubConnection.on("NewConversationMessage", this.onNewConversationMessage);
+      props.hubConnection.on(
+        "NewConversationMessage",
+        this.onNewConversationMessage
+      );
     }
 
     this.state = {
@@ -77,7 +80,9 @@ class ContentMessages extends React.Component {
   }
 
   scrollToBottom() {
-    var scrollable = document.querySelector(".message-container .simplebar-content-wrapper");
+    var scrollable = document.querySelector(
+      ".message-container .simplebar-content-wrapper"
+    );
     scrollable.scrollTop = scrollable.scrollHeight;
   }
 
@@ -89,12 +94,14 @@ class ContentMessages extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData(this.props);
+    this.fetchData(this.props).then(() => {
+      this.props.onFinishLoading();
+    });
   }
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.section !== prevProps.section || 
+      this.props.section !== prevProps.section ||
       this.props.id !== prevProps.id
     ) {
       this.fetchData(this.props);
@@ -110,7 +117,10 @@ class ContentMessages extends React.Component {
   }
 
   onNewConversationMessage(conversationId) {
-    if (this.props.section === "conversation" && this.props.id === conversationId) {
+    if (
+      this.props.section === "conversation" &&
+      this.props.id === conversationId
+    ) {
       this.fetchData(this.props);
     }
   }
@@ -128,7 +138,11 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {g.messages.map(m => (
-                <ContentMessageItem key={m.id} message={m} userProfile={this.props.userProfile} />
+                <ContentMessageItem
+                  key={m.id}
+                  message={m}
+                  userProfile={this.props.userProfile}
+                />
               ))}
             </div>
           ))}

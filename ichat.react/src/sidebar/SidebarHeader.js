@@ -6,7 +6,7 @@ import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
 import SetStatusForm from "modalForms/SetStatusForm";
 import AuthService from "services/AuthService";
-import UserStatus from "services/UserStatusService";
+import UserStatusService from "services/UserStatusService";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class SidebarHeader extends React.Component {
     this.onCloseSetStatus = this.onCloseSetStatus.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.authService = new AuthService(props);
-    this.userStatus = new UserStatus();
+    this.UserStatusService = new UserStatusService();
 
     this.state = {
       isInvitePeopleModalOpen: false,
@@ -111,8 +111,8 @@ class SidebarHeader extends React.Component {
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
               {(() => {
-                if (!this.userStatus.isActive(this.props.userStatus)) {
-                  let statusName = this.userStatus.getStatusName(
+                if (this.UserStatusService.isNotActive(this.props.userStatus)) {
+                  let statusName = this.UserStatusService.getStatusName(
                     this.props.userStatus
                   );
                   return (
@@ -138,10 +138,12 @@ class SidebarHeader extends React.Component {
                     {this.props.userProfile.displayName}
                   </div>
                   <ul>
-                    {this.userStatus.isActive(this.props.userStatus) ? (
-                      <li onClick={this.onSetStatus}>Set status</li>
-                    ) : (
+                    {this.UserStatusService.isNotActive(
+                      this.props.userStatus
+                    ) ? (
                       <li onClick={this.onClearStatus}>Clear status</li>
+                    ) : (
+                      <li onClick={this.onSetStatus}>Set status</li>
                     )}
 
                     <li>Profile</li>

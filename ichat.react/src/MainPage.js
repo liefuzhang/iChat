@@ -27,7 +27,8 @@ class MainPage extends React.Component {
 
     this.state = {
       savedActiveSidebarItem: undefined,
-      userStatus: undefined
+      userStatus: undefined,
+      isPageLoading: true
     };
   }
 

@@ -11,6 +11,7 @@ import CreateChannelForm from "modalForms/CreateChannelForm";
 import StartConversationForm from "modalForms/StartConversationForm";
 import SimpleBar from "simplebar-react";
 import "lib/simplebar.css";
+import { Loader, Image, Segment } from "semantic-ui-react";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -42,10 +43,11 @@ class Sidebar extends React.Component {
     this.state = {
       channels: [],
       conversations: [],
-      isCreateChannelModalOpen: false
+      isCreateChannelModalOpen: false,
+      isPageLoading: true
     };
 
-    this.fecthData();
+    this.fecthDataOnLoad();
   }
 
   onCreateChannel(event) {
@@ -91,25 +93,35 @@ class Sidebar extends React.Component {
   }
 
   fetchChannels() {
-    this.authService
+    return this.authService
       .fetch("/api/channels/forUser")
       .then(channels => this.setState({ channels }));
   }
 
   fetchConversations() {
-    this.authService
+    return this.authService
       .fetch("/api/conversations/recent")
       .then(conversations => this.setState({ conversations: conversations }));
   }
 
-  fecthData() {
-    this.fetchChannels();
-    this.fetchConversations();
+  fecthDataOnLoad() {
+    Promise.all([this.fetchChannels(), this.fetchConversations()]).then(() => {
+      setTimeout(() => {
+        this.setState({ isPageLoading: false });
+      }, 1000);
+    });
   }
 
   render() {
     return (
       <div id="sidebar">
+        {this.state.isPageLoading && (
+          <Segment>
+            <Loader active />
+            <Image src="https://react.semantic-ui.com/images/wireframe/short-paragraph.png" />
+            <Image src="https://react.semantic-ui.com/images/wireframe/short-paragraph.png" />
+          </Segment>
+        )}
         <section className="sidebar-header">
           <SidebarHeader {...this.props} />
         </section>
