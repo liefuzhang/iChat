@@ -15,13 +15,15 @@ namespace iChat.Api.Services {
         private readonly IUserService _userService;
         private ICacheService _cacheService;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public ChannelService(iChatContext context, IUserService userService,
-            ICacheService cacheService, IMapper mapper) {
+            ICacheService cacheService, IMapper mapper, INotificationService notificationService) {
             _context = context;
             _userService = userService;
             _cacheService = cacheService;
             _mapper = mapper;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId) {
@@ -140,6 +142,18 @@ namespace iChat.Api.Services {
 
             var defaultChannelGeneral = await GetChannelByNameAsync(iChatConstants.DefaultChannelGeneral, workspaceId);
             return defaultChannelGeneral.Id;
+        }
+
+        public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId)
+        {
+            var currentUser = await _userService.GetUserByIdAsync(currentUserId, workspaceId);
+            if (currentUser == null)
+                return;
+
+            var userIds = (await GetAllChannelUserIdsAsync(channelId)).ToList();
+            userIds.Remove(currentUserId);
+
+            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, true, channelId);
         }
     }
 }

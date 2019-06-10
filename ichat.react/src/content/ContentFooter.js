@@ -18,9 +18,11 @@ class ContentFooter extends React.Component {
       props.hubConnection.on("UserTyping", this.onOtherUserTyping);
     }
 
+    this.otherTypingNames = [];
+
     this.state = {
       showOtherTypingInfo: false,
-      otherTypingName: undefined
+      otherTypingUserName: undefined
     };
   }
 
@@ -31,6 +33,16 @@ class ContentFooter extends React.Component {
 
   componentWillUnmount() {
     this.unregisterEventHandlers();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.isChannel !== prevProps.isChannel ||
+      this.props.id !== prevProps.id
+    ) {
+      this.otherTypingNames = [];
+      this.toggleOtherTypingInfo(false);
+    }
   }
 
   configPlainClipboard() {
@@ -115,17 +127,29 @@ class ContentFooter extends React.Component {
     });
   }
 
-  onOtherUserTyping(name) {
+  toggleOtherTypingInfo(show) {
+    let names =
+      this.otherTypingNames.length > 2
+        ? "Multiple users"
+        : this.otherTypingNames.join(", ");
+
     this.setState({
-      showOtherTypingInfo: true,
-      otherTypingName: name
+      showOtherTypingInfo: show,
+      otherTypingUserName: names
     });
-    setTimeout(() => {
-      this.setState({
-        showOtherTypingInfo: false,
-        otherTypingName: undefined
-      });
-    }, 10000);
+  }
+
+  onOtherUserTyping(name, isChannel, id) {
+    if (isChannel === this.props.isChannel && id === this.props.id) {
+      this.otherTypingNames.push(name);
+      this.toggleOtherTypingInfo(true);
+
+      setTimeout(() => {
+        let index = this.otherTypingNames.indexOf(name);
+        this.otherTypingNames.splice(index, 1);
+        this.toggleOtherTypingInfo(this.otherTypingNames.length > 0);
+      }, 10000);
+    }
   }
 
   registerEventHandlers() {
@@ -220,7 +244,7 @@ class ContentFooter extends React.Component {
         </form>
         {this.state.showOtherTypingInfo && (
           <div className="message-typing-info">
-            <span>{this.state.otherTypingName}</span> is typing
+            <span>{this.state.otherTypingUserName}</span> {this.otherTypingNames.length > 1 ? "are" : "is"} typing
           </div>
         )}
         <div className="message-prompt">

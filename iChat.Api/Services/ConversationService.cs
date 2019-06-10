@@ -114,7 +114,7 @@ namespace iChat.Api.Services {
             var userIds = (await GetAllConversationUserIdsAsync(conversationId)).ToList();
             userIds.Remove(currentUserId);
 
-            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName);
+            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
         }
 
         public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId) {

@@ -14,5 +14,6 @@ namespace iChat.Api.Services {
         Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId);
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
         Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
+        Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId);
     }
 }

@@ -9,6 +9,7 @@ namespace iChat.Api.Services
         Task SendNewConversationMessageNotificationAsync(IEnumerable<int> userIds, int conversationId);
         Task SendUpdateChannelListNotificationAsync(IEnumerable<int> userIds, int channelId);
         Task SendUpdateConversationListNotificationAsync(IEnumerable<int> userIds, int conversationId);
-        Task SendUserTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName);
+        Task SendUserTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName, bool inChannel,
+            int id);
     }
 }
