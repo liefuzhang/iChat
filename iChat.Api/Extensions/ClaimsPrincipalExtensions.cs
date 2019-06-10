@@ -12,7 +12,7 @@ namespace iChat.Api.Extensions
             return int.Parse(id);
         }
 
-        public static int GetWorkplaceId(this ClaimsPrincipal principal) {
+        public static int GetWorkspaceId(this ClaimsPrincipal principal) {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 

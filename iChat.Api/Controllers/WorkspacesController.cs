@@ -54,7 +54,7 @@ namespace iChat.Api.Controllers
         // GET api/workspaces
         public async Task<ActionResult<Workspace>> GetWorkspaceAsync()
         {
-            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkspaceId());
 
             return Ok(workspace);
         }

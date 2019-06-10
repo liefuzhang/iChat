@@ -15,12 +15,25 @@
 .footer .message-box.focus {
   border-color: #666;
 }
+
 .footer .message-prompt {
   font-size: 0.7rem;
   position: absolute;
   color: #666;
   bottom: -18px;
   right: 0;
+}
+
+.footer .message-typing-info {
+  font-size: 0.75rem;
+  position: absolute;
+  color: #666;
+  bottom: -18px;
+  left: 17px;
+}
+
+.footer .message-typing-info span {
+  font-weight: 600;
 }
 
 /* overrides for quill editor */

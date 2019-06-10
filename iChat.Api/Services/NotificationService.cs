@@ -41,5 +41,13 @@ namespace iChat.Api.Services
                 await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversationList", conversationId);
             }
         }
+
+        public async Task SendUserTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName)
+        {
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UserTyping", currentUserName);
+            }
+        }
     }
 }

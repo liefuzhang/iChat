@@ -18,6 +18,7 @@ function Content(props) {
         isChannel={props.isChannel}
         section={props.section}
         id={props.id}
+        hubConnection={props.hubConnection}
       />
     </div>
   );

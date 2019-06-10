@@ -41,14 +41,14 @@ namespace iChat.Api.Controllers {
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync() {
             var users = await _userService
-                .GetAllUsersAsync(User.GetWorkplaceId());
+                .GetAllUsersAsync(User.GetWorkspaceId());
             return users.ToList();
         }
 
         // GET api/users/1
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetAsync(int id) {
-            var user = await _userService.GetUserByIdAsync(id, User.GetWorkplaceId());
+            var user = await _userService.GetUserByIdAsync(id, User.GetWorkspaceId());
             if (user == null) {
                 return NotFound();
             }
@@ -60,7 +60,7 @@ namespace iChat.Api.Controllers {
         [HttpPost("invite")]
         public async Task<IActionResult> InviteUsers(List<string> emails) {
             var user = await _userService.GetUserByIdAsync(User.GetUserId());
-            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkplaceId());
+            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkspaceId());
             await _userService.InviteUsersAsync(user, workspace, emails);
 
             return Ok();
@@ -82,7 +82,7 @@ namespace iChat.Api.Controllers {
         [HttpPost("status")]
         public async Task<IActionResult> SetStatus([FromBody]string status) {
             var statusEnum = (UserStatus)Enum.Parse(typeof(UserStatus), status);
-            await _userService.SetUserStatusAsync(User.GetUserId(), User.GetWorkplaceId(), statusEnum);
+            await _userService.SetUserStatusAsync(User.GetUserId(), User.GetWorkspaceId(), statusEnum);
 
             return Ok();
         }
@@ -90,7 +90,7 @@ namespace iChat.Api.Controllers {
         // POST api/users/clearStatus
         [HttpPost("clearStatus")]
         public async Task<IActionResult> ClearStatus() {
-            await _userService.ClearUserStatusAsync(User.GetUserId(), User.GetWorkplaceId());
+            await _userService.ClearUserStatusAsync(User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }

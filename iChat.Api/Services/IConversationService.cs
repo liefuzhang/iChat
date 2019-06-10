@@ -12,5 +12,6 @@ namespace iChat.Api.Services {
         Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId);
         Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId);
         Task<bool> IsSelfConversationAsync(int conversationId, int userId);
+        Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId);
     }
 }

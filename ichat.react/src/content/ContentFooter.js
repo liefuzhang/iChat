@@ -9,12 +9,23 @@ class ContentFooter extends React.Component {
 
     this.quill = {};
     this.authService = new AuthService(props);
-    this.keydownEventHandler = keydownEventHandler.bind(this);
+    this.keydownEventHandler = this.keydownEventHandler.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.onOtherUserTyping = this.onOtherUserTyping.bind(this);
+    this.isSendingTypingMessage = false;
+
+    if (props.hubConnection) {
+      props.hubConnection.on("UserTyping", this.onOtherUserTyping);
+    }
+
+    this.state = {
+      showOtherTypingInfo: false,
+      otherTypingName: undefined
+    };
   }
 
   componentDidMount() {
     this.initQuill();
-    this.captureKeydownEvent();
     this.registerEventHandlers();
   }
 
@@ -50,17 +61,13 @@ class ContentFooter extends React.Component {
 
       this.quill.root.innerHTML = "";
 
-      if (this.props.isChannel) {
-        this.authService.fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
+      this.authService.fetch(
+        `/api/messages/${this.props.section}/${this.props.id}`,
+        {
           method: "POST",
           body: JSON.stringify(message)
-        });
-      } else {
-        this.authService.fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
-          method: "POST",
-          body: JSON.stringify(message)
-        });
-      }
+        }
+      );
     };
     submitMessage = submitMessage.bind(this);
 
@@ -84,25 +91,123 @@ class ContentFooter extends React.Component {
         }
       }
     });
+
+    this.quill.on("text-change", this.onTextChange);
   }
 
-  captureKeydownEvent() {
-    var messageBox = document.querySelector(".message-box");
-    messageBox.addEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
+  onTextChange() {
+    if (this.isSendingTypingMessage === false) {
+      this.isSendingTypingMessage = true;
+      this.sendTypingMessage();
+      setTimeout(() => {
+        this.isSendingTypingMessage = false;
+      }, 10000); // throttle it to once in 10 secs
+    }
+  }
+
+  sendTypingMessage() {
+    var url = this.props.isChannel
+      ? `/api/channels/notifyTyping`
+      : `/api/conversations/notifyTyping`;
+    this.authService.fetch(url, {
+      method: "POST",
+      body: JSON.stringify(this.props.id)
+    });
+  }
+
+  onOtherUserTyping(name) {
+    this.setState({
+      showOtherTypingInfo: true,
+      otherTypingName: name
+    });
+    setTimeout(() => {
+      this.setState({
+        showOtherTypingInfo: false,
+        otherTypingName: undefined
+      });
+    }, 10000);
   }
 
   registerEventHandlers() {
     let editor = document.querySelector(".ql-editor");
-    editor.addEventListener("focus", toggleFocus);
-    editor.addEventListener("blur", toggleFocus);
+    editor.addEventListener("focus", this.toggleFocus);
+    editor.addEventListener("blur", this.toggleFocus);
+
+    var messageBox = document.querySelector(".message-box");
+    messageBox.addEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
   }
 
   unregisterEventHandlers() {
     var messageBox = document.querySelector(".message-box");
     let editor = document.querySelector(".ql-editor");
     messageBox.removeEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
-    editor.removeEventListener("focus", toggleFocus);
-    editor.removeEventListener("blur", toggleFocus);
+    editor.removeEventListener("focus", this.toggleFocus);
+    editor.removeEventListener("blur", this.toggleFocus);
+    this.quill.off("text-change", this.onTextChange);
+  }
+
+  toggleFocus() {
+    let messageBox = document.querySelector(".message-box");
+    messageBox.classList.toggle("focus");
+  }
+
+  toggleFormatChars(char) {
+    var selection = this.quill.getSelection();
+    var length = selection.length;
+    if (length < 1) return;
+
+    var start = selection.index;
+    var text = this.quill.getText(start, length);
+    var newText;
+    if (text.length > 2 && text.startsWith(char) && text.endsWith(char)) {
+      // remove char
+      newText = text.substr(1, length - 2);
+      this.quill.deleteText(start, length);
+      this.quill.insertText(start, newText);
+      this.quill.setSelection(start, length - 2);
+    } else {
+      // add char
+      newText = char + text + char;
+      this.quill.deleteText(start, length);
+      this.quill.insertText(start, newText);
+      this.quill.setSelection(start, length + 2);
+    }
+  }
+
+  keydownEventHandler(event) {
+    var ret = true;
+    var char = "";
+    if (event.ctrlKey || event.metaKey) {
+      switch (event.keyCode) {
+        case 66: // ctrl+B or ctrl+b
+        case 98:
+          ret = false;
+          char = "*";
+          break;
+        case 73: // ctrl+I or ctrl+i
+        case 105:
+          ret = false;
+          char = "_";
+          break;
+        case 85: // ctrl+U or ctrl+u
+        case 117:
+          ret = false;
+          break;
+        default:
+          break;
+      }
+    }
+    if (!!char) {
+      this.toggleFormatChars(char);
+    }
+
+    if (ret === false) {
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    return ret;
   }
 
   render() {
@@ -113,6 +218,11 @@ class ContentFooter extends React.Component {
             <div id="messageEditor" />
           </div>
         </form>
+        {this.state.showOtherTypingInfo && (
+          <div className="message-typing-info">
+            <span>{this.state.otherTypingName}</span> is typing
+          </div>
+        )}
         <div className="message-prompt">
           <b>*bold*</b>&nbsp;
           <span className="grey-background">`code`</span>&nbsp;
@@ -124,71 +234,6 @@ class ContentFooter extends React.Component {
       </div>
     );
   }
-}
-
-function toggleFocus() {
-  let messageBox = document.querySelector(".message-box");
-  messageBox.classList.toggle("focus");
-}
-
-function keydownEventHandler(event) {
-  var quill = this.quill;
-  var toggleFormatChars = function(char) {
-    var selection = quill.getSelection();
-    var length = selection.length;
-    if (length < 1) return;
-
-    var start = selection.index;
-    var text = quill.getText(start, length);
-    var newText;
-    if (text.length > 2 && text.startsWith(char) && text.endsWith(char)) {
-      // remove char
-      newText = text.substr(1, length - 2);
-      quill.deleteText(start, length);
-      quill.insertText(start, newText);
-      quill.setSelection(start, length - 2);
-    } else {
-      // add char
-      newText = char + text + char;
-      quill.deleteText(start, length);
-      quill.insertText(start, newText);
-      quill.setSelection(start, length + 2);
-    }
-  };
-
-  var ret = true;
-  var char = "";
-  if (event.ctrlKey || event.metaKey) {
-    switch (event.keyCode) {
-      case 66: // ctrl+B or ctrl+b
-      case 98:
-        ret = false;
-        char = "*";
-        break;
-      case 73: // ctrl+I or ctrl+i
-      case 105:
-        ret = false;
-        char = "_";
-        break;
-      case 85: // ctrl+U or ctrl+u
-      case 117:
-        ret = false;
-        break;
-      default:
-        break;
-    }
-  }
-  if (!!char) {
-    toggleFormatChars(char);
-  }
-
-  if (ret === false) {
-    event.stopPropagation();
-    event.preventDefault();
-    return false;
-  }
-
-  return ret;
 }
 
 export default ContentFooter;

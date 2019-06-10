@@ -40,11 +40,11 @@ namespace iChat.Api.Controllers {
         [HttpGet("channel/{id}")]
         public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForChannelAsync(int id) {
             if (id == iChatConstants.DefaultChannelIdInRequest) {
-                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
+                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkspaceId());
             }
 
-            var messageGroups = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkplaceId());
-            await _cacheService.RemoveUnreadChannelIdForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+            var messageGroups = await _messageService.GetMessagesForChannelAsync(id, User.GetWorkspaceId());
+            await _cacheService.RemoveUnreadChannelIdForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             _notificationService.SendUpdateChannelListNotificationAsync(new[] { User.GetUserId() }, id);
 
             return messageGroups.ToList();
@@ -53,9 +53,9 @@ namespace iChat.Api.Controllers {
         // GET api/messages/conversation/1
         [HttpGet("conversation/{id}")]
         public async Task<ActionResult<IEnumerable<MessageGroupDto>>> GetMessagesForConversationAsync(int id) {
-            var messageGroups = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkplaceId());
+            var messageGroups = await _messageService.GetMessagesForConversationAsync(id, User.GetWorkspaceId());
             if (!await _conversationService.IsSelfConversationAsync(id, User.GetUserId())) {
-                await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkplaceId());
+                await _cacheService.ClearUnreadMessageForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             }
             _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, id);
 
@@ -65,11 +65,11 @@ namespace iChat.Api.Controllers {
         // POST api/messages/conversation/1
         [HttpPost("conversation/{id}")]
         public async Task<IActionResult> PostMessageToConversationAsync(int id, [FromBody] string newMessage) {
-            await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
+            await _messageService.PostMessageToConversationAsync(newMessage, id, User.GetUserId(), User.GetWorkspaceId());
 
             var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
             if (!await _conversationService.IsSelfConversationAsync(id, User.GetUserId())) {
-                await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkplaceId());
+                await _cacheService.AddNewUnreadMessageForUsersAsync(id, userIds, User.GetWorkspaceId());
             }
             _notificationService.SendNewConversationMessageNotificationAsync(userIds, id);
 
@@ -80,13 +80,13 @@ namespace iChat.Api.Controllers {
         [HttpPost("channel/{id}")]
         public async Task<IActionResult> PostMessageToChannelAsync(int id, [FromBody] string newMessage) {
             if (id == iChatConstants.DefaultChannelIdInRequest) {
-                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkplaceId());
+                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkspaceId());
             }
 
-            await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkplaceId());
+            await _messageService.PostMessageToChannelAsync(newMessage, id, User.GetUserId(), User.GetWorkspaceId());
 
             var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
-            await _cacheService.AddUnreadChannelIdForUsersAsync(id, userIds, User.GetWorkplaceId());
+            await _cacheService.AddUnreadChannelIdForUsersAsync(id, userIds, User.GetWorkspaceId());
             _notificationService.SendNewChannelMessageNotificationAsync(userIds, id);
 
             return Ok();
