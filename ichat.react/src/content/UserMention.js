@@ -13,8 +13,12 @@ class UserMention extends React.Component {
           <div
             key={u.id}
             className="user-mention-item list-item"
-            onClick={() => {
-              this.props.onUserSelected(u.id);
+            onMouseOver={() => {
+              this.props.onMentionSelecting(u.id);
+            }}
+            onClick={(event) => {
+              event.preventDefault();
+              this.props.onMentionSelected(u.id);
             }}
           >
             <img className="user-identicon" src={u.identiconPath} />

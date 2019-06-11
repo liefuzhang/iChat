@@ -13,12 +13,17 @@ class ContentFooter extends React.Component {
     this.keydownEventHandler = this.keydownEventHandler.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
     this.onOtherUserTyping = this.onOtherUserTyping.bind(this);
-    this.onMentionUser = this.onMentionUser.bind(this);
+    this.onMentionSelecting = this.onMentionSelecting.bind(this);
+    this.onMentionSelected = this.onMentionSelected.bind(this);
     this.isSendingTypingMessage = false;
-    this.mentionAtIndex = undefined;
-    this.mentionRegex = new RegExp(
-      '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
-    );
+    this.mention = {
+      mentionAtIndex: undefined,
+      mentionedNameLength: 0,
+      isMentioning: false,
+      mentionRegex: new RegExp(
+        '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
+      )
+    };
 
     if (props.hubConnection) {
       props.hubConnection.on("UserTyping", this.onOtherUserTyping);
@@ -63,13 +68,11 @@ class ContentFooter extends React.Component {
     });
   }
 
-  configPlainClipboard() {
+  configQuill() {
     var Clipboard = Quill.import("modules/clipboard");
     var Delta = Quill.import("delta");
-    var mentionRegex = this.mentionRegex;
     class PlainClipboard extends Clipboard {
       convert(html = null) {
-        if (mentionRegex.test(html)) return;
         if (typeof html === "string") {
           this.container.innerHTML = html;
         }
@@ -97,7 +100,7 @@ class ContentFooter extends React.Component {
   }
 
   initQuill() {
-    this.configPlainClipboard();
+    this.configQuill();
     var submitMessage = function() {
       var text = this.quill.getText().trim();
       if (!text) return;
@@ -152,20 +155,30 @@ class ContentFooter extends React.Component {
 
   formatMentionUser(user) {
     // TODO escape displayName, using html-entities
-    return `<span data-user-id="${
-      user.id
-    }" class="mentioned-user">@${user.displayName}</span>`;
+    return `<span data-user-id="${user.id}" class="mentioned-user">@${
+      user.displayName
+    }</span>`;
   }
 
-  onMentionUser(id) {
+  onMentionSelecting(id) {
     let user = this.userList.find(u => u.id === id);
-    this.quill.deleteText(this.mentionAtIndex, 1); // delete the @
+    this.quill.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
     this.quill.insertEmbed(
-      this.mentionAtIndex,
+      this.mention.mentionAtIndex,
       "mentionTag",
       this.formatMentionUser(user)
     );
+    this.mention.mentionedNameLength = user.displayName.length;
+    this.quill.setSelection(this.mention.mentionAtIndex + 1, 0);
+    this.mention.isMentioning = true;
+  }
+
+  onMentionSelected(id) {
+    this.onMentionSelecting(id);
+    this.mention.isMentioning = false;
     this.setState({ showMention: false });
+    let editor = document.querySelector(".ql-editor");
+    editor.focus();
   }
 
   sendTypingMessage() {
@@ -252,7 +265,7 @@ class ContentFooter extends React.Component {
   keydownEventHandler(event) {
     if (event.shiftKey && event.keyCode === 50) {
       // mention user (@)
-      this.mentionAtIndex = this.quill.getSelection().index;
+      this.mention.mentionAtIndex = this.quill.getSelection().index;
       this.setState({ showMention: true });
       return;
     }
@@ -300,7 +313,8 @@ class ContentFooter extends React.Component {
             <div className="user-mention-container">
               <UserMention
                 userList={this.state.mentionUserList}
-                onUserSelected={this.onMentionUser}
+                onMentionSelecting={this.onMentionSelecting}
+                onMentionSelected={this.onMentionSelected}
               />
             </div>
           )}
