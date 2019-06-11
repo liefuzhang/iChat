@@ -3,6 +3,7 @@ import "./ContentFooter.css";
 import Quill from "quill";
 import AuthService from "services/AuthService";
 import UserMention from "./UserMention";
+import { tsImportEqualsDeclaration } from "@babel/types";
 
 class ContentFooter extends React.Component {
   constructor(props) {
@@ -18,8 +19,10 @@ class ContentFooter extends React.Component {
     this.isSendingTypingMessage = false;
     this.mention = {
       mentionAtIndex: undefined,
-      mentionedNameLength: 0,
-      isMentioning: false,
+      typingMentionName: "",
+      isTypingMention: false,
+      isSelecting: false,
+      isSelectingInserted: false,
       mentionRegex: new RegExp(
         '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
       )
@@ -64,7 +67,6 @@ class ContentFooter extends React.Component {
     this.authService.fetch("/api/users").then(users => {
       let currentUserId = this.props.userProfile.id;
       this.userList = users.filter(u => u.id !== currentUserId);
-      this.setState({ mentionUserList: this.userList.slice(0, 8) }); // move to evnet handler later
     });
   }
 
@@ -143,7 +145,59 @@ class ContentFooter extends React.Component {
     this.quill.on("text-change", this.onTextChange);
   }
 
-  onTextChange() {
+  onTextChange(event) {
+    let insertOp = event.ops.find(o => !!o.insert);
+    let deleteOp = event.ops.find(o => !!o.delete);
+    if (insertOp && insertOp.insert === "@" && !this.mention.isTypingMention) {
+      this.setState({
+        mentionUserList: this.userList.slice(0, 8),
+        showMention: true
+      });
+      this.mention.isTypingMention = true;
+      this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
+      return;
+    }
+    if (
+      deleteOp &&
+      this.mention.isTypingMention &&
+      !this.mention.typingMentionName
+    ) {
+      this.onMentionFinish();
+      return;
+    }
+
+    if (this.mention.isTypingMention) {
+      if (this.mention.isSelecting) {
+        // selecting mention
+        this.mention.isSelecting = false;
+        this.mention.isSelectingInserted = true;
+      } else if (
+        !this.mention.isSelecting &&
+        this.mention.isSelectingInserted
+      ) {
+        // type after mention hovered over
+        this.onMentionFinish();
+      } else {
+        insertOp
+          ? (this.mention.typingMentionName += insertOp.insert)
+          : (this.mention.typingMentionName = this.mention.typingMentionName.substring(
+              0,
+              this.mention.typingMentionName.length - deleteOp.delete
+            ));
+        let mentionList = this.userList
+          .filter(
+            u => u.displayName.indexOf(this.mention.typingMentionName) > -1
+          )
+          .slice(0, 8);
+        this.setState({
+          mentionUserList: mentionList
+        });
+        if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
+          this.onMentionFinish();
+      }
+      return;
+    }
+
     if (this.isSendingTypingMessage === false) {
       this.isSendingTypingMessage = true;
       this.sendTypingMessage();
@@ -161,6 +215,9 @@ class ContentFooter extends React.Component {
   }
 
   onMentionSelecting(id) {
+    if (this.mention.isTypingMention && !!this.mention.typingMentionName)
+      return;
+    this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
     this.quill.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
     this.quill.insertEmbed(
@@ -168,14 +225,25 @@ class ContentFooter extends React.Component {
       "mentionTag",
       this.formatMentionUser(user)
     );
-    this.mention.mentionedNameLength = user.displayName.length;
     this.quill.setSelection(this.mention.mentionAtIndex + 1, 0);
-    this.mention.isMentioning = true;
   }
 
   onMentionSelected(id) {
+    this.mention.isTypingMention = false;
     this.onMentionSelecting(id);
-    this.mention.isMentioning = false;
+    if (this.mention.typingMentionName)
+      this.quill.deleteText(
+        this.mention.mentionAtIndex + 1,
+        this.mention.typingMentionName.length
+      );
+    this.onMentionFinish();
+  }
+
+  onMentionFinish() {
+    this.mention.isTypingMention = false;
+    this.mention.isSelecting = false;
+    this.mention.isSelectingInserted = false;
+    this.mention.typingMentionName = "";
     this.setState({ showMention: false });
     let editor = document.querySelector(".ql-editor");
     editor.focus();
@@ -263,13 +331,6 @@ class ContentFooter extends React.Component {
   }
 
   keydownEventHandler(event) {
-    if (event.shiftKey && event.keyCode === 50) {
-      // mention user (@)
-      this.mention.mentionAtIndex = this.quill.getSelection().index;
-      this.setState({ showMention: true });
-      return;
-    }
-
     var ret = true;
     var char = "";
     if (event.ctrlKey || event.metaKey) {
