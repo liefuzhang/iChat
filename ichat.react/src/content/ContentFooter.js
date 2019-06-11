@@ -151,19 +151,14 @@ class ContentFooter extends React.Component {
     if (!this.mention.isSelecting) {
       let insertOp = event.ops.find(o => !!o.insert);
       let deleteOp = event.ops.find(o => !!o.delete);
-      if (
-        insertOp &&
-        insertOp.insert === "@" &&
-        !this.state.showMention
-      ) {
+      if (insertOp && insertOp.insert === "@" && !this.state.showMention) {
         this.setState({
           mentionUserList: this.userList.slice(0, 8),
           showMention: true
         });
         this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
         return;
-      }
-      if (
+      } else if (
         deleteOp &&
         this.state.showMention &&
         !this.mention.typingMentionName
@@ -218,8 +213,7 @@ class ContentFooter extends React.Component {
   }
 
   onMentionSelecting(id) {
-    if (this.state.showMention && !!this.mention.typingMentionName)
-      return;
+    if (this.state.showMention && !!this.mention.typingMentionName) return;
     this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
     this.quill.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
