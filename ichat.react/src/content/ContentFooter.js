@@ -17,13 +17,6 @@ class ContentFooter extends React.Component {
     this.onMentionSelecting = this.onMentionSelecting.bind(this);
     this.onMentionSelected = this.onMentionSelected.bind(this);
     this.isSendingTypingMessage = false;
-    this.mention = {
-      mentionAtIndex: undefined,
-      typingMentionName: "",
-      isSelecting: false,
-      isSelectionInserted: false,
-      mentionRegex: /<span data-user-id="([0-9]+)" class="mentioned-user">@.+?<\/span>/g
-    };
 
     if (props.hubConnection) {
       props.hubConnection.on("UserTyping", this.onOtherUserTyping);
@@ -36,11 +29,13 @@ class ContentFooter extends React.Component {
       showOtherTypingInfo: false,
       otherTypingUserName: undefined,
       showMention: false,
-      mentionUserList: []
+      mentionUserList: [],
+      highlightMentionUserIndex: 0
     };
   }
 
   componentDidMount() {
+    this.initMention();
     this.initQuill();
     this.registerEventHandlers();
     this.fecthUsers();
@@ -98,6 +93,16 @@ class ContentFooter extends React.Component {
     });
   }
 
+  initMention() {
+    this.mention = {
+      mentionAtIndex: undefined,
+      filterName: "",
+      isSelecting: false,
+      isSelectionInserted: false,
+      mentionRegex: /<span data-user-id="([0-9]+)" class="mentioned-user">@.+?<\/span>/g
+    };
+  }
+
   initQuill() {
     this.configQuill();
     var submitMessage = function() {
@@ -152,8 +157,8 @@ class ContentFooter extends React.Component {
       let insertOp = event.ops.find(o => !!o.insert);
       let deleteOp = event.ops.find(o => !!o.delete);
       if (insertOp && insertOp.insert === "@" && !this.state.showMention) {
+        this.setMentionList(this.userList.slice(0, 8));
         this.setState({
-          mentionUserList: this.userList.slice(0, 8),
           showMention: true
         });
         this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
@@ -161,7 +166,7 @@ class ContentFooter extends React.Component {
       } else if (
         deleteOp &&
         this.state.showMention &&
-        !this.mention.typingMentionName
+        !this.mention.filterName
       ) {
         this.onMentionFinish();
         return;
@@ -173,22 +178,21 @@ class ContentFooter extends React.Component {
           this.onMentionFinish();
         } else {
           insertOp
-            ? (this.mention.typingMentionName += insertOp.insert)
-            : (this.mention.typingMentionName = this.mention.typingMentionName.substring(
+            ? (this.mention.filterName += insertOp.insert)
+            : (this.mention.filterName = this.mention.filterName.substring(
                 0,
-                this.mention.typingMentionName.length - deleteOp.delete
+                this.mention.filterName.length - deleteOp.delete
               ));
           let mentionList = this.userList
             .filter(
               u =>
                 u.displayName
                   .toLowerCase()
-                  .indexOf(this.mention.typingMentionName.toLowerCase()) > -1
+                  .indexOf(this.mention.filterName.toLowerCase()) > -1
             )
             .slice(0, 8);
-          this.setState({
-            mentionUserList: mentionList
-          });
+          this.setMentionList(mentionList);
+
           if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
             this.onMentionFinish();
         }
@@ -212,8 +216,15 @@ class ContentFooter extends React.Component {
     }</span>`;
   }
 
+  setMentionList(list) {
+    this.setState({
+      mentionUserList: list,
+      highlightMentionUserIndex: 0
+    });
+  }
+
   onMentionSelecting(id) {
-    if (this.state.showMention && !!this.mention.typingMentionName) return;
+    if (this.state.showMention && !!this.mention.filterName) return;
     this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
     this.quill.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
@@ -230,18 +241,16 @@ class ContentFooter extends React.Component {
   onMentionSelected(id) {
     this.setState({ showMention: false });
     this.onMentionSelecting(id);
-    if (this.mention.typingMentionName)
+    if (this.mention.filterName)
       this.quill.deleteText(
         this.mention.mentionAtIndex + 1,
-        this.mention.typingMentionName.length
+        this.mention.filterName.length
       );
     this.onMentionFinish();
   }
 
   onMentionFinish() {
-    this.mention.isSelecting = false;
-    this.mention.isSelectionInserted = false;
-    this.mention.typingMentionName = "";
+    this.initMention();
     this.setState({ showMention: false });
     let editor = document.querySelector(".ql-editor");
     editor.focus();
@@ -329,23 +338,65 @@ class ContentFooter extends React.Component {
   }
 
   keydownEventHandler(event) {
-    var ret = true;
+    var handled = false;
+
+    if (
+      this.state.showMention &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      let index = this.state.highlightMentionUserIndex;
+      switch (event.keyCode) {
+        case 40: // arrow down
+          this.setState({
+            highlightMentionUserIndex:
+              index + 1 > this.state.mentionUserList.length - 1 ? 0 : index + 1
+          });
+          handled = true;
+          break;
+        case 38: // arrow up
+          this.setState({
+            highlightMentionUserIndex:
+              index - 1 < 0 ? this.state.mentionUserList.length - 1 : index - 1
+          });
+          handled = true;
+          break;
+        case 13: // enter
+        case 9: // tab
+          let user = this.state.mentionUserList[
+            this.state.highlightMentionUserIndex
+          ];
+          if (!!user) {
+            this.onMentionSelected(user.id);
+            handled = true;
+          }
+          break;
+        case 27: // esc
+          this.onMentionFinish();
+          handled = true;
+          break;
+        default:
+          break;
+      }
+    }
+
     var char = "";
     if (event.ctrlKey || event.metaKey) {
       switch (event.keyCode) {
         case 66: // ctrl+B or ctrl+b
         case 98:
-          ret = false;
+          handled = true;
           char = "*";
           break;
         case 73: // ctrl+I or ctrl+i
         case 105:
-          ret = false;
+          handled = true;
           char = "_";
           break;
         case 85: // ctrl+U or ctrl+u
         case 117:
-          ret = false;
+          handled = true;
           break;
         default:
           break;
@@ -355,13 +406,13 @@ class ContentFooter extends React.Component {
       this.toggleFormatChars(char);
     }
 
-    if (ret === false) {
+    if (handled === true) {
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
-    return ret;
+    return true;
   }
 
   render() {
@@ -374,6 +425,8 @@ class ContentFooter extends React.Component {
                 userList={this.state.mentionUserList}
                 onMentionSelecting={this.onMentionSelecting}
                 onMentionSelected={this.onMentionSelected}
+                highlightItemIndex={this.state.highlightMentionUserIndex}
+                filterName={this.mention.filterName}
               />
             </div>
           )}

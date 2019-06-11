@@ -6,6 +6,30 @@
   box-sizing: border-box;
 }
 
+.user-mention .user-mention-title {
+  display: flex;
+  font-size: 0.8rem;
+  color: #666;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 15px;
+  background: #eeeeee;
+}
+
+.user-mention-title .mention-filter-name {
+  flex: 1 1 auto;
+  margin-left: auto;
+}
+
+.user-mention-title .mention-prompt {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.user-mention-title .mention-prompt span {
+  margin-left: 20px;
+}
+
 .user-mention-item {
   padding: 0 15px;
 }
@@ -19,7 +43,9 @@
   color: #666;
 }
 
-.user-mention-item:hover, .user-mention-item:hover .user-mention-email {
+.user-mention-item:hover,
+.user-mention-item:hover .user-mention-email,
+.user-mention-item.active-item .user-mention-email {
   color: white;
 }
 
