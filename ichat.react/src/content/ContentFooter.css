@@ -40,13 +40,6 @@
   position: relative;
 }
 
-.footer .message-box .mentioned-user{
-  color: #297fa3;
-  background: rgba(0,132,255,.1);
-  padding: 3px;
-  margin-right: 3px;
-}
-
 /* overrides for quill editor */
 .ql-container {
   border: none !important;

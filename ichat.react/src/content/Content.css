@@ -27,3 +27,10 @@
 #content .segment img + img {
   margin-top: 56px;
 }
+
+.mentioned-user{
+  color: #297fa3;
+  background: rgba(0,132,255,.1);
+  padding: 3px;
+  margin-right: 3px;
+}

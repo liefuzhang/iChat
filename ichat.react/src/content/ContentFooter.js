@@ -22,7 +22,7 @@ class ContentFooter extends React.Component {
       typingMentionName: "",
       isTypingMention: false,
       isSelecting: false,
-      isSelectingInserted: false,
+      isSelectionInserted: false,
       mentionRegex: new RegExp(
         '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
       )
@@ -146,56 +146,58 @@ class ContentFooter extends React.Component {
   }
 
   onTextChange(event) {
-    let insertOp = event.ops.find(o => !!o.insert);
-    let deleteOp = event.ops.find(o => !!o.delete);
-    if (insertOp && insertOp.insert === "@" && !this.mention.isTypingMention) {
-      this.setState({
-        mentionUserList: this.userList.slice(0, 8),
-        showMention: true
-      });
-      this.mention.isTypingMention = true;
-      this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
-      return;
-    }
-    if (
-      deleteOp &&
-      this.mention.isTypingMention &&
-      !this.mention.typingMentionName
-    ) {
-      this.onMentionFinish();
-      return;
-    }
-
-    if (this.mention.isTypingMention) {
-      if (this.mention.isSelecting) {
-        // selecting mention
-        this.mention.isSelecting = false;
-        this.mention.isSelectingInserted = true;
-      } else if (
-        !this.mention.isSelecting &&
-        this.mention.isSelectingInserted
+    if (!this.mention.isSelecting) {
+      let insertOp = event.ops.find(o => !!o.insert);
+      let deleteOp = event.ops.find(o => !!o.delete);
+      if (
+        insertOp &&
+        insertOp.insert === "@" &&
+        !this.mention.isTypingMention
       ) {
-        // type after mention hovered over
-        this.onMentionFinish();
-      } else {
-        insertOp
-          ? (this.mention.typingMentionName += insertOp.insert)
-          : (this.mention.typingMentionName = this.mention.typingMentionName.substring(
-              0,
-              this.mention.typingMentionName.length - deleteOp.delete
-            ));
-        let mentionList = this.userList
-          .filter(
-            u => u.displayName.indexOf(this.mention.typingMentionName) > -1
-          )
-          .slice(0, 8);
         this.setState({
-          mentionUserList: mentionList
+          mentionUserList: this.userList.slice(0, 8),
+          showMention: true
         });
-        if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
-          this.onMentionFinish();
+        this.mention.isTypingMention = true;
+        this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
+        return;
       }
-      return;
+      if (
+        deleteOp &&
+        this.mention.isTypingMention &&
+        !this.mention.typingMentionName
+      ) {
+        this.onMentionFinish();
+        return;
+      }
+
+      if (this.mention.isTypingMention) {
+        if (this.mention.isSelectionInserted) {
+          // type after mention selection inserted
+          this.onMentionFinish();
+        } else {
+          insertOp
+            ? (this.mention.typingMentionName += insertOp.insert)
+            : (this.mention.typingMentionName = this.mention.typingMentionName.substring(
+                0,
+                this.mention.typingMentionName.length - deleteOp.delete
+              ));
+          let mentionList = this.userList
+            .filter(
+              u =>
+                u.displayName
+                  .toLowerCase()
+                  .indexOf(this.mention.typingMentionName.toLowerCase()) > -1
+            )
+            .slice(0, 8);
+          this.setState({
+            mentionUserList: mentionList
+          });
+          if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
+            this.onMentionFinish();
+        }
+        return;
+      }
     }
 
     if (this.isSendingTypingMessage === false) {
@@ -226,6 +228,8 @@ class ContentFooter extends React.Component {
       this.formatMentionUser(user)
     );
     this.quill.setSelection(this.mention.mentionAtIndex + 1, 0);
+    this.mention.isSelecting = false;
+    this.mention.isSelectionInserted = true;
   }
 
   onMentionSelected(id) {
@@ -242,7 +246,7 @@ class ContentFooter extends React.Component {
   onMentionFinish() {
     this.mention.isTypingMention = false;
     this.mention.isSelecting = false;
-    this.mention.isSelectingInserted = false;
+    this.mention.isSelectionInserted = false;
     this.mention.typingMentionName = "";
     this.setState({ showMention: false });
     let editor = document.querySelector(".ql-editor");
