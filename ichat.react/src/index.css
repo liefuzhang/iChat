@@ -240,3 +240,22 @@ form button[type="submit"] {
   width: 32px;
   margin-right: 10px;
 }
+
+.list-item {
+  height: 28px;
+  line-height: 28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+.list-item:hover {
+  cursor: pointer;
+  background: #259;
+}
+
+.list-item.active-item {
+  background: #259;
+  color: white;
+}

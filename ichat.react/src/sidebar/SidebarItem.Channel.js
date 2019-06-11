@@ -21,7 +21,7 @@ function SidebarItemChannel(props) {
       <div
         title={props.channel.name}
         className={
-          "sidebar-item" +
+          "sidebar-item list-item" +
           (props.active ? " active-item" : "") +
           (props.channel.hasUnreadMessage && !props.active
             ? " unread-item"

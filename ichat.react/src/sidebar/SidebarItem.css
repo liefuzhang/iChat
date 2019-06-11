@@ -1,20 +1,5 @@
 .sidebar-item {
-  height: 26px;
-  line-height: 26px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
   padding: 0 15px;
-}
-.sidebar-item:hover {
-  cursor: pointer;
-  background: #259;
-}
-
-.sidebar-item.active-item {
-  background: #259;
 }
 
 .sidebar-item.unread-item {

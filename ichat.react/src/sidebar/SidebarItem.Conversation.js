@@ -23,7 +23,7 @@ function SidebarItemConversation(props) {
       <div
         title={props.conversation.name}
         className={
-          "sidebar-item" +
+          "sidebar-item list-item" +
           (props.active ? " active-item" : "") +
           (props.conversation.unreadMessageCount && !props.active
             ? " unread-item"

@@ -99,10 +99,12 @@ namespace iChat.Api.Controllers {
         [AllowAnonymous]
         // TODO remove after development
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto) {
-            var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, 10);
-            await _channelService.AddUserToDefaultChannelsAsync(userId, 10);
-            await _conversationService.StartSelfConversationAsync(userId, 10);
+        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto)
+        {
+            var workspaceId = 1;
+            var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, workspaceId);
+            await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
+            await _conversationService.StartSelfConversationAsync(userId, workspaceId);
 
             return Ok();
         }

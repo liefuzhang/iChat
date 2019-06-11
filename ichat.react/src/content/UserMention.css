@@ -1,7 +1,30 @@
-.user-mention{
+.user-mention {
   position: absolute;
   bottom: 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
+}
+
+.user-mention-item {
+  padding: 0 15px;
+}
+
+.user-mention-item .user-mention-name {
+  font-weight: 600;
+}
+
+.user-mention-item .user-mention-email {
+  margin-left: 10px;
+  color: #666;
+}
+
+.user-mention-item:hover, .user-mention-item:hover .user-mention-email {
+  color: white;
+}
+
+.user-mention-item .user-identicon {
+  height: 20px;
+  width: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

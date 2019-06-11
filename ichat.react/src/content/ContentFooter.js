@@ -13,19 +13,24 @@ class ContentFooter extends React.Component {
     this.keydownEventHandler = this.keydownEventHandler.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
     this.onOtherUserTyping = this.onOtherUserTyping.bind(this);
+    this.onMentionUser = this.onMentionUser.bind(this);
     this.isSendingTypingMessage = false;
+    this.mentionAtIndex = undefined;
+    this.mentionRegex = new RegExp(
+      '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
+    );
 
     if (props.hubConnection) {
       props.hubConnection.on("UserTyping", this.onOtherUserTyping);
     }
 
     this.otherTypingNames = [];
+    this.userList = [];
 
     this.state = {
       showOtherTypingInfo: false,
       otherTypingUserName: undefined,
-      showMention: true,
-      userList: [],
+      showMention: false,
       mentionUserList: []
     };
   }
@@ -53,22 +58,18 @@ class ContentFooter extends React.Component {
   fecthUsers() {
     this.authService.fetch("/api/users").then(users => {
       let currentUserId = this.props.userProfile.id;
-      let userList = users
-        .filter(u => u.id !== currentUserId)
-        .map(u => {
-          return { displayName: u.displayName, id: u.id };
-        });
-      this.setState({ userList: userList });
-      this.setState({mentionUserList: userList.slice(0, 7)}); // move to evnet handler later
+      this.userList = users.filter(u => u.id !== currentUserId);
+      this.setState({ mentionUserList: this.userList.slice(0, 8) }); // move to evnet handler later
     });
   }
 
   configPlainClipboard() {
     var Clipboard = Quill.import("modules/clipboard");
     var Delta = Quill.import("delta");
-
+    var mentionRegex = this.mentionRegex;
     class PlainClipboard extends Clipboard {
       convert(html = null) {
+        if (mentionRegex.test(html)) return;
         if (typeof html === "string") {
           this.container.innerHTML = html;
         }
@@ -77,8 +78,22 @@ class ContentFooter extends React.Component {
         return new Delta().insert(text);
       }
     }
-
     Quill.register("modules/clipboard", PlainClipboard, true);
+
+    var Embed = Quill.import("blots/embed");
+    class MentionTag extends Embed {
+      static create(value) {
+        let node = super.create(value);
+        node.innerHTML = `${value}`;
+        return node;
+      }
+    }
+    MentionTag.blotName = "mentionTag";
+    MentionTag.tagName = "span";
+
+    Quill.register({
+      "formats/mentionTag": MentionTag
+    });
   }
 
   initQuill() {
@@ -133,6 +148,24 @@ class ContentFooter extends React.Component {
         this.isSendingTypingMessage = false;
       }, 10000); // throttle it to once in 10 secs
     }
+  }
+
+  formatMentionUser(user) {
+    // TODO escape displayName, using html-entities
+    return `<span data-user-id="${
+      user.id
+    }" class="mentioned-user">@${user.displayName}</span>`;
+  }
+
+  onMentionUser(id) {
+    let user = this.userList.find(u => u.id === id);
+    this.quill.deleteText(this.mentionAtIndex, 1); // delete the @
+    this.quill.insertEmbed(
+      this.mentionAtIndex,
+      "mentionTag",
+      this.formatMentionUser(user)
+    );
+    this.setState({ showMention: false });
   }
 
   sendTypingMessage() {
@@ -217,6 +250,13 @@ class ContentFooter extends React.Component {
   }
 
   keydownEventHandler(event) {
+    if (event.shiftKey && event.keyCode === 50) {
+      // mention user (@)
+      this.mentionAtIndex = this.quill.getSelection().index;
+      this.setState({ showMention: true });
+      return;
+    }
+
     var ret = true;
     var char = "";
     if (event.ctrlKey || event.metaKey) {
@@ -258,7 +298,10 @@ class ContentFooter extends React.Component {
         <form id="messageForm" method="post">
           {this.state.showMention && (
             <div className="user-mention-container">
-              <UserMention userList={this.state.mentionUserList} />
+              <UserMention
+                userList={this.state.mentionUserList}
+                onUserSelected={this.onMentionUser}
+              />
             </div>
           )}
           <div className="message-box">

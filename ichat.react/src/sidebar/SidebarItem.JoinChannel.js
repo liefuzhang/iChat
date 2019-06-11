@@ -38,7 +38,7 @@ class SidebarItemJoinChannel extends React.Component {
 
   render() {
     return (
-      <div className="sidebar-item">
+      <div className="sidebar-item list-item">
         <span onClick={this.onJoinChannel}>+&nbsp;Join a channel</span>
         <div>
           {this.state.isJoinChannelModalOpen && (
