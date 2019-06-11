@@ -20,12 +20,9 @@ class ContentFooter extends React.Component {
     this.mention = {
       mentionAtIndex: undefined,
       typingMentionName: "",
-      isTypingMention: false,
       isSelecting: false,
       isSelectionInserted: false,
-      mentionRegex: new RegExp(
-        '^<span data-user-id="([0-9]+)" class="mentioned-user">@.+</span>$'
-      )
+      mentionRegex: /<span data-user-id="([0-9]+)" class="mentioned-user">@.+?<\/span>/g
     };
 
     if (props.hubConnection) {
@@ -104,12 +101,17 @@ class ContentFooter extends React.Component {
   initQuill() {
     this.configQuill();
     var submitMessage = function() {
-      var text = this.quill.getText().trim();
-      if (!text) return;
-
       var message = this.quill.root.innerHTML;
+      var text = this.quill.getText().trim();
+      if (!text && !this.mention.mentionRegex.test(message)) return;
 
       this.quill.root.innerHTML = "";
+      var mentionUserIds = [];
+      var groups;
+      this.mention.mentionRegex.lastIndex = 0;
+      while ((groups = this.mention.mentionRegex.exec(message)) !== null) {
+        mentionUserIds.push(+groups[1]);
+      }
 
       this.authService.fetch(
         `/api/messages/${this.props.section}/${this.props.id}`,
@@ -152,26 +154,25 @@ class ContentFooter extends React.Component {
       if (
         insertOp &&
         insertOp.insert === "@" &&
-        !this.mention.isTypingMention
+        !this.state.showMention
       ) {
         this.setState({
           mentionUserList: this.userList.slice(0, 8),
           showMention: true
         });
-        this.mention.isTypingMention = true;
         this.mention.mentionAtIndex = this.quill.getSelection().index - 1;
         return;
       }
       if (
         deleteOp &&
-        this.mention.isTypingMention &&
+        this.state.showMention &&
         !this.mention.typingMentionName
       ) {
         this.onMentionFinish();
         return;
       }
 
-      if (this.mention.isTypingMention) {
+      if (this.state.showMention) {
         if (this.mention.isSelectionInserted) {
           // type after mention selection inserted
           this.onMentionFinish();
@@ -217,7 +218,7 @@ class ContentFooter extends React.Component {
   }
 
   onMentionSelecting(id) {
-    if (this.mention.isTypingMention && !!this.mention.typingMentionName)
+    if (this.state.showMention && !!this.mention.typingMentionName)
       return;
     this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
@@ -233,7 +234,7 @@ class ContentFooter extends React.Component {
   }
 
   onMentionSelected(id) {
-    this.mention.isTypingMention = false;
+    this.setState({ showMention: false });
     this.onMentionSelecting(id);
     if (this.mention.typingMentionName)
       this.quill.deleteText(
@@ -244,7 +245,6 @@ class ContentFooter extends React.Component {
   }
 
   onMentionFinish() {
-    this.mention.isTypingMention = false;
     this.mention.isSelecting = false;
     this.mention.isSelectionInserted = false;
     this.mention.typingMentionName = "";
