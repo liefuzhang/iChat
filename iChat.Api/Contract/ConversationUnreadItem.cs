@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Contract {
-    public class ConversationItem {
-        public ConversationItem(int conversationId) {
+    public class ConversationUnreadItem {
+        public ConversationUnreadItem(int conversationId) {
             ConversationId = conversationId;
         }
 

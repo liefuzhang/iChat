@@ -122,7 +122,10 @@ class ContentFooter extends React.Component {
         `/api/messages/${this.props.section}/${this.props.id}`,
         {
           method: "POST",
-          body: JSON.stringify(message)
+          body: JSON.stringify({
+            message: message,
+            mentionUserIds: mentionUserIds
+          })
         }
       );
     };
@@ -441,12 +444,16 @@ class ContentFooter extends React.Component {
           </div>
         )}
         <div className="message-prompt">
-          <b>*bold*</b>&nbsp;
-          <span className="grey-background">`code`</span>&nbsp;
-          <span className="grey-background">```preformatted```</span>&nbsp;
-          <i>_italics_</i>&nbsp;
-          <span>~strike~</span>&nbsp;
-          <span>>quote</span>&nbsp;
+          <span>
+            <b>*bold*</b>
+          </span>
+          <span className="grey-background">`code`</span>
+          <span className="grey-background">```preformatted```</span>
+          <span>
+            <i>_italics_</i>
+          </span>
+          <span>~strike~</span>
+          <span>>quote</span>
         </div>
       </div>
     );

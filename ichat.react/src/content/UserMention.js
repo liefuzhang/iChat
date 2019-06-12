@@ -4,6 +4,14 @@ import "./UserMention.css";
 class UserMention extends React.Component {
   constructor(props) {
     super(props);
+
+    this.onMentionSelecting = this.onMentionSelecting.bind(this);
+  }
+
+  onMentionSelecting(id) {
+    let activeItem = document.querySelector(".user-mention-item.active-item");
+    activeItem && activeItem.classList.remove("active-item");
+    this.props.onMentionSelecting(id);
   }
 
   render() {
@@ -14,9 +22,15 @@ class UserMention extends React.Component {
             People matching "@<b>{this.props.filterName}</b>"
           </div>
           <div className="mention-prompt">
-          <span><b>&uarr;</b> <b>&darr;</b> to navigate</span>
-          <span><b>&crarr;</b> to select</span>
-          <span><b>esc</b> to dismiss</span>
+            <span>
+              <b>&uarr;</b> <b>&darr;</b> to navigate
+            </span>
+            <span>
+              <b>&crarr;</b> to select
+            </span>
+            <span>
+              <b>esc</b> to dismiss
+            </span>
           </div>
         </div>
         {this.props.userList.map((u, index) => {
@@ -29,7 +43,7 @@ class UserMention extends React.Component {
                 (highlighting ? " active-item" : "")
               }
               onMouseOver={() => {
-                this.props.onMentionSelecting(u.id);
+                this.onMentionSelecting(u.id);
               }}
               onClick={event => {
                 event.preventDefault();

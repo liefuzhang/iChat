@@ -24,6 +24,10 @@
   right: 0;
 }
 
+.footer .message-prompt span {
+  margin: 0 3px;
+}
+
 .footer .message-typing-info {
   font-size: 0.75rem;
   position: absolute;

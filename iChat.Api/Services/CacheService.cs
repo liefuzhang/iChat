@@ -1,25 +1,26 @@
-﻿using iChat.Api.Models;
-using iChat.Api.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
-using iChat.Api.Constants;
+﻿using iChat.Api.Constants;
 using iChat.Api.Contract;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public class CacheService : ICacheService {
+namespace iChat.Api.Services
+{
+    public class CacheService : ICacheService
+    {
         private readonly IDistributedCache _cache;
 
-        public CacheService(IDistributedCache cache) {
+        public CacheService(IDistributedCache cache)
+        {
             _cache = cache;
         }
 
-        public async Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int userId, int workspaceId) {
-            var item = new ActiveSidebarItem {
+        public async Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int userId, int workspaceId)
+        {
+            var item = new ActiveSidebarItem
+            {
                 IsChannel = isChannel,
                 ItemId = itemId
             };
@@ -28,43 +29,56 @@ namespace iChat.Api.Services {
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(item));
         }
 
-        public async Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId) {
+        public async Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId)
+        {
             var key = GetRedisKeyForActiveSidebarItem(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);
 
             if (value == null)
+            {
                 return null;
+            }
 
             return JsonConvert.DeserializeObject<ActiveSidebarItem>(value);
         }
 
-        private string GetRedisKeyForActiveSidebarItem(int userId, int workspaceId) {
+        private string GetRedisKeyForActiveSidebarItem(int userId, int workspaceId)
+        {
             return $"{iChatConstants.RedisKeyActiveSidebarItemPrefix}-{workspaceId}/{userId}";
         }
 
-        public async Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId) {
-            foreach (var userId in userIds) {
+        public async Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId)
+        {
+            foreach (var userId in userIds.Distinct())
+            {
                 await AddRecentConversationForUserAsync(conversationId, userId, workspaceId, incrementUnreadMessage: true);
             }
         }
 
         public async Task AddRecentConversationForUserAsync(int conversationId, int userId,
-            int workspaceId, bool incrementUnreadMessage = false) {
-            ConversationItem item = null;
+            int workspaceId, bool incrementUnreadMessage = false)
+        {
+            ConversationUnreadItem item = null;
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
-            if (items.Any()) {
+            if (items.Any())
+            {
                 item = items.SingleOrDefault(i => i.ConversationId == conversationId);
-                if (item != null) {
+                if (item != null)
+                {
                     // move to end of list
                     items.Remove(item);
-                } else if (items.Count >= iChatConstants.RedisRecentConversationMaxNumber) {
+                }
+                else if (items.Count >= iChatConstants.RedisRecentConversationMaxNumber)
+                {
                     items.RemoveAt(0);
                 }
             }
-            if (item == null) {
-                item = new ConversationItem(conversationId);
+            if (item == null)
+            {
+                item = new ConversationUnreadItem(conversationId);
             }
-            if (incrementUnreadMessage) {
+            if (incrementUnreadMessage)
+            {
                 item.IncrementUnreadMessage();
             }
             items.Add(item);
@@ -73,14 +87,12 @@ namespace iChat.Api.Services {
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task ClearUnreadMessageForUserAsync(int conversationId, int userId, int workspaceId) {
+        public async Task ClearUnreadMessageForUserAsync(int conversationId, int userId, int workspaceId)
+        {
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
-            if (!items.Any()) {
-                return;
-            }
-
             var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
-            if (item == null) {
+            if (item == null)
+            {
                 return;
             }
 
@@ -90,77 +102,77 @@ namespace iChat.Api.Services {
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task RemoveConversationForUserAsync(int conversationId, int userId,
-            int workspaceId, bool incrementUnreadMessage = false) {
-            ConversationItem item = null;
-            var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
-            if (items.Any()) {
-                item = items.SingleOrDefault(i => i.ConversationId == conversationId);
-                if (item != null) {
-                    // move to end of list
-                    items.Remove(item);
-                } else if (items.Count >= iChatConstants.RedisRecentConversationMaxNumber) {
-                    items.RemoveAt(0);
-                }
-            }
-            if (item == null) {
-                item = new ConversationItem(conversationId);
-            }
-            if (incrementUnreadMessage) {
-                item.IncrementUnreadMessage();
-            }
-            items.Add(item);
-
-            var key = GetRedisKeyForRecentConversation(userId, workspaceId);
-            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
-        }
-
-        public async Task<List<ConversationItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId) {
+        public async Task<List<ConversationUnreadItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId)
+        {
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);
 
             if (value == null)
-                return new List<ConversationItem>();
+            {
+                return new List<ConversationUnreadItem>();
+            }
 
-            return JsonConvert.DeserializeObject<List<ConversationItem>>(value);
+            return JsonConvert.DeserializeObject<List<ConversationUnreadItem>>(value);
         }
 
-        private string GetRedisKeyForRecentConversation(int userId, int workspaceId) {
+        private static string GetRedisKeyForRecentConversation(int userId, int workspaceId)
+        {
             return $"{iChatConstants.RedisKeyRecentConversationPrefix}-{workspaceId}/{userId}";
         }
 
-        public async Task AddUnreadChannelIdForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId) {
-            foreach (var userId in userIds) {
-                var ids = await GetUnreadChannelIdsForUserAsync(userId, workspaceId);
-                if (!ids.Any(i => i == channelId))
-                    ids.Add(channelId);
+        public async Task AddUnreadChannelForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId,
+            List<int> mentionUserIds)
+        {
+            foreach (var userId in userIds.Distinct())
+            {
+                var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+                var item = items.SingleOrDefault(i => i.ChannelId == channelId);
+                if (item == null)
+                {
+                    item = new ChannelUnreadItem(channelId);
+                    items.Add(item);
+                }
 
-                var key = GetRedisKeyForUnreadChannelIds(userId, workspaceId);
-                await _cache.SetStringAsync(key, JsonConvert.SerializeObject(ids));
+                if (mentionUserIds.Contains(userId))
+                {
+                    item.IncrementUnreadMention();
+                }
+
+                var key = GetRedisKeyForUnreadChannel(userId, workspaceId);
+                await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
             }
         }
 
-        public async Task RemoveUnreadChannelIdForUserAsync(int channelId, int userId, int workspaceId) {
-            var ids = await GetUnreadChannelIdsForUserAsync(userId, workspaceId);
-            if (ids.Any(i => i == channelId)) {
-                ids.Remove(channelId);
-                var key = GetRedisKeyForUnreadChannelIds(userId, workspaceId);
-                await _cache.SetStringAsync(key, JsonConvert.SerializeObject(ids));
+        public async Task RemoveUnreadChannelForUserAsync(int channelId, int userId, int workspaceId)
+        {
+            var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+            var item = items.SingleOrDefault(i => i.ChannelId == channelId);
+            if (item == null)
+            {
+                return;
             }
+
+            items.Remove(item);
+            var key = GetRedisKeyForUnreadChannel(userId, workspaceId);
+            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task<List<int>> GetUnreadChannelIdsForUserAsync(int userId, int workspaceId) {
-            var key = GetRedisKeyForUnreadChannelIds(userId, workspaceId);
+        public async Task<List<ChannelUnreadItem>> GetUnreadChannelForUserAsync(int userId, int workspaceId)
+        {
+            var key = GetRedisKeyForUnreadChannel(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);
 
             if (value == null)
-                return new List<int>();
+            {
+                return new List<ChannelUnreadItem>();
+            }
 
-            return JsonConvert.DeserializeObject<List<int>>(value);
+            return JsonConvert.DeserializeObject<List<ChannelUnreadItem>>(value);
         }
 
-        private string GetRedisKeyForUnreadChannelIds(int userId, int workspaceId) {
-            return $"{iChatConstants.RedisKeyRecentUnreadChannelIdsPrefix}-{workspaceId}/{userId}";
+        private string GetRedisKeyForUnreadChannel(int userId, int workspaceId)
+        {
+            return $"{iChatConstants.RedisKeyRecentUnreadChannelPrefix}-{workspaceId}/{userId}";
         }
     }
 }

@@ -8,10 +8,11 @@ namespace iChat.Api.Services {
         Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId);
         Task AddRecentConversationForUserAsync(int conversationId, int userId, int workspaceId, bool incrementUnreadMessage = false);
         Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId);
-        Task<List<ConversationItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId);
+        Task<List<ConversationUnreadItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId);
         Task ClearUnreadMessageForUserAsync(int conversationId, int userId, int workspaceId);
-        Task AddUnreadChannelIdForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId);
-        Task RemoveUnreadChannelIdForUserAsync(int channelId, int userId, int workspaceId);
-        Task<List<int>> GetUnreadChannelIdsForUserAsync(int userId, int workspaceId);
+        Task AddUnreadChannelForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId,
+            List<int> mentionUserIds);
+        Task RemoveUnreadChannelForUserAsync(int channelId, int userId, int workspaceId);
+        Task<List<ChannelUnreadItem>> GetUnreadChannelForUserAsync(int userId, int workspaceId);
     }
 }

@@ -8,5 +8,6 @@ namespace iChat.Api.Models
         public string Name { get; private set; }
         public string Topic { get; private set; }
         public bool HasUnreadMessage { get; set; }
+        public int UnreadMentionCount { get; set; }
     }
 }
