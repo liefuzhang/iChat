@@ -2,6 +2,7 @@ import React from "react";
 import "./StartConversationForm.css";
 import AuthService from "services/AuthService";
 import { Dropdown } from "semantic-ui-react";
+import { toast } from "react-toastify";
 
 class StartConversationForm extends React.Component {
   constructor(props) {
@@ -33,7 +34,10 @@ class StartConversationForm extends React.Component {
       .then(id => {
         this.props.onConversationStarted();
         this.props.history.push(`/conversation/${id}`);
-      });
+      })
+      .catch(error => {
+        toast.error(`Start conversation failed: ${error}`);
+      });;
   }
 
   changeConversationUser(event, item) {

@@ -7,6 +7,7 @@ import InvitePeopleForm from "modalForms/InvitePeopleForm";
 import SetStatusForm from "modalForms/SetStatusForm";
 import AuthService from "services/AuthService";
 import UserStatusService from "services/UserStatusService";
+import { toast } from "react-toastify";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -72,6 +73,9 @@ class SidebarHeader extends React.Component {
         this.setState({
           isDropdownModalOpen: false
         });
+      })
+      .catch(error => {
+        toast.error(`Clear status failed: ${error}`);
       });
   }
 

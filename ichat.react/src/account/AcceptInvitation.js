@@ -7,7 +7,9 @@ class AcceptInvitation extends React.Component {
     super(props);
 
     this.authService = new AuthService(props);
-    this.onAcceptInvitationFormSubmit = this.onAcceptInvitationFormSubmit.bind(this);
+    this.onAcceptInvitationFormSubmit = this.onAcceptInvitationFormSubmit.bind(
+      this
+    );
 
     let searchParams = new URLSearchParams(props.location.search);
     this.workspaceName = searchParams.get("workspaceName");

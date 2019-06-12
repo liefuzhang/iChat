@@ -2,6 +2,7 @@ import React from "react";
 import "./InvitePeopleForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthService from "services/AuthService";
+import { toast } from "react-toastify";
 
 class InvitePeopleForm extends React.Component {
   constructor(props) {
@@ -44,9 +45,12 @@ class InvitePeopleForm extends React.Component {
         body: JSON.stringify(emails)
       })
       .then(() => {
-        alert("Invitation email sent!");
+        toast.success("Invitation email sent!");
         this.props.onClose();
-      });
+      })
+      .catch(error => {
+        toast.error(`Send Invitation failed: ${error}`);
+      });;
   }
 
   handleChange(event, index) {

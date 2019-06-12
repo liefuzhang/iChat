@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 class AuthService {
   constructor(props) {
     this.localStorageKey = "ichat.user";
@@ -28,7 +30,7 @@ class AuthService {
         this.login(email, password);
       })
       .catch(error => {
-        alert(error);
+        toast.error(`Create account failed: ${error}`);
         return Promise.reject();
       });
   }
@@ -52,7 +54,7 @@ class AuthService {
         this.props.history.push("/");
       })
       .catch(error => {
-        alert(error);
+        toast.error(`Login failed: ${error}`);
         return Promise.reject();
       });
   }
@@ -112,8 +114,8 @@ class AuthService {
       .then(text => (text.length ? JSON.parse(text) : null))
       .then(json => Promise.resolve(json))
       .catch(error => {
-        alert(error);
-        return Promise.reject();
+        console.error(error);
+        return Promise.reject(error);
       });
   }
 }

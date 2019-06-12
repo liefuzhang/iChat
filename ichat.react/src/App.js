@@ -5,6 +5,8 @@ import Login from "account/Login";
 import AcceptInvitation from "./account/AcceptInvitation";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import PrivateRoute from "components/PrivateRoute";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faTimes,
@@ -13,6 +15,18 @@ import {
   faFlag,
   faPaperclip
 } from "@fortawesome/free-solid-svg-icons";
+
+toast.configure({
+  position: "top-center",
+  autoClose: 4000,
+  hideProgressBar: true,
+  newestOnTop: false,
+  closeOnClick: true,
+  pauseOnVisibilityChange: true,
+  draggable: true,
+  pauseOnHover: true,
+  transition: Slide
+});
 
 function App() {
   library.add(faTimes);

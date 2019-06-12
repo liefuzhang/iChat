@@ -2,6 +2,7 @@ import React from "react";
 import AuthService from "services/AuthService";
 import "./SetStatusForm.css";
 import UserStatus from "services/UserStatusService";
+import { toast } from "react-toastify";
 
 class SetStatusForm extends React.Component {
   constructor(props) {
@@ -28,6 +29,9 @@ class SetStatusForm extends React.Component {
       .then(id => {
         this.props.onClose();
         this.props.onSelect();
+      })
+      .catch(error => {
+        toast.error(`Save status failed: ${error}`);
       });
   }
 

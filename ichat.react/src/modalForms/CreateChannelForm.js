@@ -1,5 +1,6 @@
 import React from "react";
 import AuthService from "services/AuthService";
+import { toast } from "react-toastify";
 
 class CreateChannelForm extends React.Component {
   constructor(props) {
@@ -25,6 +26,9 @@ class CreateChannelForm extends React.Component {
       .then(id => {
         this.props.onChannelCreated();
         this.props.history.push(`/channel/${id}`);
+      })
+      .catch(error => {
+        toast.error(`Create channel failed: ${error}`);
       });
   }
 
@@ -37,7 +41,9 @@ class CreateChannelForm extends React.Component {
           method="post"
           onSubmit={this.onCreateChannelFormSubmit}
         >
-          <p className="form-description">Channels are where specific topics can be talked about.</p>
+          <p className="form-description">
+            Channels are where specific topics can be talked about.
+          </p>
           <div className="form-group">
             <label htmlFor="createChannelName">Name</label>
             <input

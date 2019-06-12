@@ -2,6 +2,7 @@ import React from "react";
 import "./JoinChannelForm.css";
 import AuthService from "services/AuthService";
 import { Dropdown } from "semantic-ui-react";
+import { toast } from "react-toastify";
 
 class JoinChannelForm extends React.Component {
   constructor(props) {
@@ -33,7 +34,10 @@ class JoinChannelForm extends React.Component {
       .then(() => {
         this.props.onChannelJoined();
         this.props.history.push(`/channel/${this.selectedChannelId}`);
-      });
+      })
+      .catch(error => {
+        toast.error(`Join channel failed: ${error}`);
+      });;
   }
 
   changeSelectedChannel(event, item) {
