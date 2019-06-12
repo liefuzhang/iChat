@@ -10,7 +10,8 @@ import {
   faTimes,
   faChevronDown,
   faPlusCircle,
-  faFlag
+  faFlag,
+  faPaperclip
 } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
   library.add(faChevronDown);
   library.add(faPlusCircle);
   library.add(faFlag);
+  library.add(faPaperclip);
 
   return (
     <div id="container">

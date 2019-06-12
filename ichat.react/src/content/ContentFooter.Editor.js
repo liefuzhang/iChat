@@ -3,6 +3,7 @@ import "./ContentFooter.Editor.css";
 import QuillService from "services/QuillService";
 import AuthService from "services/AuthService";
 import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class ContentFooterEditor extends React.Component {
   constructor(props) {
@@ -283,7 +284,19 @@ class ContentFooterEditor extends React.Component {
           </div>
         )}
         <div className="message-box">
-          <div id="messageEditor" />
+          <div className="message-editor-container">
+            <div id="messageEditor" />
+          </div>
+          <div className="message-box-buttons">
+            <input id="uploadFile" type="file" />
+            <span
+              className="message-box-button"
+              onClick={() => document.querySelector("#uploadFile").click()}
+              title="send file"
+            >
+              <FontAwesomeIcon icon="paperclip" className="icon-paperclip" />
+            </span>
+          </div>
         </div>
       </form>
     );

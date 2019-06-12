@@ -2,14 +2,52 @@
   border: 2px solid #999;
   border-radius: 6px;
   min-height: 40px;
+  display: flex;
+  align-items: center;
 }
-.message-box:focus,
 .message-box.focus {
   border-color: #666;
 }
 
+.message-editor-container {
+  flex: 1 1 auto;
+}
+
+.message-box-buttons {
+  flex: 0 0 auto;
+  margin-left: 10px;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.message-box-buttons input[type="file"] {
+  display: none;
+}
+
+.message-box-buttons .message-box-button {
+  margin: 0 10px;
+  transition: 0.1s;
+  box-sizing: border-box;
+  width: 24px;
+  display: inline-block;
+  text-align: center;
+}
+
+.message-box-buttons .message-box-button:hover {
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.message-box-button .icon-paperclip {
+  transform: rotate(-45deg);
+}
+
+.message-box-button:hover .icon-paperclip {
+  color: #795548;
+}
+
 .message-prompt {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   position: absolute;
   color: #666;
   bottom: -18px;

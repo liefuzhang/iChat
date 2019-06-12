@@ -39,8 +39,8 @@ class QuillService {
     let editorContainer = document.querySelector(this.params.editorContainerSelector);
     editorContainer.removeEventListener("keydown", keydownEventHandler, true); // true - event capturing phase
     let editor = document.querySelector(".ql-editor");
-    editor.removeEventListener("focus", this.params.toggleFocus);
-    editor.removeEventListener("blur", this.params.toggleFocus);
+    editor.removeEventListener("focus", this.params.onToggleFocus);
+    editor.removeEventListener("blur", this.params.onToggleFocus);
     this.quill.off("text-change", this.params.onTextChange);
   }
 }
@@ -116,8 +116,8 @@ function registerEventHandlers() {
   this.quill.on("text-change", this.params.onTextChange);
 
   let editor = document.querySelector(".ql-editor");
-  editor.addEventListener("focus", this.params.toggleFocus);
-  editor.addEventListener("blur", this.params.toggleFocus);
+  editor.addEventListener("focus", this.params.onToggleFocus);
+  editor.addEventListener("blur", this.params.onToggleFocus);
 
   var editorContainer = document.querySelector(this.params.editorContainerSelector);
   editorContainer.addEventListener("keydown", keydownEventHandler, true); // true - event capturing phase

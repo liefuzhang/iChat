@@ -35,12 +35,16 @@
   display: flex;
 }
 
-.message-item-container .message-item{
+.message-item-container .message-item {
   flex: 1 1 auto;
 }
 
 .message-item-container .message-content-container .message-content {
   flex: 1 1 auto;
+}
+
+.message-content-container .message-content .mentioned-user {
+  padding: 1px 3px;
 }
 
 .message-item-container .message-content-time {
@@ -49,14 +53,14 @@
   display: none;
 }
 
-.message-item-container.following-message .message-content-time{
+.message-item-container.following-message .message-content-time {
   display: block;
   visibility: hidden;
-} 
+}
 
-.message-item-container.following-message.message-hover .message-content-time{
+.message-item-container.following-message.message-hover .message-content-time {
   visibility: visible;
-} 
+}
 
 .message-item-container .message-content-container .message-time {
   position: absolute;
