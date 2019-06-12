@@ -1,7 +1,7 @@
 import React from "react";
-import "./UserMention.css";
+import "./ContentFooter.Editor.UserMention.css";
 
-class UserMention extends React.Component {
+class ContentFooterEditorUserMention extends React.Component {
   constructor(props) {
     super(props);
 
@@ -61,4 +61,4 @@ class UserMention extends React.Component {
   }
 }
 
-export default UserMention;
+export default ContentFooterEditorUserMention;

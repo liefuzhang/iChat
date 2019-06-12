@@ -6,27 +6,7 @@
   flex: 0 0 auto;
   position: relative;
 }
-.footer .message-box {
-  border: 2px solid #999;
-  border-radius: 6px;
-  min-height: 40px;
-}
-.footer .message-box:focus,
-.footer .message-box.focus {
-  border-color: #666;
-}
 
-.footer .message-prompt {
-  font-size: 0.7rem;
-  position: absolute;
-  color: #666;
-  bottom: -18px;
-  right: 0;
-}
-
-.footer .message-prompt span {
-  margin: 0 3px;
-}
 
 .footer .message-typing-info {
   font-size: 0.75rem;
@@ -38,30 +18,4 @@
 
 .footer .message-typing-info span {
   font-weight: 600;
-}
-
-.footer .user-mention-container {
-  position: relative;
-}
-
-/* overrides for quill editor */
-.ql-container {
-  border: none !important;
-  height: auto;
-  font-size: 1rem !important;
-}
-
-.ql-toolbar {
-  display: none;
-}
-
-.ql-editor {
-  padding: 10px 15px !important;
-  max-height: 40vh;
-}
-
-.ql-editor.ql-blank::before {
-  color: #aaa;
-  font-style: normal;
-  font-size: 1rem;
 }

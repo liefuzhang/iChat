@@ -1,0 +1,293 @@
+import React from "react";
+import "./ContentFooter.Editor.css";
+import QuillService from "services/QuillService";
+import AuthService from "services/AuthService";
+import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
+
+class ContentFooterEditor extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.authService = new AuthService(props);
+    this.isSendingTypingMessage = false;
+    this.keydownEventHandler = this.keydownEventHandler.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.onMentionSelecting = this.onMentionSelecting.bind(this);
+    this.onMentionSelected = this.onMentionSelected.bind(this);
+    this.onSubmitMessage = this.onSubmitMessage.bind(this);
+    this.onToggleFocus = this.onToggleFocus.bind(this);
+    this.userList = [];
+
+    this.state = {
+      showMention: false,
+      mentionUserList: [],
+      highlightMentionUserIndex: 0
+    };
+  }
+
+  componentDidMount() {
+    this.quillService = new QuillService({
+      editorSelector: "#messageEditor",
+      onSubmitMessage: this.onSubmitMessage,
+      onTextChange: this.onTextChange,
+      onToggleFocus: this.onToggleFocus
+    });
+
+    this.initMention();
+    this.registerEventHandlers();
+    this.fecthUsers();
+  }
+
+  componentWillUnmount() {
+    this.unregisterEventHandlers();
+  }
+
+  fecthUsers() {
+    this.authService.fetch("/api/users").then(users => {
+      let currentUserId = this.props.userProfile.id;
+      this.userList = users.filter(u => u.id !== currentUserId);
+    });
+  }
+
+  initMention() {
+    this.mention = {
+      mentionAtIndex: undefined,
+      filterName: "",
+      isSelecting: false,
+      isSelectionInserted: false,
+      mentionRegex: /<span data-user-id="([0-9]+)" class="mentioned-user">@.+?<\/span>/g
+    };
+  }
+
+  onSubmitMessage(message, pureText) {
+    if (!pureText && !this.mention.mentionRegex.test(message)) return;
+    var mentionUserIds = [];
+    var groups;
+    this.mention.mentionRegex.lastIndex = 0;
+    while ((groups = this.mention.mentionRegex.exec(message)) !== null) {
+      mentionUserIds.push(+groups[1]);
+    }
+
+    this.authService.fetch(
+      `/api/messages/${this.props.section}/${this.props.id}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          message: message,
+          mentionUserIds: mentionUserIds
+        })
+      }
+    );
+  }
+
+  onTextChange(event) {
+    if (!this.mention.isSelecting) {
+      let insertOp = event.ops.find(o => !!o.insert);
+      let deleteOp = event.ops.find(o => !!o.delete);
+      if (insertOp && insertOp.insert === "@" && !this.state.showMention) {
+        this.setMentionList(this.userList.slice(0, 8));
+        this.setState({
+          showMention: true
+        });
+        this.mention.mentionAtIndex = this.quillService.getCursorIndex() - 1;
+        return;
+      } else if (
+        deleteOp &&
+        this.state.showMention &&
+        !this.mention.filterName
+      ) {
+        this.onMentionFinish();
+        return;
+      }
+
+      if (this.state.showMention) {
+        if (this.mention.isSelectionInserted) {
+          // type after mention selection inserted
+          this.onMentionFinish();
+        } else {
+          insertOp
+            ? (this.mention.filterName += insertOp.insert)
+            : (this.mention.filterName = this.mention.filterName.substring(
+                0,
+                this.mention.filterName.length - deleteOp.delete
+              ));
+          let mentionList = this.userList
+            .filter(
+              u =>
+                u.displayName
+                  .toLowerCase()
+                  .indexOf(this.mention.filterName.toLowerCase()) > -1
+            )
+            .slice(0, 8);
+          this.setMentionList(mentionList);
+
+          if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
+            this.onMentionFinish();
+        }
+        return;
+      }
+    }
+
+    if (this.isSendingTypingMessage === false) {
+      this.isSendingTypingMessage = true;
+      this.sendTypingMessage();
+      setTimeout(() => {
+        this.isSendingTypingMessage = false;
+      }, 10000); // throttle it to once in 10 secs
+    }
+  }
+
+  setMentionList(list) {
+    this.setState({
+      mentionUserList: list,
+      highlightMentionUserIndex: 0
+    });
+  }
+
+  sendTypingMessage() {
+    var url = this.props.isChannel
+      ? `/api/channels/notifyTyping`
+      : `/api/conversations/notifyTyping`;
+    this.authService.fetch(url, {
+      method: "POST",
+      body: JSON.stringify(this.props.id)
+    });
+  }
+
+  formatMentionUser(user) {
+    // TODO escape displayName, using html-entities
+    return `<span data-user-id="${user.id}" class="mentioned-user">@${
+      user.displayName
+    }</span>`;
+  }
+
+  onMentionSelecting(id) {
+    if (this.state.showMention && !!this.mention.filterName) return;
+    this.mention.isSelecting = true;
+    let user = this.userList.find(u => u.id === id);
+    this.quillService.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
+    this.quillService.insertHtml(
+      this.mention.mentionAtIndex,
+      this.quillService.getSpanTagName(),
+      this.formatMentionUser(user)
+    );
+    this.quillService.setCursorIndex(this.mention.mentionAtIndex + 1, 0);
+    this.mention.isSelecting = false;
+    this.mention.isSelectionInserted = true;
+  }
+
+  onMentionSelected(id) {
+    this.setState({ showMention: false });
+    this.onMentionSelecting(id);
+    if (this.mention.filterName)
+      this.quillService.deleteText(
+        this.mention.mentionAtIndex + 1,
+        this.mention.filterName.length
+      );
+    this.onMentionFinish();
+  }
+
+  onMentionFinish() {
+    this.initMention();
+    this.setState({ showMention: false });
+    let editor = document.querySelector(".ql-editor");
+    editor.focus();
+  }
+
+  registerEventHandlers() {
+    var editorContainer = document.querySelector("#messageEditor");
+    editorContainer.addEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
+  }
+
+  unregisterEventHandlers() {
+    let editorContainer = document.querySelector("#messageEditor");
+    editorContainer.removeEventListener(
+      "keydown",
+      this.keydownEventHandler,
+      true
+    ); // true - event capturing phase
+
+    this.quillService.unregisterEventHandlers();
+  }
+
+  onToggleFocus() {
+    let messageBox = document.querySelector(".message-box");
+    messageBox.classList.toggle("focus");
+  }
+
+  keydownEventHandler(event) {
+    var handled = false;
+
+    if (
+      this.state.showMention &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      let index = this.state.highlightMentionUserIndex;
+      switch (event.keyCode) {
+        case 40: // arrow down
+          this.setState({
+            highlightMentionUserIndex:
+              index + 1 > this.state.mentionUserList.length - 1 ? 0 : index + 1
+          });
+          handled = true;
+          break;
+        case 38: // arrow up
+          this.setState({
+            highlightMentionUserIndex:
+              index - 1 < 0 ? this.state.mentionUserList.length - 1 : index - 1
+          });
+          handled = true;
+          break;
+        case 13: // enter
+        case 9: // tab
+          let user = this.state.mentionUserList[
+            this.state.highlightMentionUserIndex
+          ];
+          if (!!user) {
+            this.onMentionSelected(user.id);
+            handled = true;
+          }
+          break;
+        case 27: // esc
+          this.onMentionFinish();
+          handled = true;
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (handled === true) {
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+
+  render() {
+    return (
+      <form id="messageForm" method="post">
+        {this.state.showMention && (
+          <div className="user-mention-container">
+            <ContentFooterEditorUserMention
+              userList={this.state.mentionUserList}
+              onMentionSelecting={this.onMentionSelecting}
+              onMentionSelected={this.onMentionSelected}
+              highlightItemIndex={this.state.highlightMentionUserIndex}
+              filterName={this.mention.filterName}
+            />
+          </div>
+        )}
+        <div className="message-box">
+          <div id="messageEditor" />
+        </div>
+      </form>
+    );
+  }
+}
+
+export default ContentFooterEditor;
