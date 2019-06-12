@@ -11,7 +11,6 @@ class QuillService {
     registerEventHandlers = registerEventHandlers.bind(this);
     toggleFormatChars = toggleFormatChars.bind(this);
     keydownEventHandler = keydownEventHandler.bind(this);
-    this.unregisterEventHandlers = this.unregisterEventHandlers.bind(this);
 
     initQuill();
   }
@@ -37,15 +36,11 @@ class QuillService {
   }
 
   unregisterEventHandlers() {
-    let editorContainer = document.querySelector(this.params.editorSelector);
-    editorContainer.removeEventListener(
-      "keydown",
-      keydownEventHandler,
-      true
-    ); // true - event capturing phase
+    let editorContainer = document.querySelector(this.params.editorContainerSelector);
+    editorContainer.removeEventListener("keydown", keydownEventHandler, true); // true - event capturing phase
     let editor = document.querySelector(".ql-editor");
-    editor.removeEventListener("focus", this.toggleFocus);
-    editor.removeEventListener("blur", this.toggleFocus);
+    editor.removeEventListener("focus", this.params.toggleFocus);
+    editor.removeEventListener("blur", this.params.toggleFocus);
     this.quill.off("text-change", this.params.onTextChange);
   }
 }
@@ -104,7 +99,7 @@ function initQuill() {
     }
   };
 
-  this.quill = new Quill(this.params.editorSelector, {
+  this.quill = new Quill(this.params.editorContainerSelector, {
     theme: "snow",
     placeholder: `Type your message...`,
     modules: {
@@ -124,7 +119,7 @@ function registerEventHandlers() {
   editor.addEventListener("focus", this.params.toggleFocus);
   editor.addEventListener("blur", this.params.toggleFocus);
 
-  var editorContainer = document.querySelector(this.params.editorSelector);
+  var editorContainer = document.querySelector(this.params.editorContainerSelector);
   editorContainer.addEventListener("keydown", keydownEventHandler, true); // true - event capturing phase
 }
 

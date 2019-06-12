@@ -1,5 +1,3 @@
-import decode from "jwt-decode";
-
 class AuthService {
   constructor(props) {
     this.localStorageKey = "ichat.user";

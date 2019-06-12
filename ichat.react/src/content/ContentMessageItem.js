@@ -2,10 +2,6 @@ import React from "react";
 import "./ContentMessageItem.css";
 
 class ContentMessageItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   onHoverMessageItem(event) {
     event.currentTarget.classList.add("message-hover");
   }

@@ -18,16 +18,18 @@ class InvitePeopleForm extends React.Component {
   }
 
   addAnotherEmail() {
-    this.state.emailsToInvite.push("");
+    let emails = this.state.emailsToInvite;
+    emails.push("");
     this.setState({
-      emailsToInvite: this.state.emailsToInvite
+      emailsToInvite: emails
     });
   }
 
   removeEmail(index) {
-    this.state.emailsToInvite.splice(index, 1);
+    let emails = this.state.emailsToInvite;
+    emails.splice(index, 1);
     this.setState({
-      emailsToInvite: this.state.emailsToInvite
+      emailsToInvite: emails
     });
   }
 
@@ -48,9 +50,10 @@ class InvitePeopleForm extends React.Component {
   }
 
   handleChange(event, index) {
-    this.state.emailsToInvite[index] = event.target.value;
+    let emails = this.state.emailsToInvite;
+    emails[index] = event.target.value;
     this.setState({
-      emailsToInvite: this.state.emailsToInvite
+      emailsToInvite: emails
     });
   }
 

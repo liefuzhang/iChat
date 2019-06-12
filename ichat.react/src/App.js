@@ -12,9 +12,6 @@ import {
   faPlusCircle,
   faFlag
 } from "@fortawesome/free-solid-svg-icons";
-{
-  /* usage: <FontAwesomeIcon icon="chevron-down" /> */
-}
 
 function App() {
   library.add(faTimes);

@@ -27,7 +27,7 @@ class ContentFooterEditor extends React.Component {
 
   componentDidMount() {
     this.quillService = new QuillService({
-      editorSelector: "#messageEditor",
+      editorContainerSelector: "#messageEditor",
       onSubmitMessage: this.onSubmitMessage,
       onTextChange: this.onTextChange,
       onToggleFocus: this.onToggleFocus
