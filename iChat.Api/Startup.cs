@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -49,6 +48,7 @@ namespace iChat.Api
             services.AddScoped<IEmailHelper, EmailHelper>();
             services.AddScoped<IUserIdenticonHelper, UserIdenticonHelper>();
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IFileService, FileService>();
 
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
 
@@ -68,7 +68,8 @@ namespace iChat.Api
                     });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddStackExchangeRedisCache(options =>
             {

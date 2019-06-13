@@ -84,7 +84,7 @@ class AuthService {
     this.props.history.push("/login");
   }
 
-  fetch(url, options) {
+  fetch(url, options, noContentType) {
     if (!url) {
       return Promise.reject(new Error("Empty url"));
     }
@@ -99,10 +99,9 @@ class AuthService {
 
     var bearer = "Bearer " + token;
     options || (options = {});
-    options.headers = {
-      "Content-Type": "application/json",
-      Authorization: bearer
-    };
+    options.headers || (options.headers = {});
+    noContentType || (options.headers["Content-Type"] = "application/json");
+    options.headers["Authorization"] = bearer;
 
     return fetch(url, options)
       .then(function(response) {

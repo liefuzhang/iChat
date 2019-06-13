@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace iChat.Api.Helpers
+﻿namespace iChat.Api.Helpers
 {
     public class AppSettings
     {
@@ -14,5 +9,8 @@ namespace iChat.Api.Helpers
         public string GmailPort { get; set; }
         public string GmailSsl { get; set; }
         public string FrontEndUrl { get; set; }
+        public string AwsAccessKeyId { get; set; }
+        public string AwsSecretAccessKey { get; set; }
+        public string AwsFileBucketName { get; set; }
     }
 }

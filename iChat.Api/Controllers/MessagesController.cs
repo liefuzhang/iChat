@@ -1,10 +1,11 @@
 ﻿using iChat.Api.Constants;
-using iChat.Api.Data;
 using iChat.Api.Dtos;
 using iChat.Api.Extensions;
 using iChat.Api.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,19 +22,20 @@ namespace iChat.Api.Controllers
         private readonly IChannelService _channelService;
         private readonly IConversationService _conversationService;
         private readonly ICacheService _cacheService;
+        private readonly IFileService _fileService;
 
-        public MessagesController(iChatContext context,
-            INotificationService notificationService,
+        public MessagesController(INotificationService notificationService,
             IMessageService messageService,
             IChannelService channelService,
             IConversationService conversationService,
-            ICacheService cacheService)
+            ICacheService cacheService, IFileService fileService)
         {
             _notificationService = notificationService;
             _messageService = messageService;
             _channelService = channelService;
             _conversationService = conversationService;
             _cacheService = cacheService;
+            _fileService = fileService;
         }
 
         // GET api/messages/channel/1
@@ -98,6 +100,22 @@ namespace iChat.Api.Controllers
             _notificationService.SendNewChannelMessageNotificationAsync(userIds, id);
 
             return Ok();
+        }
+
+        // POST api/messages/conversation/1/uploadFile
+        [HttpPost("conversation/{conversationId}/uploadFile")]
+        public async Task<IActionResult> UploadFilesToConversationAsync(IList<IFormFile> files, int conversationId)
+        {
+            await _fileService.UploadFilesAsync(files, User.GetWorkspaceId());
+            return Ok();
+        }
+
+        // POST api/messages/channel/1/uploadFile
+        [HttpPost("channel/{channelId}/uploadFile")]
+        public async Task<IActionResult> UploadFilesToChannelAsync(IList<IFormFile> files, int channelId)
+        {
+            return Ok();
+
         }
     }
 }

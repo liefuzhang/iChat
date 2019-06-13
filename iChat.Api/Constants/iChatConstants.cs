@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace iChat.Api.Constants
+﻿namespace iChat.Api.Constants
 {
     public class iChatConstants
     {
@@ -20,5 +15,7 @@ namespace iChat.Api.Constants
         public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
         public static readonly string RedisKeyRecentConversationPrefix = "RecentConversation";
         public static readonly string RedisKeyRecentUnreadChannelPrefix = "UnreadChannel";
+
+        public static readonly string AwsBucketWorkspaceFileFolderPrefix = "Workspace-";
     }
 }

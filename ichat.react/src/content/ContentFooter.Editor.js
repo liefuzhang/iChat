@@ -4,6 +4,8 @@ import QuillService from "services/QuillService";
 import AuthService from "services/AuthService";
 import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UploadFileForm from "modalForms/UploadFileForm";
+import Modal from "modals/Modal";
 
 class ContentFooterEditor extends React.Component {
   constructor(props) {
@@ -17,12 +19,16 @@ class ContentFooterEditor extends React.Component {
     this.onMentionSelected = this.onMentionSelected.bind(this);
     this.onSubmitMessage = this.onSubmitMessage.bind(this);
     this.onToggleFocus = this.onToggleFocus.bind(this);
+    this.onFileUploaded = this.onFileUploaded.bind(this);
+    this.onCloseUploadFile = this.onCloseUploadFile.bind(this);
+    this.onUploadFileButtonClicked = this.onUploadFileButtonClicked.bind(this);
     this.userList = [];
 
     this.state = {
-      showMention: false,
+      isMentionOpen: false,
       mentionUserList: [],
-      highlightMentionUserIndex: 0
+      highlightMentionUserIndex: 0,
+      isUploadFileModalOpen: false
     };
   }
 
@@ -85,7 +91,7 @@ class ContentFooterEditor extends React.Component {
     if (!this.mention.isSelecting) {
       let insertOp = event.ops.find(o => !!o.insert);
       let deleteOp = event.ops.find(o => !!o.delete);
-      if (insertOp && insertOp.insert === "@" && !this.state.showMention) {
+      if (insertOp && insertOp.insert === "@" && !this.state.isMentionOpen) {
         this.setMentionList(this.userList.slice(0, 8));
         this.setState({
           showMention: true
@@ -94,14 +100,14 @@ class ContentFooterEditor extends React.Component {
         return;
       } else if (
         deleteOp &&
-        this.state.showMention &&
+        this.state.isMentionOpen &&
         !this.mention.filterName
       ) {
         this.onMentionFinish();
         return;
       }
 
-      if (this.state.showMention) {
+      if (this.state.isMentionOpen) {
         if (this.mention.isSelectionInserted) {
           // type after mention selection inserted
           this.onMentionFinish();
@@ -163,7 +169,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   onMentionSelecting(id) {
-    if (this.state.showMention && !!this.mention.filterName) return;
+    if (this.state.isMentionOpen && !!this.mention.filterName) return;
     this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
     this.quillService.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
@@ -220,7 +226,7 @@ class ContentFooterEditor extends React.Component {
     var handled = false;
 
     if (
-      this.state.showMention &&
+      this.state.isMentionOpen &&
       !event.ctrlKey &&
       !event.shiftKey &&
       !event.altKey
@@ -269,36 +275,69 @@ class ContentFooterEditor extends React.Component {
     return true;
   }
 
+  onFileUploaded(event) {
+    if (event.currentTarget.files && event.currentTarget.files[0]) {
+      this.uploadFile = event.currentTarget.files[0];
+      this.setState({
+        isUploadFileModalOpen: true
+      });
+    }
+  }
+
+  onCloseUploadFile() {
+    this.setState({
+      isUploadFileModalOpen: false
+    });
+  }
+
+  onUploadFileButtonClicked() {
+    document.querySelector("#uploadFile").click();
+  }
+
   render() {
     return (
-      <form id="messageForm" method="post">
-        {this.state.showMention && (
-          <div className="user-mention-container">
-            <ContentFooterEditorUserMention
-              userList={this.state.mentionUserList}
-              onMentionSelecting={this.onMentionSelecting}
-              onMentionSelected={this.onMentionSelected}
-              highlightItemIndex={this.state.highlightMentionUserIndex}
-              filterName={this.mention.filterName}
-            />
+      <div>
+        <form id="messageForm" method="post">
+          {this.state.isMentionOpen && (
+            <div className="user-mention-container">
+              <ContentFooterEditorUserMention
+                userList={this.state.mentionUserList}
+                onMentionSelecting={this.onMentionSelecting}
+                onMentionSelected={this.onMentionSelected}
+                highlightItemIndex={this.state.highlightMentionUserIndex}
+                filterName={this.mention.filterName}
+              />
+            </div>
+          )}
+          <div className="message-box">
+            <div className="message-editor-container">
+              <div id="messageEditor" />
+            </div>
+            <div className="message-box-buttons">
+              <input
+                id="uploadFile"
+                type="file"
+                onChange={this.onFileUploaded}
+              />
+              <span
+                className="message-box-button"
+                onClick={this.onUploadFileButtonClicked}
+                title="send file"
+              >
+                <FontAwesomeIcon icon="paperclip" className="icon-paperclip" />
+              </span>
+              {this.state.isUploadFileModalOpen && (
+                <Modal onClose={this.onCloseUploadFile}>
+                  <UploadFileForm
+                    file={this.uploadFile}
+                    {...this.props}
+                  />
+                </Modal>
+              )}
+            </div>
           </div>
-        )}
-        <div className="message-box">
-          <div className="message-editor-container">
-            <div id="messageEditor" />
-          </div>
-          <div className="message-box-buttons">
-            <input id="uploadFile" type="file" />
-            <span
-              className="message-box-button"
-              onClick={() => document.querySelector("#uploadFile").click()}
-              title="send file"
-            >
-              <FontAwesomeIcon icon="paperclip" className="icon-paperclip" />
-            </span>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     );
   }
 }
