@@ -11,8 +11,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public class MessageService : IMessageService {
+namespace iChat.Api.Services
+{
+    public class MessageService : IMessageService
+    {
         private readonly iChatContext _context;
         private readonly IChannelService _channelService;
         private readonly IMessageParsingHelper _messageParsingHelper;
@@ -20,7 +22,8 @@ namespace iChat.Api.Services {
         private readonly IFileHelper _fileHelper;
 
         public MessageService(iChatContext context, IChannelService channelService,
-            IMessageParsingHelper messageParsingHelper, IMapper mapper, IFileHelper fileHelper) {
+            IMessageParsingHelper messageParsingHelper, IMapper mapper, IFileHelper fileHelper)
+        {
             _context = context;
             _channelService = channelService;
             _messageParsingHelper = messageParsingHelper;
@@ -28,11 +31,13 @@ namespace iChat.Api.Services {
             _fileHelper = fileHelper;
         }
 
-        private async Task<List<MessageGroupDto>> GetMessageGroups(IQueryable<Message> baseQuery) {
+        private async Task<List<MessageGroupDto>> GetMessageGroups(IQueryable<Message> baseQuery)
+        {
             var groups = await baseQuery.GroupBy(cm => cm.CreatedDate.Date)
                 .OrderBy(group => group.Key)
                 .Select(group =>
-                    new MessageGroupDto {
+                    new MessageGroupDto
+                    {
                         DateString = group.Key.ToString("dddd, MMM d", CultureInfo.InvariantCulture),
                         Messages = group.Select(m => _mapper.Map<MessageDto>(m))
                     })
@@ -43,17 +48,22 @@ namespace iChat.Api.Services {
             return groups;
         }
 
-        private void AllowConsecutiveMessages(List<MessageGroupDto> groups) {
+        private void AllowConsecutiveMessages(List<MessageGroupDto> groups)
+        {
             var maxDiffInMin = 3;
-            groups.ForEach(g => {
+            groups.ForEach(g =>
+            {
                 var messages = g.Messages.ToList();
-                for (var i = 0; i < messages.Count(); i++) {
-                    if (i == 0 || messages[i - 1].SenderId != messages[i].SenderId) {
+                for (var i = 0; i < messages.Count(); i++)
+                {
+                    if (i == 0 || messages[i - 1].SenderId != messages[i].SenderId)
+                    {
                         continue;
                     }
                     var time = DateTime.Parse(messages[i].TimeString);
                     var prevTime = DateTime.Parse(messages[i - 1].TimeString);
-                    if ((time - prevTime).Minutes <= maxDiffInMin) {
+                    if ((time - prevTime).Minutes <= maxDiffInMin)
+                    {
                         messages[i].IsConsecutiveMessage = true;
                     }
                 }
@@ -61,7 +71,8 @@ namespace iChat.Api.Services {
             });
         }
 
-        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int workspaceId) {
+        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int workspaceId)
+        {
             var messageGroupsBaseQuery = _context.ChannelMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ChannelId == channelId && m.WorkspaceId == workspaceId);
@@ -70,7 +81,8 @@ namespace iChat.Api.Services {
             return messageGroups;
         }
 
-        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int workspaceId) {
+        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int workspaceId)
+        {
             var messageGroupsBaseQuery = _context.ConversationMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ConversationId == conversationId && m.WorkspaceId == workspaceId);
@@ -80,7 +92,8 @@ namespace iChat.Api.Services {
         }
 
         public async Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId,
-            int workspaceId, bool hasFileAttachments = false) {
+            int workspaceId, bool hasFileAttachments = false)
+        {
             var content = _messageParsingHelper.Parse(newMessage);
             var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId, hasFileAttachments);
 
@@ -90,7 +103,8 @@ namespace iChat.Api.Services {
         }
 
         public async Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId,
-            int workspaceId, bool hasFileAttachments = false) {
+            int workspaceId, bool hasFileAttachments = false)
+        {
             var content = _messageParsingHelper.Parse(newMessage);
             var message = new ChannelMessage(channelId, content, currentUserId, workspaceId, hasFileAttachments);
 
@@ -99,36 +113,47 @@ namespace iChat.Api.Services {
             return message.Id;
         }
 
-        private async Task AddNewFilesAndMessageAsync(List<string> fileNames, int messageId, int userId,
-            int workspaceId) {
+        private async Task AddNewFileForMessageAsync(string savedFileName, string fileName, int messageId, int userId,
+            int workspaceId)
+        {
+            var newFile = new File(savedFileName, fileName, userId, workspaceId);
+            _context.Files.Add(newFile);
+            await _context.SaveChangesAsync();
 
-            foreach (var fileName in fileNames) {
-                var newFile = new File(fileName, userId, workspaceId);
-                _context.Files.Add(newFile);
-                await _context.SaveChangesAsync();
-
-                _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, newFile.Id));
-            }
-
+            _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, newFile.Id));
             await _context.SaveChangesAsync();
         }
 
-        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId) {
-            if (!files.Any())
-                return;
-
-            var fileNames = await _fileHelper.UploadFilesAsync(files, workspaceId);
-            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
-            await AddNewFilesAndMessageAsync(fileNames, messageId, userId, workspaceId);
+        private async Task UploadAndSaveFilesForMessageAsync(IList<IFormFile> files, int messageId, int userId, int workspaceId)
+        {
+            foreach (var file in files)
+            {
+                var savedFileName = await _fileHelper.UploadFileAsync(file, workspaceId);
+                await AddNewFileForMessageAsync(savedFileName, file.Name, messageId, userId, workspaceId);
+            }
         }
 
-        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId) {
+        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
+        {
             if (!files.Any())
+            {
                 return;
+            }
 
-            var fileNames = await _fileHelper.UploadFilesAsync(files, workspaceId);
+            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
+            await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
+        }
+
+
+        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
+        {
+            if (!files.Any())
+            {
+                return;
+            }
+
             var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
-            await AddNewFilesAndMessageAsync(fileNames, messageId, userId, workspaceId);
+            await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
         }
     }
 }

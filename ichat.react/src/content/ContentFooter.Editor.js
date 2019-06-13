@@ -277,7 +277,7 @@ class ContentFooterEditor extends React.Component {
 
   onFileUploaded(event) {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
-      this.uploadFile = event.currentTarget.files[0];
+      this.uploadFiles = event.currentTarget.files;
       this.setState({
         isUploadFileModalOpen: true
       });
@@ -317,6 +317,7 @@ class ContentFooterEditor extends React.Component {
               <input
                 id="uploadFile"
                 type="file"
+                multiple
                 onChange={this.onFileUploaded}
               />
               <span
@@ -329,7 +330,7 @@ class ContentFooterEditor extends React.Component {
               {this.state.isUploadFileModalOpen && (
                 <Modal onClose={this.onCloseUploadFile}>
                   <UploadFileForm
-                    file={this.uploadFile}
+                    files={Array.from(this.uploadFiles)}
                     {...this.props}
                   />
                 </Modal>

@@ -1,6 +1,8 @@
 import React from "react";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "semantic-ui-react";
 
 class UploadFileForm extends React.Component {
   constructor(props) {
@@ -14,8 +16,9 @@ class UploadFileForm extends React.Component {
     event.preventDefault();
 
     let formData = new FormData();
-    let file = this.props.file;
-    formData.append("files", file);
+    let files = this.props.files;
+    if (files.length === 0) return;
+    files.forEach(file => formData.append("files", file));
 
     let url = this.props.isChannel
       ? `/api/messages/channel/${this.props.id}/uploadFile`
@@ -50,7 +53,14 @@ class UploadFileForm extends React.Component {
             Your workspace is limited to 1 GB of files. If you need to upload
             more files, please contact liefuzhangnz@gmail.com
           </p>
-          <div className="file-container">{this.props.file.name}</div>
+          <div className="file-container">
+            {this.props.files.map(file => (
+              <div key={file.name + file.lastModified} className="file-item">
+                <Icon name="file outline" size="large" />
+                <span>{file.name}</span>
+              </div>
+            ))}
+          </div>
           <button type="submit" className="btn form-control">
             Upload
           </button>
