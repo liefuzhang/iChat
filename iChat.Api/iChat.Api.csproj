@@ -10,6 +10,10 @@
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.Designer.cs" />
     <Compile Remove="Migrations\20190511222647_RenameWorkSpaceToWorkspace.cs" />
     <Compile Remove="Migrations\20190511222647_RenameWorkSpaceToWorkspace.Designer.cs" />
+    <Compile Remove="Migrations\20190613085925_AddFileAndFileMessage.cs" />
+    <Compile Remove="Migrations\20190613085925_AddFileAndFileMessage.Designer.cs" />
+    <Compile Remove="Migrations\20190613090631_AddFileAndFileMessage.cs" />
+    <Compile Remove="Migrations\20190613090631_AddFileAndFileMessage.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

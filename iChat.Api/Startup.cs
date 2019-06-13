@@ -48,7 +48,7 @@ namespace iChat.Api
             services.AddScoped<IEmailHelper, EmailHelper>();
             services.AddScoped<IUserIdenticonHelper, UserIdenticonHelper>();
             services.AddScoped<ICacheService, CacheService>();
-            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IFileHelper, FileHelper>();
 
             var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); });
 

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iChat.Api.Data;
 
 namespace iChat.Api.Migrations
 {
     [DbContext(typeof(iChatContext))]
-    partial class iChatContextModelSnapshot : ModelSnapshot
+    [Migration("20190613091038_AddFileAndFileMessage")]
+    partial class AddFileAndFileMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,8 +117,6 @@ namespace iChat.Api.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
-                    b.Property<bool>("HasFileAttachments");
-
                     b.Property<int>("SenderId");
 
                     b.Property<int>("WorkspaceId");
@@ -136,11 +136,11 @@ namespace iChat.Api.Migrations
                 {
                     b.Property<int>("FileId");
 
-                    b.Property<int>("MessageId");
+                    b.Property<int>("FileMessageId");
 
-                    b.HasKey("FileId", "MessageId");
+                    b.HasKey("FileId", "FileMessageId");
 
-                    b.HasIndex("MessageId");
+                    b.HasIndex("FileMessageId");
 
                     b.ToTable("MessageFileAttachments");
                 });
@@ -238,6 +238,13 @@ namespace iChat.Api.Migrations
                     b.HasDiscriminator().HasValue("ConversationMessage");
                 });
 
+            modelBuilder.Entity("iChat.Api.Models.FileMessage", b =>
+                {
+                    b.HasBaseType("iChat.Api.Models.Message");
+
+                    b.HasDiscriminator().HasValue("FileMessage");
+                });
+
             modelBuilder.Entity("iChat.Api.Models.Channel", b =>
                 {
                     b.HasOne("iChat.Api.Models.Workspace", "Workspace")
@@ -313,9 +320,9 @@ namespace iChat.Api.Migrations
                         .HasForeignKey("FileId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("iChat.Api.Models.Message", "Message")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
+                    b.HasOne("iChat.Api.Models.FileMessage", "FileMessage")
+                        .WithMany("MessageFileAttachments")
+                        .HasForeignKey("FileMessageId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

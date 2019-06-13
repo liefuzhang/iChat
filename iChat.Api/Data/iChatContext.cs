@@ -1,12 +1,9 @@
 ﻿using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace iChat.Api.Data
-{
-    public class iChatContext : DbContext
-    {
-        public iChatContext(DbContextOptions<iChatContext> options) : base(options)
-        {
+namespace iChat.Api.Data {
+    public class iChatContext : DbContext {
+        public iChatContext(DbContextOptions<iChatContext> options) : base(options) {
         }
 
         public DbSet<Channel> Channels { get; set; }
@@ -17,11 +14,12 @@ namespace iChat.Api.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChannelMessage> ChannelMessages { get; set; }
         public DbSet<ConversationMessage> ConversationMessages { get; set; }
+        public DbSet<File> Files { get; set; }
+        public DbSet<MessageFileAttachment> MessageFileAttachments { get; set; }
         public DbSet<Workspace> Workspaces { get; set; }
         public DbSet<UserInvitation> UserInvitations { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
             //// config many-to-many for channel and user
@@ -45,16 +43,34 @@ namespace iChat.Api.Data
                 .HasOne(m => m.Sender)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Workspace)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Workspace)
                 .WithMany(w => w.Users)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ConversationMessage>()
-                .HasOne(cm=>cm.Conversation)
+            modelBuilder.Entity<File>()
+                .HasOne(f => f.Workspace)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<File>()
+                .HasOne(f => f.UploadedByUser)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ConversationMessage>()
+                .HasOne(cm => cm.Conversation)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MessageFileAttachment>()
+                .HasKey(m => new { m.FileId, m.MessageId });
         }
     }
 }

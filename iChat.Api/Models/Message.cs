@@ -8,7 +8,8 @@ namespace iChat.Api.Models {
         public User Sender { get; protected set; }
         public string Content { get; protected set; }
         public int WorkspaceId { get; protected set; }
+        public Workspace Workspace { get; private set; }
         public DateTime CreatedDate { get; protected set; }
-
+        public bool HasFileAttachments { get; set; }
     }
 }

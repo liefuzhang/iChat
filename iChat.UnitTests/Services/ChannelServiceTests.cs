@@ -1,4 +1,5 @@
-﻿using iChat.Api.Data;
+﻿using AutoMapper;
+using iChat.Api.Data;
 using iChat.Api.Models;
 using iChat.Api.Services;
 using iChat.UnitTests.Extensions;
@@ -19,7 +20,11 @@ namespace iChat.UnitTests.Services {
         public void Initilize() {
             _context = new DbContextFactory().CreateNewContext();
             var userService = new Mock<IUserService>();
-            _channelService = new ChannelService(_context, userService.Object);
+            var cacheService = new Mock<ICacheService>();
+            var mapper = new Mock<IMapper>();
+            var notificationService = new Mock<INotificationService>();
+            _channelService = new ChannelService(_context, userService.Object,
+                cacheService.Object, mapper.Object, notificationService.Object);
         }
 
         [TestMethod]

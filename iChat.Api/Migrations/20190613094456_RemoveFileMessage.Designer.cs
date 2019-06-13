@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iChat.Api.Data;
 
 namespace iChat.Api.Migrations
 {
     [DbContext(typeof(iChatContext))]
-    partial class iChatContextModelSnapshot : ModelSnapshot
+    [Migration("20190613094456_RemoveFileMessage")]
+    partial class RemoveFileMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,8 +116,6 @@ namespace iChat.Api.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired();
-
-                    b.Property<bool>("HasFileAttachments");
 
                     b.Property<int>("SenderId");
 

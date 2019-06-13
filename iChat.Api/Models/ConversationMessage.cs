@@ -7,9 +7,9 @@ namespace iChat.Api.Models
     public class ConversationMessage : Message
     {
         protected ConversationMessage() { }
-        public ConversationMessage(int conversationId, string content, int senderId, int workspaceId)
+        public ConversationMessage(int conversationId, string content, int senderId, int workspaceId, bool hasFileAttachments = false)
         {
-            if (string.IsNullOrWhiteSpace(content))
+            if (string.IsNullOrWhiteSpace(content) && !hasFileAttachments)
             {
                 throw new Exception("Content cannot be empty");
             }

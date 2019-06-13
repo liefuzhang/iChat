@@ -1,6 +1,7 @@
 ﻿using iChat.Api.Constants;
 using iChat.Api.Dtos;
 using iChat.Api.Extensions;
+using iChat.Api.Helpers;
 using iChat.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,20 +23,18 @@ namespace iChat.Api.Controllers
         private readonly IChannelService _channelService;
         private readonly IConversationService _conversationService;
         private readonly ICacheService _cacheService;
-        private readonly IFileService _fileService;
 
         public MessagesController(INotificationService notificationService,
             IMessageService messageService,
             IChannelService channelService,
             IConversationService conversationService,
-            ICacheService cacheService, IFileService fileService)
+            ICacheService cacheService, IFileHelper fileHelper)
         {
             _notificationService = notificationService;
             _messageService = messageService;
             _channelService = channelService;
             _conversationService = conversationService;
             _cacheService = cacheService;
-            _fileService = fileService;
         }
 
         // GET api/messages/channel/1
@@ -106,7 +105,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToConversationAsync(IList<IFormFile> files, int conversationId)
         {
-            await _fileService.UploadFilesAsync(files, User.GetWorkspaceId());
+            await _messageService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 
@@ -114,8 +113,8 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToChannelAsync(IList<IFormFile> files, int channelId)
         {
+            await _messageService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
-
         }
     }
 }

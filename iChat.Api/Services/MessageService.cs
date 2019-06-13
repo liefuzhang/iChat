@@ -3,6 +3,7 @@ using iChat.Api.Data;
 using iChat.Api.Dtos;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,15 @@ namespace iChat.Api.Services {
         private readonly IChannelService _channelService;
         private readonly IMessageParsingHelper _messageParsingHelper;
         private readonly IMapper _mapper;
+        private readonly IFileHelper _fileHelper;
 
         public MessageService(iChatContext context, IChannelService channelService,
-            IMessageParsingHelper messageParsingHelper, IMapper mapper) {
+            IMessageParsingHelper messageParsingHelper, IMapper mapper, IFileHelper fileHelper) {
             _context = context;
             _channelService = channelService;
             _messageParsingHelper = messageParsingHelper;
             _mapper = mapper;
+            _fileHelper = fileHelper;
         }
 
         private async Task<List<MessageGroupDto>> GetMessageGroups(IQueryable<Message> baseQuery) {
@@ -76,20 +79,56 @@ namespace iChat.Api.Services {
             return messageGroups;
         }
 
-        public async Task PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId) {
+        public async Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId,
+            int workspaceId, bool hasFileAttachments = false) {
             var content = _messageParsingHelper.Parse(newMessage);
-            var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId);
+            var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId, hasFileAttachments);
 
             _context.ConversationMessages.Add(message);
             await _context.SaveChangesAsync();
+            return message.Id;
         }
 
-        public async Task PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId) {
+        public async Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId,
+            int workspaceId, bool hasFileAttachments = false) {
             var content = _messageParsingHelper.Parse(newMessage);
-            var message = new ChannelMessage(channelId, content, currentUserId, workspaceId);
+            var message = new ChannelMessage(channelId, content, currentUserId, workspaceId, hasFileAttachments);
 
             _context.ChannelMessages.Add(message);
             await _context.SaveChangesAsync();
+            return message.Id;
+        }
+
+        private async Task AddNewFilesAndMessageAsync(List<string> fileNames, int messageId, int userId,
+            int workspaceId) {
+
+            foreach (var fileName in fileNames) {
+                var newFile = new File(fileName, userId, workspaceId);
+                _context.Files.Add(newFile);
+                await _context.SaveChangesAsync();
+
+                _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, newFile.Id));
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId) {
+            if (!files.Any())
+                return;
+
+            var fileNames = await _fileHelper.UploadFilesAsync(files, workspaceId);
+            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
+            await AddNewFilesAndMessageAsync(fileNames, messageId, userId, workspaceId);
+        }
+
+        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId) {
+            if (!files.Any())
+                return;
+
+            var fileNames = await _fileHelper.UploadFilesAsync(files, workspaceId);
+            var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
+            await AddNewFilesAndMessageAsync(fileNames, messageId, userId, workspaceId);
         }
     }
 }
