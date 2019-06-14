@@ -1,6 +1,6 @@
 import React from "react";
 import "./CloseButton.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "semantic-ui-react";
 
 class CloseButton extends React.Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class CloseButton extends React.Component {
       <div>
         <button className="close-button" onClick={this.props.onClose}>
           <div style={{ fontSize: "1.5rem" }}>
-            <FontAwesomeIcon icon="times" />
+            <Icon name="times" />
           </div>
           <div>esc</div>
         </button>

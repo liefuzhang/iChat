@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace iChat.Api.Models
 {
@@ -30,6 +28,7 @@ namespace iChat.Api.Models
             Content = content;
             SenderId = senderId;
             WorkspaceId = workspaceId;
+            HasFileAttachments = hasFileAttachments;
             CreatedDate = DateTime.Now;
         }
         public int ConversationId { get; private set; }

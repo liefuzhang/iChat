@@ -21,6 +21,7 @@ namespace iChat.Api.Models {
             Content = content;
             SenderId = senderId;
             WorkspaceId = workspaceId;
+            HasFileAttachments = hasFileAttachments;
             CreatedDate = DateTime.Now;
         }
         public int ChannelId { get; private set; }

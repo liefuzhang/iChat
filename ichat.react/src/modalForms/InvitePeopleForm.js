@@ -1,8 +1,8 @@
 import React from "react";
 import "./InvitePeopleForm.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
+import { Icon } from "semantic-ui-react";
 
 class InvitePeopleForm extends React.Component {
   constructor(props) {
@@ -50,7 +50,7 @@ class InvitePeopleForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Send Invitation failed: ${error}`);
-      });;
+      });
   }
 
   handleChange(event, index) {
@@ -80,8 +80,8 @@ class InvitePeopleForm extends React.Component {
                   onChange={event => this.handleChange(event, index)}
                 />
                 {this.state.emailsToInvite.length > 1 && (
-                  <FontAwesomeIcon
-                    icon="times"
+                  <Icon
+                    name="times"
                     className="icon-times"
                     title="remove this email"
                     onClick={() => this.removeEmail(index)}
@@ -91,8 +91,8 @@ class InvitePeopleForm extends React.Component {
             );
           })}
           <div onClick={this.addAnotherEmail} className="add-email">
-            <FontAwesomeIcon icon="plus-circle" className="icon-circle" />
-            Add another
+            <Icon name="plus circle" className="icon-circle" />
+            <span>Add another</span>
           </div>
           <button type="submit" className="btn form-control">
             Send Invitation

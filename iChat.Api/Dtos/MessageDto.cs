@@ -1,6 +1,5 @@
-﻿using System;
+﻿using iChat.Api.Models;
 using System.Collections.Generic;
-using iChat.Api.Models;
 
 namespace iChat.Api.Dtos
 {
@@ -13,5 +12,7 @@ namespace iChat.Api.Dtos
         public int WorkspaceId { get; set; }
         public string TimeString { get; set; }
         public bool IsConsecutiveMessage { get; set; }
+        public bool HasFileAttachments { get; set; }
+        public List<FileDto> FileAttachments { get; set; }
     }
 }

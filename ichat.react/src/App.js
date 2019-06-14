@@ -7,14 +7,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import PrivateRoute from "components/PrivateRoute";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-  faTimes,
-  faChevronDown,
-  faPlusCircle,
-  faFlag,
-  faPaperclip
-} from "@fortawesome/free-solid-svg-icons";
 
 toast.configure({
   position: "top-center",
@@ -29,12 +21,6 @@ toast.configure({
 });
 
 function App() {
-  library.add(faTimes);
-  library.add(faChevronDown);
-  library.add(faPlusCircle);
-  library.add(faFlag);
-  library.add(faPaperclip);
-
   return (
     <div id="container">
       <BrowserRouter>

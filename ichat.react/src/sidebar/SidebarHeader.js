@@ -1,6 +1,6 @@
 import React from "react";
 import "./SidebarHeader.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "semantic-ui-react";
 import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
@@ -110,7 +110,7 @@ class SidebarHeader extends React.Component {
               <span className="sidebar-header-workspace-name">
                 {this.props.userProfile.workspaceName}
               </span>
-              <FontAwesomeIcon icon="chevron-down" />
+              <Icon name="chevron down" />
             </div>
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
@@ -120,8 +120,8 @@ class SidebarHeader extends React.Component {
                     this.props.userStatus
                   );
                   return (
-                    <FontAwesomeIcon
-                      icon="flag"
+                    <Icon
+                      name="flag"
                       className="status-icon"
                       title={statusName}
                     />

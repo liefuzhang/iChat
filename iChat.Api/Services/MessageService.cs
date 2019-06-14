@@ -44,6 +44,7 @@ namespace iChat.Api.Services
                 .ToListAsync();
 
             AllowConsecutiveMessages(groups);
+            await AddFilesToMessagesAsync(groups);
 
             return groups;
         }
@@ -69,6 +70,20 @@ namespace iChat.Api.Services
                 }
                 g.Messages = messages;
             });
+        }
+
+        private async Task AddFilesToMessagesAsync(List<MessageGroupDto> groups)
+        {
+            var fileMessages = groups.Select(g => g.Messages).SelectMany(m => m).Where(m => m.HasFileAttachments).ToList();
+            var fileMessageIds = fileMessages.Select(m => m.Id);
+            var files = await _context.Files.Include(f => f.MessageFileAttachments)
+                .Where(f => f.MessageFileAttachments
+                .Any(mfa => fileMessageIds.Contains(mfa.MessageId))).ToListAsync();
+            foreach (var fileMessage in fileMessages)
+            {
+                var fileAttachments = files.Where(f => f.MessageFileAttachments.Any(mfa => mfa.MessageId == fileMessage.Id)).ToList();
+                fileMessage.FileAttachments = _mapper.Map<List<FileDto>>(fileAttachments);
+            }
         }
 
         public async Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int workspaceId)
@@ -129,7 +144,7 @@ namespace iChat.Api.Services
             foreach (var file in files)
             {
                 var savedFileName = await _fileHelper.UploadFileAsync(file, workspaceId);
-                await AddNewFileForMessageAsync(savedFileName, file.Name, messageId, userId, workspaceId);
+                await AddNewFileForMessageAsync(savedFileName, file.FileName, messageId, userId, workspaceId);
             }
         }
 

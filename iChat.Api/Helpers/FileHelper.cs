@@ -6,7 +6,6 @@ using iChat.Api.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -26,11 +25,7 @@ namespace iChat.Api.Helpers
         public async Task<string> UploadFileAsync(IFormFile file, int workspaceId)
         {
             var uploadToSubFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
-            var fileName = file.FileName;
-            while (await FileExistsAsync(fileName, workspaceId))
-            {
-                fileName = $"{Guid.NewGuid()}-{file.FileName}";
-            }
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
             using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
             {
@@ -52,32 +47,6 @@ namespace iChat.Api.Helpers
             }
 
             return fileName;
-        }
-
-        private async Task<bool> FileExistsAsync(string fileName, int workspaceId)
-        {
-            var subFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
-
-            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
-            {
-                var exist = false;
-                try
-                {
-                    await client.GetObjectMetadataAsync(_appSettings.AwsFileBucketName, $"{subFolder}/{fileName}");
-                    exist = true;
-                }
-                catch (AmazonS3Exception e)
-                {
-                    if (e.ErrorCode != "NotFound")
-                    {
-                        throw;
-                    }
-
-                    // only reach here when file doesn't exist
-                }
-
-                return exist;
-            }
         }
     }
 }

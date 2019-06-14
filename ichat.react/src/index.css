@@ -36,7 +36,9 @@ h1 {
   margin-block-end: 0.83em;
 }
 
-*, :after, :before {
+*,
+:after,
+:before {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
 }
@@ -89,7 +91,7 @@ blockquote {
   margin-left: 0;
 }
 
-button{
+button {
   padding: 0;
 }
 
@@ -258,4 +260,10 @@ form button[type="submit"] {
 .list-item.active-item {
   background: #259;
   color: white;
+}
+
+/* sematic ui icon */
+i.icon {
+  margin: 0;
+  line-height: 1em;
 }

@@ -3,7 +3,7 @@ import "./ContentFooter.Editor.css";
 import QuillService from "services/QuillService";
 import AuthService from "services/AuthService";
 import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
 
@@ -325,7 +325,7 @@ class ContentFooterEditor extends React.Component {
                 onClick={this.onUploadFileButtonClicked}
                 title="send file"
               >
-                <FontAwesomeIcon icon="paperclip" className="icon-paperclip" />
+                <Icon name="paperclip" className="icon-paperclip" />
               </span>
               {this.state.isUploadFileModalOpen && (
                 <Modal onClose={this.onCloseUploadFile}>

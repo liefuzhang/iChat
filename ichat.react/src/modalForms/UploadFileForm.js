@@ -1,7 +1,6 @@
 import React from "react";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Icon } from "semantic-ui-react";
 
 class UploadFileForm extends React.Component {
@@ -10,6 +9,12 @@ class UploadFileForm extends React.Component {
 
     this.onUploadFileFormSubmit = this.onUploadFileFormSubmit.bind(this);
     this.authService = new AuthService(props);
+    let maxFileCount = 3;
+    this.files = this.props.files;
+    if (this.files.length > maxFileCount) {
+      toast.warn(`Maximum ${maxFileCount} files can be uploaded at one time`);
+      this.files = this.files.slice(0, maxFileCount);
+    }
   }
 
   onUploadFileFormSubmit(event) {

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using iChat.Api.Dtos;
 using iChat.Api.Models;
+using System.Globalization;
 
-namespace iChat.Api.Helpers {
-    public class AutoMapperProfile : Profile {
-        public AutoMapperProfile() {
+namespace iChat.Api.Helpers
+{
+    public class AutoMapperProfile : Profile
+    {
+        public AutoMapperProfile()
+        {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
             CreateMap<Message, MessageDto>()
@@ -19,6 +18,8 @@ namespace iChat.Api.Helpers {
             CreateMap<ConversationDto, Conversation>();
             CreateMap<Channel, ChannelDto>();
             CreateMap<ChannelDto, Channel>();
+            CreateMap<File, FileDto>();
+            CreateMap<FileDto, File>();
         }
     }
 }

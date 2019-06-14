@@ -5,13 +5,13 @@ import SidebarItemChannel from "./SidebarItem.Channel";
 import SidebarItemJoinChannel from "./SidebarItem.JoinChannel";
 import SidebarHeader from "./SidebarHeader";
 import AuthService from "services/AuthService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "modals/Modal";
 import CreateChannelForm from "modalForms/CreateChannelForm";
 import StartConversationForm from "modalForms/StartConversationForm";
 import SimpleBar from "simplebar-react";
 import "lib/simplebar.css";
 import { Loader, Image, Segment } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -129,8 +129,8 @@ class Sidebar extends React.Component {
           <section>
             <div className="section-title">
               <span>CHANNELS</span>
-              <FontAwesomeIcon
-                icon="plus-circle"
+              <Icon
+                name="plus circle"
                 title="Create a channel"
                 className="icon-circle"
                 onClick={this.onCreateChannel}
@@ -171,8 +171,8 @@ class Sidebar extends React.Component {
           <section>
             <div className="section-title">
               <span>DIRECT MESSAGES</span>
-              <FontAwesomeIcon
-                icon="plus-circle"
+              <Icon
+                name="plus circle"
                 title="Start a conversation"
                 className="icon-circle"
                 onClick={this.onStartConversation}

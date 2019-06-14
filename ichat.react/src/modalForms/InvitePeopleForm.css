@@ -1,12 +1,16 @@
 #emailForm .add-email {
   color: #206890;
-  display: flex;
-  align-content: center;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    line-height: 1em;
+    padding-right: 3px;
+    margin: 3px 0;
 }
 
 #emailForm .add-email:hover {
   cursor: pointer;
-  text-decoration: underline;
+  border-bottom: 1px solid;
 }
 
 #emailForm .email-row {
@@ -18,8 +22,7 @@
   font-size: 1rem;
   margin-left: 10px;
   position: absolute;
-  top: calc(50% - 6px);
-  transform: translateY(-50%);
+  top: 13px;
   color: #666;
 }
 
