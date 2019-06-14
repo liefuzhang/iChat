@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "semantic-ui-react";
 import "./ContentMessageItem.css";
 
 class ContentMessageItem extends React.Component {
@@ -11,34 +12,46 @@ class ContentMessageItem extends React.Component {
   }
 
   render() {
+    let message = this.props.message;
     return (
       <div
         className={
           "message-item-container" +
-          (this.props.message.isConsecutiveMessage ? " following-message" : "")
+          (message.isConsecutiveMessage ? " following-message" : "")
         }
-        key={this.props.message.id}
+        key={message.id}
         onMouseOver={this.onHoverMessageItem}
         onMouseLeave={this.onLeaveMessageItem}
       >
-        <img
-          className="user-identicon"
-          src={this.props.message.sender.identiconPath}
-        />
+        <img className="user-identicon" src={message.sender.identiconPath} />
         <div className="message-item">
           <div className="message-title">
-            <b>{this.props.message.sender.displayName}</b>{" "}
-            <span className="message-time">
-              &nbsp;{this.props.message.timeString}
-            </span>
+            <b>{message.sender.displayName}</b>{" "}
+            <span className="message-time">&nbsp;{message.timeString}</span>
           </div>
           <div className="message-content-container">
             <div className="message-content-time">
-              <span className="message-time">
-                {this.props.message.timeString}
-              </span>
+              <span className="message-time">{message.timeString}</span>
             </div>
-            <RawMessage content={this.props.message.content} />
+            <div className="message-content">
+              {!message.hasFileAttachments && (
+                <RawMessage content={message.content} />
+              )}
+              {message.hasFileAttachments && (
+                <div className="file-container">
+                  {message.fileAttachments.map(file => (
+                    <div
+                      key={file.name + file.lastModified}
+                      className="file-item"
+                      title="Click to download"
+                    >
+                      <Icon name="file outline" size="large" />
+                      <span title={file.name}>{file.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -47,12 +60,7 @@ class ContentMessageItem extends React.Component {
 }
 
 function RawMessage(props) {
-  return (
-    <div
-      className="message-content"
-      dangerouslySetInnerHTML={{ __html: props.content }}
-    />
-  );
+  return <div dangerouslySetInnerHTML={{ __html: props.content }} />;
 }
 
 export default ContentMessageItem;

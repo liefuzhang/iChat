@@ -83,7 +83,7 @@ class InvitePeopleForm extends React.Component {
                   <Icon
                     name="times"
                     className="icon-times"
-                    title="remove this email"
+                    title="Remove this email"
                     onClick={() => this.removeEmail(index)}
                   />
                 )}

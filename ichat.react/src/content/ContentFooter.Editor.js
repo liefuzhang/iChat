@@ -324,7 +324,7 @@ class ContentFooterEditor extends React.Component {
               <span
                 className="message-box-button"
                 onClick={this.onUploadFileButtonClicked}
-                title="send file"
+                title="Send file"
               >
                 <Icon name="paperclip" className="icon-paperclip" />
               </span>

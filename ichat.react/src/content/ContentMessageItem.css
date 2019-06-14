@@ -70,3 +70,15 @@
   width: 60px;
   text-align: right;
 }
+
+.message-content .file-container {
+  margin: 5px 0;
+}
+
+.message-content .file-container .file-item {
+  max-width: 300px;
+}
+
+.message-content .file-container .file-item:hover {
+  cursor: pointer;
+}
