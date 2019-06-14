@@ -106,6 +106,10 @@ namespace iChat.Api.Controllers
         public async Task<IActionResult> UploadFilesToConversationAsync(IList<IFormFile> files, int conversationId)
         {
             await _messageService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
+
+            var userIds = (await _conversationService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            _notificationService.SendNewConversationMessageNotificationAsync(userIds, conversationId);
+
             return Ok();
         }
 
@@ -114,6 +118,10 @@ namespace iChat.Api.Controllers
         public async Task<IActionResult> UploadFilesToChannelAsync(IList<IFormFile> files, int channelId)
         {
             await _messageService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
+
+            var userIds = (await _channelService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            _notificationService.SendNewChannelMessageNotificationAsync(userIds, channelId);
+
             return Ok();
         }
     }

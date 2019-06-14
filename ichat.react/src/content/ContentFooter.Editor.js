@@ -94,7 +94,7 @@ class ContentFooterEditor extends React.Component {
       if (insertOp && insertOp.insert === "@" && !this.state.isMentionOpen) {
         this.setMentionList(this.userList.slice(0, 8));
         this.setState({
-          showMention: true
+          isMentionOpen: true
         });
         this.mention.mentionAtIndex = this.quillService.getCursorIndex() - 1;
         return;
@@ -184,7 +184,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   onMentionSelected(id) {
-    this.setState({ showMention: false });
+    this.setState({ isMentionOpen: false });
     this.onMentionSelecting(id);
     if (this.mention.filterName)
       this.quillService.deleteText(
@@ -196,7 +196,7 @@ class ContentFooterEditor extends React.Component {
 
   onMentionFinish() {
     this.initMention();
-    this.setState({ showMention: false });
+    this.setState({ isMentionOpen: false });
     let editor = document.querySelector(".ql-editor");
     editor.focus();
   }
@@ -285,6 +285,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   onCloseUploadFile() {
+    document.querySelector("#uploadFile").value = "";
     this.setState({
       isUploadFileModalOpen: false
     });
@@ -331,6 +332,7 @@ class ContentFooterEditor extends React.Component {
                 <Modal onClose={this.onCloseUploadFile}>
                   <UploadFileForm
                     files={Array.from(this.uploadFiles)}
+                    onUploaded={this.onCloseUploadFile}
                     {...this.props}
                   />
                 </Modal>

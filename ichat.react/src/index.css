@@ -267,3 +267,10 @@ i.icon {
   margin: 0;
   line-height: 1em;
 }
+
+.warning-text {
+  background: rgba(0, 132, 255, 0.1);
+  border: 1px solid #6bcdf7;
+  padding: 10px 20px;
+  border-radius: 4px;
+}

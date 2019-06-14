@@ -2,6 +2,7 @@ import React from "react";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
 import { Icon } from "semantic-ui-react";
+import "./UploadFileForm.css";
 
 class UploadFileForm extends React.Component {
   constructor(props) {
@@ -21,29 +22,28 @@ class UploadFileForm extends React.Component {
     event.preventDefault();
 
     let formData = new FormData();
-    let files = this.props.files;
-    if (files.length === 0) return;
-    files.forEach(file => formData.append("files", file));
+    if (this.files.length === 0) return;
+    this.files.forEach(file => formData.append("files", file));
 
     let url = this.props.isChannel
       ? `/api/messages/channel/${this.props.id}/uploadFile`
       : `/api/messages/conversation/${this.props.id}/uploadFile`;
-    this.authService.fetch(
-      url,
-      {
-        method: "POST",
-        body: formData
-      },
-      true //noContentType
-    );
-    // .then(id => {
-    //   this.props.onChannelCreated();
-    //   this.props.history.push(`/channel/${id}`);
-    // })
-    // .catch(error => {
-    //   toast.error(`Create channel failed: ${error}`);
+    this.authService
+      .fetch(
+        url,
+        {
+          method: "POST",
+          body: formData
+        },
+        true //noContentType
+      )
+      .then(id => {
+        this.props.onUploaded();
+      })
+      .catch(error => {
+        toast.error(`Upload file failed: ${error}`);
+      });
   }
-  // });
 
   render() {
     return (
@@ -59,10 +59,10 @@ class UploadFileForm extends React.Component {
             more files, please contact liefuzhangnz@gmail.com
           </p>
           <div className="file-container">
-            {this.props.files.map(file => (
+            {this.files.map(file => (
               <div key={file.name + file.lastModified} className="file-item">
                 <Icon name="file outline" size="large" />
-                <span>{file.name}</span>
+                <span title={file.name}>{file.name}</span>
               </div>
             ))}
           </div>

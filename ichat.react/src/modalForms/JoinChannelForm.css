@@ -16,7 +16,6 @@
 }
 
 .join-channel-form button[type="submit"]{
-    width: 300px;
     margin-left: auto;
     margin-right: auto;
 }
