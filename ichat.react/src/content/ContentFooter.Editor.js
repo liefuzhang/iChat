@@ -22,6 +22,7 @@ class ContentFooterEditor extends React.Component {
     this.onFileUploaded = this.onFileUploaded.bind(this);
     this.onCloseUploadFile = this.onCloseUploadFile.bind(this);
     this.onUploadFileButtonClicked = this.onUploadFileButtonClicked.bind(this);
+    this.onMentionButtonClicked = this.onMentionButtonClicked.bind(this);
     this.userList = [];
 
     this.state = {
@@ -91,7 +92,11 @@ class ContentFooterEditor extends React.Component {
     if (!this.mention.isSelecting) {
       let insertOp = event.ops.find(o => !!o.insert);
       let deleteOp = event.ops.find(o => !!o.delete);
-      if (insertOp && insertOp.insert === "@" && !this.state.isMentionOpen) {
+      if (
+        insertOp &&
+        insertOp.insert.trim() === "@" &&
+        !this.state.isMentionOpen
+      ) {
         this.setMentionList(this.userList.slice(0, 8));
         this.setState({
           isMentionOpen: true
@@ -128,7 +133,7 @@ class ContentFooterEditor extends React.Component {
             .slice(0, 8);
           this.setMentionList(mentionList);
 
-          if (mentionList.length === 0 && insertOp && insertOp.insert === " ")
+          if (mentionList.length === 0 && insertOp && insertOp.insert.trim() === "")
             this.onMentionFinish();
         }
         return;
@@ -199,6 +204,14 @@ class ContentFooterEditor extends React.Component {
     this.setState({ isMentionOpen: false });
     let editor = document.querySelector(".ql-editor");
     editor.focus();
+  }
+
+  onMentionButtonClicked(event) {
+    let editor = document.querySelector(".ql-editor");
+    editor.focus();
+    let index = this.quillService.getCursorIndex();
+    this.quillService.setCursorIndex(index, 0);
+    this.quillService.insertText(index, "@");
   }
 
   registerEventHandlers() {
@@ -315,28 +328,37 @@ class ContentFooterEditor extends React.Component {
               <div id="messageEditor" />
             </div>
             <div className="message-box-buttons">
-              <input
-                id="uploadFile"
-                type="file"
-                multiple
-                onChange={this.onFileUploaded}
-              />
-              <span
-                className="message-box-button"
-                onClick={this.onUploadFileButtonClicked}
-                title="Send file"
-              >
-                <Icon name="paperclip" className="icon-paperclip" />
-              </span>
-              {this.state.isUploadFileModalOpen && (
-                <Modal onClose={this.onCloseUploadFile}>
-                  <UploadFileForm
-                    files={Array.from(this.uploadFiles)}
-                    onUploaded={this.onCloseUploadFile}
-                    {...this.props}
-                  />
-                </Modal>
-              )}
+              <div className="message-box-button">
+                <span
+                  title="Mention user"
+                  onClick={this.onMentionButtonClicked}
+                >
+                  <Icon name="at" className="icon-mention" />
+                </span>
+              </div>
+              <div className="message-box-button">
+                <input
+                  id="uploadFile"
+                  type="file"
+                  multiple
+                  onChange={this.onFileUploaded}
+                />
+                <span
+                  onClick={this.onUploadFileButtonClicked}
+                  title="Send file"
+                >
+                  <Icon name="paperclip" className="icon-paperclip" />
+                </span>
+                {this.state.isUploadFileModalOpen && (
+                  <Modal onClose={this.onCloseUploadFile}>
+                    <UploadFileForm
+                      files={Array.from(this.uploadFiles)}
+                      onUploaded={this.onCloseUploadFile}
+                      {...this.props}
+                    />
+                  </Modal>
+                )}
+              </div>
             </div>
           </div>
         </form>

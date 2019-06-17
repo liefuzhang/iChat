@@ -76,7 +76,7 @@
 }
 
 .message-content .file-container .file-item {
-  max-width: 300px;
+  width: 300px;
 }
 
 .message-content .file-container .file-item:hover {

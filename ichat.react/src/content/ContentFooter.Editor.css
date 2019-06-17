@@ -16,8 +16,11 @@
 .message-box-buttons {
   flex: 0 0 auto;
   margin-left: 10px;
+  margin-right: 5px;
   color: #666;
   font-size: 1.2rem;
+  align-self: flex-end;
+  display: flex;
 }
 
 .message-box-buttons input[type="file"] {
@@ -25,12 +28,13 @@
 }
 
 .message-box-buttons .message-box-button {
-  margin: 0 10px;
+  margin-right: 10px;
   transition: 0.1s;
   box-sizing: border-box;
   width: 24px;
   display: inline-block;
   text-align: center;
+  line-height: 40px;
 }
 
 .message-box-buttons .message-box-button:hover {
@@ -44,6 +48,10 @@
 
 .message-box-button:hover .icon-paperclip {
   color: #795548;
+}
+
+.message-box-button:hover .icon-mention {
+  color: #297fa3;
 }
 
 .message-prompt {

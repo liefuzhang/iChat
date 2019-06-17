@@ -16,7 +16,7 @@ class QuillService {
   }
 
   getCursorIndex() {
-    return this.quill.getSelection().index;
+    return this.quill.selection.savedRange.index;
   }
 
   setCursorIndex(index) {
@@ -25,6 +25,14 @@ class QuillService {
 
   getSpanTagName() {
     return this.spanTagName;
+  }
+
+  insertText(index, string) {
+    this.quill.insertText(index, string);
+  }
+
+  getText() {
+    return this.quill.getText().trim();
   }
 
   deleteText(index, length) {
@@ -36,7 +44,9 @@ class QuillService {
   }
 
   unregisterEventHandlers() {
-    let editorContainer = document.querySelector(this.params.editorContainerSelector);
+    let editorContainer = document.querySelector(
+      this.params.editorContainerSelector
+    );
     editorContainer.removeEventListener("keydown", keydownEventHandler, true); // true - event capturing phase
     let editor = document.querySelector(".ql-editor");
     editor.removeEventListener("focus", this.params.onToggleFocus);
@@ -119,7 +129,9 @@ function registerEventHandlers() {
   editor.addEventListener("focus", this.params.onToggleFocus);
   editor.addEventListener("blur", this.params.onToggleFocus);
 
-  var editorContainer = document.querySelector(this.params.editorContainerSelector);
+  var editorContainer = document.querySelector(
+    this.params.editorContainerSelector
+  );
   editorContainer.addEventListener("keydown", keydownEventHandler, true); // true - event capturing phase
 }
 
