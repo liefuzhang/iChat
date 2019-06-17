@@ -6,6 +6,8 @@ import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
 import { Icon } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
+import { Picker } from "emoji-mart";
+import "lib/emoji-mart.css";
 
 class ContentFooterEditor extends React.Component {
   constructor(props) {
@@ -23,6 +25,11 @@ class ContentFooterEditor extends React.Component {
     this.onCloseUploadFile = this.onCloseUploadFile.bind(this);
     this.onUploadFileButtonClicked = this.onUploadFileButtonClicked.bind(this);
     this.onMentionButtonClicked = this.onMentionButtonClicked.bind(this);
+    this.openMention = this.openMention.bind(this);
+    this.onCloseMentionClick = this.onCloseMentionClick.bind(this);
+    this.closeMention = this.closeMention.bind(this);
+    this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
+    this.closeEmoji = this.closeEmoji.bind(this);
     this.userList = [];
 
     this.state = {
@@ -67,6 +74,29 @@ class ContentFooterEditor extends React.Component {
     };
   }
 
+  openMention() {
+    this.setState(
+      {
+        isMentionOpen: true
+      },
+      () => {
+        document.addEventListener("click", this.onCloseMentionClick);
+      }
+    );
+  }
+
+  onCloseMentionClick(event) {
+    let mentionContainer = document.querySelector(".user-mention-container");
+    if (mentionContainer.contains(event.target)) return;
+    this.onMentionFinish();
+  }
+
+  closeMention() {
+    this.setState({ isMentionOpen: false }, () => {
+      document.removeEventListener("click", this.onCloseMentionClick);
+    });
+  }
+
   onSubmitMessage(message, pureText) {
     if (!pureText && !this.mention.mentionRegex.test(message)) return;
     var mentionUserIds = [];
@@ -98,9 +128,7 @@ class ContentFooterEditor extends React.Component {
         !this.state.isMentionOpen
       ) {
         this.setMentionList(this.userList.slice(0, 8));
-        this.setState({
-          isMentionOpen: true
-        });
+        this.openMention();
         this.mention.mentionAtIndex = this.quillService.getCursorIndex() - 1;
         return;
       } else if (
@@ -133,7 +161,11 @@ class ContentFooterEditor extends React.Component {
             .slice(0, 8);
           this.setMentionList(mentionList);
 
-          if (mentionList.length === 0 && insertOp && insertOp.insert.trim() === "")
+          if (
+            mentionList.length === 0 &&
+            insertOp &&
+            insertOp.insert.trim() === ""
+          )
             this.onMentionFinish();
         }
         return;
@@ -189,7 +221,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   onMentionSelected(id) {
-    this.setState({ isMentionOpen: false });
+    this.closeMention();
     this.onMentionSelecting(id);
     if (this.mention.filterName)
       this.quillService.deleteText(
@@ -201,7 +233,7 @@ class ContentFooterEditor extends React.Component {
 
   onMentionFinish() {
     this.initMention();
-    this.setState({ isMentionOpen: false });
+    this.closeMention();
     let editor = document.querySelector(".ql-editor");
     editor.focus();
   }
@@ -308,6 +340,20 @@ class ContentFooterEditor extends React.Component {
     document.querySelector("#uploadFile").click();
   }
 
+  onEmojiButtonClicked() {
+    this.setState({ isEmojiOpen: true }, () => {
+      document.addEventListener("click", this.closeEmoji);
+    });
+  }
+
+  closeEmoji(event) {
+    let emojiPicker = document.querySelector(".emoji-picker");
+    if (emojiPicker.contains(event.target)) return;
+    this.setState({ isEmojiOpen: false }, () => {
+      document.removeEventListener("click", this.closeEmoji);
+    });
+  }
+
   render() {
     return (
       <div>
@@ -359,7 +405,17 @@ class ContentFooterEditor extends React.Component {
                   </Modal>
                 )}
               </div>
+              <div className="message-box-button">
+                <span title="Add emoji" onClick={this.onEmojiButtonClicked}>
+                  <Icon name="smile outline" className="icon-emoji" />
+                </span>
+              </div>
             </div>
+            {this.state.isEmojiOpen && (
+              <div className="emoji-picker">
+                <Picker onSelect={this.addEmoji} />
+              </div>
+            )}
           </div>
         </form>
       </div>
