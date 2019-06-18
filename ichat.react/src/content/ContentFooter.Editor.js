@@ -384,7 +384,7 @@ class ContentFooterEditor extends React.Component {
     this.quillService.insertHtml(
       index,
       this.quillService.getSpanTagName(),
-      imgHtml
+      `<span class='emoji-container'>${imgHtml}</span>`
     );
 
     this.quillService.setCursorIndex(index + 1, 0);

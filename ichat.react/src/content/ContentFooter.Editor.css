@@ -14,6 +14,10 @@
   flex: 1 1 auto;
 }
 
+.message-editor p {
+  line-height: 2;
+}
+
 .message-box-buttons {
   flex: 0 0 auto;
   margin-left: 10px;
@@ -92,7 +96,7 @@
 }
 
 .ql-editor {
-  padding: 10px 15px !important;
+  padding: 6px 15px !important;
   max-height: 40vh;
 }
 

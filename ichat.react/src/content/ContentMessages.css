@@ -52,3 +52,12 @@
   position: absolute;
   top: -60px;
 }
+
+.emoji-container {
+  height: 18px;
+  width: 18px;
+  display: inline-block;
+  font-size: 18px;
+  vertical-align: sub;
+  line-height: 19px;
+}
