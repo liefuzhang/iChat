@@ -27,7 +27,7 @@ class SidebarHeader extends React.Component {
     this.state = {
       isInvitePeopleModalOpen: false,
       isSetStatusModalOpen: false,
-      isDropdownModalOpen: false
+      isDropdownModalOpen: false 
     };
   }
 

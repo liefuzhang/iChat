@@ -82,6 +82,7 @@ function configQuill() {
   }
   SpanTag.blotName = this.spanTagName;
   SpanTag.tagName = "span";
+  SpanTag.className = "span-tag";
 
   Quill.register({
     [`formats/${this.spanTagName}`]: SpanTag
