@@ -1,7 +1,7 @@
 import React from "react";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
-import { Icon } from "semantic-ui-react";
+import { Icon, Progress } from "semantic-ui-react";
 import "./UploadFileForm.css";
 
 class UploadFileForm extends React.Component {
@@ -16,13 +16,25 @@ class UploadFileForm extends React.Component {
       toast.warn(`Maximum ${maxFileCount} files can be uploaded at one time`);
       this.files = this.files.slice(0, maxFileCount);
     }
+
+    this.state = {
+      showUploadingBar: false
+    };
   }
 
   onUploadFileFormSubmit(event) {
     event.preventDefault();
+    if (this.files.length === 0) return;
+
+    event.currentTarget.querySelector(
+      "button[type='submit']"
+    ).classList.add("disabled-button");
+
+    this.setState({
+      showUploadingBar: true
+    });
 
     let formData = new FormData();
-    if (this.files.length === 0) return;
     this.files.forEach(file => formData.append("files", file));
 
     let url = this.props.isChannel
@@ -69,6 +81,11 @@ class UploadFileForm extends React.Component {
           <button type="submit" className="btn form-control">
             Upload
           </button>
+          {this.state.showUploadingBar && (
+            <Progress percent={100} active>
+              Uploading file
+            </Progress>
+          )}
         </form>
       </div>
     );

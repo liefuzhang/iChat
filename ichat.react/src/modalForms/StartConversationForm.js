@@ -26,6 +26,10 @@ class StartConversationForm extends React.Component {
     if (!this.conversationUserIds || this.conversationUserIds.length === 0)
       return;
 
+    event.currentTarget
+      .querySelector("button[type='submit']")
+      .classList.add("disabled-button");
+
     this.authService
       .fetch(`/api/conversations/start`, {
         method: "POST",
@@ -37,7 +41,7 @@ class StartConversationForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Start conversation failed: ${error}`);
-      });;
+      });
   }
 
   changeConversationUser(event, item) {
@@ -71,14 +75,14 @@ class StartConversationForm extends React.Component {
           </p>
 
           <Dropdown
-              placeholder="Search user"
-              fluid
-              multiple
-              search
-              selection
-              options={this.state.userList}
-              onChange={this.changeConversationUser}
-            />
+            placeholder="Search user"
+            fluid
+            multiple
+            search
+            selection
+            options={this.state.userList}
+            onChange={this.changeConversationUser}
+          />
           <button type="submit" className="btn form-control">
             Go
           </button>

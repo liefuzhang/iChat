@@ -8,9 +8,7 @@ class JoinChannelForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onJoinChannelFormSubmit = this.onJoinChannelFormSubmit.bind(
-      this
-    );
+    this.onJoinChannelFormSubmit = this.onJoinChannelFormSubmit.bind(this);
     this.changeSelectedChannel = this.changeSelectedChannel.bind(this);
     this.authService = new AuthService(props);
 
@@ -23,8 +21,11 @@ class JoinChannelForm extends React.Component {
 
   onJoinChannelFormSubmit(event) {
     event.preventDefault();
-    if (!this.selectedChannelId)
-      return;
+    if (!this.selectedChannelId) return;
+
+    event.currentTarget
+      .querySelector("button[type='submit']")
+      .classList.add("disabled-button");
 
     this.authService
       .fetch(`/api/channels/join`, {
@@ -37,7 +38,7 @@ class JoinChannelForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Join channel failed: ${error}`);
-      });;
+      });
   }
 
   changeSelectedChannel(event, item) {
@@ -46,10 +47,9 @@ class JoinChannelForm extends React.Component {
 
   componentDidMount() {
     this.authService.fetch("/api/channels/allUnsubscribed").then(channels => {
-      let channelList = channels
-        .map(c => {
-          return { key: c.id, text: c.name, value: c.id };
-        });
+      let channelList = channels.map(c => {
+        return { key: c.id, text: c.name, value: c.id };
+      });
       this.setState({ channelList: channelList });
     });
   }
@@ -64,18 +64,16 @@ class JoinChannelForm extends React.Component {
           method="post"
           onSubmit={this.onJoinChannelFormSubmit}
         >
-          <p className="form-description">
-            Select a channel to join.
-          </p>
+          <p className="form-description">Select a channel to join.</p>
 
           <Dropdown
-              placeholder="Search channel"
-              fluid
-              search
-              selection
-              options={this.state.channelList || []}
-              onChange={this.changeSelectedChannel}
-            />
+            placeholder="Search channel"
+            fluid
+            search
+            selection
+            options={this.state.channelList || []}
+            onChange={this.changeSelectedChannel}
+          />
           <button type="submit" className="btn form-control">
             Join
           </button>

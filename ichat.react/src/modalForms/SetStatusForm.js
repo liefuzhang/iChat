@@ -21,6 +21,10 @@ class SetStatusForm extends React.Component {
     event.preventDefault();
     if (!this.state.selectedStatus) return;
 
+    event.currentTarget
+      .querySelector("button[type='submit']")
+      .classList.add("disabled-button");
+
     this.authService
       .fetch(`/api/users/status`, {
         method: "POST",

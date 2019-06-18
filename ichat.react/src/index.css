@@ -139,6 +139,14 @@ button {
   -webkit-box-shadow: 0 0 2px #666;
 }
 
+.btn.disabled-button {
+  background: #aaa;
+  box-shadow: 0 0 2px #999;
+  -moz-box-shadow: 0 0 2px #999;
+  -webkit-box-shadow: 0 0 2px #999;
+  pointer-events: none;
+}
+
 .panel {
   background: #fff;
   overflow: hidden;

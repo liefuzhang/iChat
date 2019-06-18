@@ -112,11 +112,9 @@ class AuthService {
 
     return fetch(url, options)
       .then(response => {
-        debugger;
         return response.blob();
       })
       .then(blob => {
-        debugger;
         return URL.createObjectURL(blob);
       })
       .then(url => {

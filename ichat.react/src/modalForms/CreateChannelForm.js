@@ -12,6 +12,11 @@ class CreateChannelForm extends React.Component {
 
   onCreateChannelFormSubmit(event) {
     event.preventDefault();
+
+    event.currentTarget.querySelector(
+      "button[type='submit']"
+    ).classList.add("disabled-button");
+
     let name = event.target.elements["name"].value;
     let topic = event.target.elements["topic"].value;
 

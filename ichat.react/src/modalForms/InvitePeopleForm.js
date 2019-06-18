@@ -39,6 +39,10 @@ class InvitePeopleForm extends React.Component {
     let emails = this.state.emailsToInvite.filter(e => e && !!e.trim());
     if (emails.length === 0) return;
 
+    event.currentTarget.querySelector(
+      "button[type='submit']"
+    ).classList.add("disabled-button");
+
     this.authService
       .fetch(`/api/users/invite`, {
         method: "POST",
