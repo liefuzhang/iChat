@@ -9,25 +9,32 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Helpers {
-    public class FileHelper : IFileHelper {
+namespace iChat.Api.Helpers
+{
+    public class FileHelper : IFileHelper
+    {
         private readonly iChatContext _context;
         private readonly AppSettings _appSettings;
 
-        public FileHelper(iChatContext context, IOptions<AppSettings> appSettings) {
+        public FileHelper(iChatContext context, IOptions<AppSettings> appSettings)
+        {
             _context = context;
             _appSettings = appSettings.Value;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file, int workspaceId) {
+        public async Task<string> UploadFileAsync(IFormFile file, int workspaceId)
+        {
             var uploadToSubFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
-            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2)) {
-                using (var memoryStream = new MemoryStream()) {
+            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
+            {
+                using (var memoryStream = new MemoryStream())
+                {
                     file.CopyTo(memoryStream);
 
-                    var uploadRequest = new TransferUtilityUploadRequest {
+                    var uploadRequest = new TransferUtilityUploadRequest
+                    {
                         InputStream = memoryStream,
                         Key = fileName,
                         BucketName = $"{_appSettings.AwsFileBucketName}/{uploadToSubFolder}",
@@ -42,23 +49,28 @@ namespace iChat.Api.Helpers {
             return fileName;
         }
 
-        public async Task<FileStream> DownloadFileAsync(string savedName, int workspaceId) {
+        public async Task<Stream> DownloadFileAsync(string savedName, int workspaceId)
+        {
             var downloadFromSubFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
             var downloadPath = Path.GetTempFileName();
-            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2)) {
-                using (var memoryStream = new MemoryStream()) {
-                    var downloadRequest = new TransferUtilityDownloadRequest {
-                        Key = savedName,
-                        BucketName = $"{_appSettings.AwsFileBucketName}/{downloadFromSubFolder}",
-                        FilePath = downloadPath
-                    };
+            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
+            {
+                var downloadRequest = new TransferUtilityDownloadRequest
+                {
+                    Key = savedName,
+                    BucketName = $"{_appSettings.AwsFileBucketName}/{downloadFromSubFolder}",
+                    FilePath = downloadPath
+                };
 
-                    var fileTransferUtility = new TransferUtility(client);
-                    await fileTransferUtility.DownloadAsync(downloadRequest);
-                }
+                var fileTransferUtility = new TransferUtility(client);
+                await fileTransferUtility.DownloadAsync(downloadRequest);
             }
 
-            return new FileStream(@"path\to\file", FileMode.Open);
+            var bufferSize = 4096;
+            var stream = new FileStream(downloadPath, FileMode.Open, FileAccess.Read, FileShare.None, bufferSize,
+                FileOptions.DeleteOnClose);
+
+            return stream;
         }
     }
 }

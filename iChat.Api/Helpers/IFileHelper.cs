@@ -8,6 +8,6 @@ namespace iChat.Api.Helpers
     public interface IFileHelper
     {
         Task<string> UploadFileAsync(IFormFile file, int workspaceId);
-        Task<FileStream> DownloadFileAsync(string savedName, int workspaceId);
+        Task<Stream> DownloadFileAsync(string savedName, int workspaceId);
     }
 }

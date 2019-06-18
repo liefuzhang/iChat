@@ -5,7 +5,7 @@ namespace iChat.Api.Models
 {
     public class File
     {
-        public File(string savedName, string name, int userId, int workspaceId) : this()
+        public File(string savedName, string name, string contentType, int userId, int workspaceId) : this()
         {
             if (string.IsNullOrWhiteSpace(savedName) || userId < 1 || workspaceId < 1)
             {
@@ -14,6 +14,7 @@ namespace iChat.Api.Models
 
             SavedName = savedName;
             Name = name;
+            ContentType = contentType;
             UploadedByUserId = userId;
             WorkspaceId = workspaceId;
             UploadedDate = DateTime.Now;
@@ -27,6 +28,7 @@ namespace iChat.Api.Models
         public int Id { get; private set; }
         public string SavedName { get; private set; }
         public string Name { get; private set; }
+        public string ContentType { get; private set; }
         public int UploadedByUserId { get; private set; }
         public User UploadedByUser { get; private set; }
         public DateTime UploadedDate { get; private set; }

@@ -1,14 +1,30 @@
 import React from "react";
 import { Icon } from "semantic-ui-react";
 import "./ContentMessageItem.css";
+import AuthService from "services/AuthService";
+import { toast } from "react-toastify";
 
 class ContentMessageItem extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.authService = new AuthService(props);
+  }
+
   onHoverMessageItem(event) {
     event.currentTarget.classList.add("message-hover");
   }
 
   onLeaveMessageItem(event) {
     event.currentTarget.classList.remove("message-hover");
+  }
+
+  onDownloadClick(id, name) {
+    this.authService
+      .fetchFile(`/api/messages/downloadFile/${id}`, name)
+      .catch(error => {
+        toast.error(`Download file failed: ${error}`);
+      });
   }
 
   render() {
@@ -44,7 +60,7 @@ class ContentMessageItem extends React.Component {
                       key={file.name + file.lastModified}
                       className="file-item"
                       title="Click to download"
-                      onClick="onDownloadClick"
+                      onClick={() => this.onDownloadClick(file.id, file.name)}
                     >
                       <Icon name="file outline" size="large" />
                       <span title={file.name}>{file.name}</span>

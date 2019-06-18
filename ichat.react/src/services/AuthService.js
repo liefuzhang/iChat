@@ -5,6 +5,7 @@ class AuthService {
     this.localStorageKey = "ichat.user";
     this.props = props;
     this.fetch = this.fetch.bind(this);
+    this.fetchFile = this.fetchFile.bind(this);
   }
 
   acceptInvitation(email, password, name, code) {
@@ -84,24 +85,14 @@ class AuthService {
     this.props.history.push("/login");
   }
 
+  fetchErrorHandler(error) {
+    console.error(error);
+    return Promise.reject(error);
+  }
+
   fetch(url, options, noContentType) {
-    if (!url) {
-      return Promise.reject(new Error("Empty url"));
-    }
-
-    var token = this.getToken();
-    if (!token || this.checkIfTokenExpired(token)) {
-      this.props.history.push("/login");
-      return Promise.reject(new Error("invalid token, taken to login")).then(
-        () => this.props.history.push("/login")
-      );
-    }
-
-    var bearer = "Bearer " + token;
     options || (options = {});
-    options.headers || (options.headers = {});
-    noContentType || (options.headers["Content-Type"] = "application/json");
-    options.headers["Authorization"] = bearer;
+    this.fetchCommon(url, options, noContentType).catch(this.fetchErrorHandler);
 
     return fetch(url, options)
       .then(function(response) {
@@ -112,10 +103,53 @@ class AuthService {
       })
       .then(text => (text.length ? JSON.parse(text) : null))
       .then(json => Promise.resolve(json))
-      .catch(error => {
-        console.error(error);
-        return Promise.reject(error);
-      });
+      .catch(this.fetchErrorHandler);
+  }
+
+  fetchFile(url, fileName) {
+    let options = {};
+    this.fetchCommon(url, options).catch(this.fetchErrorHandler);
+
+    return fetch(url, options)
+      .then(response => {
+        debugger;
+        return response.blob();
+      })
+      .then(blob => {
+        debugger;
+        return URL.createObjectURL(blob);
+      })
+      .then(url => {
+        var link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(this.fetchErrorHandler);
+  }
+
+  fetchCommon(url, options, noContentType) {
+    if (!url) {
+      return Promise.reject(new Error("Empty url"));
+    }
+
+    var token = this.getToken();
+    if (!token || this.checkIfTokenExpired(token)) {
+      this.props.history.push("/login");
+      return Promise.reject(new Error("invalid token, taken to login")).catch(
+        () => this.props.history.push("/login")
+      );
+    }
+
+    var bearer = "Bearer " + token;
+    options.headers || (options.headers = {});
+    noContentType || (options.headers["Content-Type"] = "application/json");
+    options.headers["Authorization"] = bearer;
+
+    return Promise.resolve();
   }
 }
 
