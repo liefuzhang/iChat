@@ -6,8 +6,11 @@ import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
 import { Icon } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
-import { Picker } from "emoji-mart";
+import data from "emoji-mart/data/messenger.json";
+import { EmojiConvertor } from "emoji-js";
+import { NimblePicker } from "emoji-mart";
 import "lib/emoji-mart.css";
+import "lib/emoji.css";
 
 class ContentFooterEditor extends React.Component {
   constructor(props) {
@@ -26,10 +29,10 @@ class ContentFooterEditor extends React.Component {
     this.onUploadFileButtonClicked = this.onUploadFileButtonClicked.bind(this);
     this.onMentionButtonClicked = this.onMentionButtonClicked.bind(this);
     this.openMention = this.openMention.bind(this);
-    this.onCloseMentionClick = this.onCloseMentionClick.bind(this);
     this.closeMention = this.closeMention.bind(this);
     this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
     this.closeEmoji = this.closeEmoji.bind(this);
+    this.addEmoji = this.addEmoji.bind(this);
     this.userList = [];
 
     this.state = {
@@ -80,20 +83,16 @@ class ContentFooterEditor extends React.Component {
         isMentionOpen: true
       },
       () => {
-        document.addEventListener("click", this.onCloseMentionClick);
+        document.addEventListener("click", this.closeMention);
       }
     );
   }
 
-  onCloseMentionClick(event) {
+  closeMention(event) {
     let mentionContainer = document.querySelector(".user-mention-container");
-    if (mentionContainer.contains(event.target)) return;
-    this.onMentionFinish();
-  }
-
-  closeMention() {
+    if (event && mentionContainer.contains(event.target)) return;
     this.setState({ isMentionOpen: false }, () => {
-      document.removeEventListener("click", this.onCloseMentionClick);
+      document.removeEventListener("click", this.closeMention);
     });
   }
 
@@ -124,6 +123,8 @@ class ContentFooterEditor extends React.Component {
       let deleteOp = event.ops.find(o => !!o.delete);
       if (
         insertOp &&
+        insertOp.insert &&
+        typeof insertOp.insert === "string" &&
         insertOp.insert.trim() === "@" &&
         !this.state.isMentionOpen
       ) {
@@ -348,10 +349,33 @@ class ContentFooterEditor extends React.Component {
 
   closeEmoji(event) {
     let emojiPicker = document.querySelector(".emoji-picker");
-    if (emojiPicker.contains(event.target)) return;
+    if (event && emojiPicker.contains(event.target)) return;
     this.setState({ isEmojiOpen: false }, () => {
       document.removeEventListener("click", this.closeEmoji);
     });
+  }
+
+  addEmoji(event) {
+    var emoji = new EmojiConvertor();
+    emoji.img_sets.google.path =
+      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/";
+    emoji.img_sets.google.sheet =
+      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/64.png";
+    emoji.img_set = "google";
+    emoji.use_sheet = true;
+    var imgHtml = emoji.replace_colons(event.colons);
+
+    const index = this.quillService.getCursorIndex();
+    this.quillService.insertHtml(
+      index,
+      this.quillService.getSpanTagName(),
+      imgHtml
+    );
+
+    this.quillService.setCursorIndex(index + 1, 0);
+    let editor = document.querySelector(".ql-editor");
+    editor.focus();
+    this.closeEmoji();
   }
 
   render() {
@@ -413,7 +437,11 @@ class ContentFooterEditor extends React.Component {
             </div>
             {this.state.isEmojiOpen && (
               <div className="emoji-picker">
-                <Picker onSelect={this.addEmoji} />
+                <NimblePicker
+                  set="google"
+                  data={data}
+                  onSelect={this.addEmoji}
+                />
               </div>
             )}
           </div>

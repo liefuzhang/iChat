@@ -5,6 +5,7 @@
   "proxy": "http://localhost:58314",
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
+    "emoji-js": "^3.4.1",
     "emoji-mart": "^2.11.1",
     "jwt-decode": "^2.2.0",
     "quill": "^1.3.6",
