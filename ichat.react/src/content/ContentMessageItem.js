@@ -44,6 +44,7 @@ class ContentMessageItem extends React.Component {
                       key={file.name + file.lastModified}
                       className="file-item"
                       title="Click to download"
+                      onClick="onDownloadClick"
                     >
                       <Icon name="file outline" size="large" />
                       <span title={file.name}>{file.name}</span>

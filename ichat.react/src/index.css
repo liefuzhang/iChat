@@ -277,7 +277,8 @@ i.icon {
 
 .file-item i.icon {
   font-size: 36px;
-  color: #666;
+  color: #6bcdf7;
+  margin-right: 5px;
 }
 
 .file-container {

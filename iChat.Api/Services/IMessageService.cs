@@ -1,6 +1,7 @@
 ﻿using iChat.Api.Dtos;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Services {
@@ -11,5 +12,6 @@ namespace iChat.Api.Services {
         Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId);
         Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId);
+        Task<FileStream> DownloadFileAsync(int fileId, int userId, int workspaceId);
     }
 }

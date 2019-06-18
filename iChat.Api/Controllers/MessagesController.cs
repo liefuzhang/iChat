@@ -124,5 +124,12 @@ namespace iChat.Api.Controllers
 
             return Ok();
         }
+
+        // GET api/messages/downloadFile/1
+        [HttpPost("messages/downloadFile/{fileId}")]
+        public async Task<IActionResult> DownloadFileAsync(int fileId) {
+            var stream = await _messageService.DownloadFileAsync(fileId, User.GetUserId(), User.GetWorkspaceId());
+            return File(stream);
+        }
     }
 }
