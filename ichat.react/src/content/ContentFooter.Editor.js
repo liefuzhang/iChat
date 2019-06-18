@@ -33,6 +33,7 @@ class ContentFooterEditor extends React.Component {
     this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
     this.closeEmoji = this.closeEmoji.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
+    this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
     this.userList = [];
 
     this.state = {
@@ -344,7 +345,20 @@ class ContentFooterEditor extends React.Component {
   onEmojiButtonClicked() {
     this.setState({ isEmojiOpen: true }, () => {
       document.addEventListener("click", this.closeEmoji);
+      document.addEventListener("keyup", this.onEmojiKeyup);
     });
+  }
+
+  onEmojiKeyup(event) {
+    if (
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey &&
+      event.keyCode === 27
+    ) {
+      // esc pressed
+      this.closeEmoji();
+    }
   }
 
   closeEmoji(event) {
@@ -352,6 +366,7 @@ class ContentFooterEditor extends React.Component {
     if (event && emojiPicker.contains(event.target)) return;
     this.setState({ isEmojiOpen: false }, () => {
       document.removeEventListener("click", this.closeEmoji);
+      document.removeEventListener("keyup", this.onEmojiKeyup);
     });
   }
 
