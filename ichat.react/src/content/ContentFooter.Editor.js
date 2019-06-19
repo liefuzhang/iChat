@@ -3,7 +3,7 @@ import "./ContentFooter.Editor.css";
 import QuillService from "services/QuillService";
 import AuthService from "services/AuthService";
 import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
 import data from "emoji-mart/data/messenger.json";
@@ -414,11 +414,14 @@ class ContentFooterEditor extends React.Component {
             </div>
             <div className="message-box-buttons">
               <div className="message-box-button">
-                <span
-                  title="Mention user"
-                  onClick={this.onMentionButtonClicked}
-                >
-                  <Icon name="at" className="icon-mention" />
+                <span onClick={this.onMentionButtonClicked}>
+                  <Popup
+                    trigger={<Icon name="at" className="icon-mention" />}
+                    content="Mention user"
+                    inverted
+                    position="top center"
+                    size="tiny"
+                  />
                 </span>
               </div>
               <div className="message-box-button">
@@ -428,11 +431,16 @@ class ContentFooterEditor extends React.Component {
                   multiple
                   onChange={this.onFileUploaded}
                 />
-                <span
-                  onClick={this.onUploadFileButtonClicked}
-                  title="Send file"
-                >
-                  <Icon name="paperclip" className="icon-paperclip" />
+                <span onClick={this.onUploadFileButtonClicked}>
+                  <Popup
+                    trigger={
+                      <Icon name="paperclip" className="icon-paperclip" />
+                    }
+                    content="Send file"
+                    inverted
+                    position="top center"
+                    size="tiny"
+                  />
                 </span>
                 {this.state.isUploadFileModalOpen && (
                   <Modal onClose={this.onCloseUploadFile}>
@@ -445,8 +453,16 @@ class ContentFooterEditor extends React.Component {
                 )}
               </div>
               <div className="message-box-button">
-                <span title="Add emoji" onClick={this.onEmojiButtonClicked}>
-                  <Icon name="smile outline" className="icon-emoji" />
+                <span onClick={this.onEmojiButtonClicked}>
+                  <Popup
+                    trigger={
+                      <Icon name="smile outline" className="icon-emoji" />
+                    }
+                    content="Add emoji"
+                    inverted
+                    position="top center"
+                    size="tiny"
+                  />
                 </span>
               </div>
             </div>

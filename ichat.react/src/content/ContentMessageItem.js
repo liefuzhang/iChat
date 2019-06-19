@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 import "./ContentMessageItem.css";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
@@ -56,15 +56,24 @@ class ContentMessageItem extends React.Component {
               {message.hasFileAttachments && (
                 <div className="file-container">
                   {message.fileAttachments.map(file => (
-                    <div
+                    <Popup
+                      trigger={
+                        <div
+                          className="file-item"
+                          onClick={() =>
+                            this.onDownloadClick(file.id, file.name)
+                          }
+                        >
+                          <Icon name="file outline" size="large" />
+                          <span title={file.name}>{file.name}</span>
+                        </div>
+                      }
                       key={file.name + file.lastModified}
-                      className="file-item"
-                      title="Click to download"
-                      onClick={() => this.onDownloadClick(file.id, file.name)}
-                    >
-                      <Icon name="file outline" size="large" />
-                      <span title={file.name}>{file.name}</span>
-                    </div>
+                      content="Click to download"
+                      inverted
+                      position="top center"
+                      size="tiny"
+                    />
                   ))}
                 </div>
               )}

@@ -315,3 +315,8 @@ i.icon {
   text-overflow: ellipsis;
   margin: 5px 6px;
 }
+
+.ui.popup {
+  font-weight: 600;
+  transition: all 0s ease 0.5s;
+}

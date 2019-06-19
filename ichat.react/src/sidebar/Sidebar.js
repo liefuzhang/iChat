@@ -11,7 +11,7 @@ import StartConversationForm from "modalForms/StartConversationForm";
 import SimpleBar from "simplebar-react";
 import "lib/simplebar.css";
 import { Loader, Image, Segment } from "semantic-ui-react";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -129,11 +129,18 @@ class Sidebar extends React.Component {
           <section>
             <div className="section-title">
               <span>CHANNELS</span>
-              <Icon
-                name="plus circle"
-                title="Create a channel"
-                className="icon-circle"
-                onClick={this.onCreateChannel}
+              <Popup
+                trigger={
+                  <Icon
+                    name="plus circle"
+                    className="icon-circle"
+                    onClick={this.onCreateChannel}
+                  />
+                }
+                content="Create a channel"
+                inverted
+                position="top center"
+                size="tiny"
               />
             </div>
             {this.state.channels.map(c => {
@@ -171,11 +178,18 @@ class Sidebar extends React.Component {
           <section>
             <div className="section-title">
               <span>DIRECT MESSAGES</span>
-              <Icon
-                name="plus circle"
-                title="Start a conversation"
-                className="icon-circle"
-                onClick={this.onStartConversation}
+              <Popup
+                trigger={
+                  <Icon
+                    name="plus circle"
+                    className="icon-circle"
+                    onClick={this.onStartConversation}
+                  />
+                }
+                content="Start a conversation"
+                inverted
+                position="top center"
+                size="tiny"
               />
             </div>
             {this.state.conversations.map(c => {

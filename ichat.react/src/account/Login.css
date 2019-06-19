@@ -30,6 +30,7 @@
 
 .login-page section .white-btn {
   width: 100%;
+  box-sizing: border-box;
 }
 
 #workspaceContainer {
@@ -42,6 +43,6 @@
   opacity: 0;
 }
 
-.login-page .login-container .horizontal-divider{
+.login-page .login-container .horizontal-divider {
   width: 300px;
 }

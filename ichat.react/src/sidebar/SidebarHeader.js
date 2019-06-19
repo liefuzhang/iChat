@@ -1,6 +1,6 @@
 import React from "react";
 import "./SidebarHeader.css";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
@@ -27,7 +27,7 @@ class SidebarHeader extends React.Component {
     this.state = {
       isInvitePeopleModalOpen: false,
       isSetStatusModalOpen: false,
-      isDropdownModalOpen: false 
+      isDropdownModalOpen: false
     };
   }
 
@@ -120,10 +120,12 @@ class SidebarHeader extends React.Component {
                     this.props.userStatus
                   );
                   return (
-                    <Icon
-                      name="flag"
-                      className="status-icon"
-                      title={statusName}
+                    <Popup
+                      trigger={<Icon name="flag" className="status-icon" />}
+                      content={statusName}
+                      inverted
+                      position="right center"
+                      size="tiny"
                     />
                   );
                 }

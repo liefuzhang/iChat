@@ -2,7 +2,7 @@ import React from "react";
 import "./InvitePeopleForm.css";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
-import { Icon } from "semantic-ui-react";
+import { Icon, Popup } from "semantic-ui-react";
 
 class InvitePeopleForm extends React.Component {
   constructor(props) {
@@ -39,9 +39,9 @@ class InvitePeopleForm extends React.Component {
     let emails = this.state.emailsToInvite.filter(e => e && !!e.trim());
     if (emails.length === 0) return;
 
-    event.currentTarget.querySelector(
-      "button[type='submit']"
-    ).classList.add("disabled-button");
+    event.currentTarget
+      .querySelector("button[type='submit']")
+      .classList.add("disabled-button");
 
     this.authService
       .fetch(`/api/users/invite`, {
@@ -84,11 +84,18 @@ class InvitePeopleForm extends React.Component {
                   onChange={event => this.handleChange(event, index)}
                 />
                 {this.state.emailsToInvite.length > 1 && (
-                  <Icon
-                    name="times"
-                    className="icon-times"
-                    title="Remove this email"
-                    onClick={() => this.removeEmail(index)}
+                  <Popup
+                    trigger={
+                      <Icon
+                        name="times"
+                        className="icon-times"
+                        onClick={() => this.removeEmail(index)}
+                      />
+                    }
+                    content="Remove this email"
+                    inverted
+                    position="right center"
+                    size="tiny"
                   />
                 )}
               </div>
