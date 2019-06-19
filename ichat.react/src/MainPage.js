@@ -2,26 +2,28 @@ import React from "react";
 import "./MainPage.css";
 import Sidebar from "sidebar/Sidebar";
 import * as signalR from "@aspnet/signalr";
-import AuthService from "services/AuthService";
 import Content from "content/Content";
+import ApiService from "services/ApiService";
+import ProfileService from "services/ProfileService";
 
 class MainPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.authService = new AuthService(props);
+    this.profileService = new ProfileService();
+    this.apiService = new ApiService(props);
 
     this.connection = new signalR.HubConnectionBuilder()
       // TODO use config here?
       .withUrl("https://localhost:44389/chatHub/", {
-        accessTokenFactory: () => this.authService.getToken()
+        accessTokenFactory: () => this.profileService.getToken()
       })
       .build();
     this.connection.start().catch(function(err) {
       return console.error(err.toString());
     });
 
-    this.userProfile = this.authService.getProfile();
+    this.userProfile = this.profileService.getProfile();
 
     this.onUserSessionDataChange = this.onUserSessionDataChange.bind(this);
 
@@ -33,7 +35,7 @@ class MainPage extends React.Component {
   }
 
   onUserSessionDataChange() {
-    this.authService.fetch(`/api/app/userSessionData`).then(data => {
+    this.apiService.fetch(`/api/app/userSessionData`).then(data => {
       if (data) {
         this.setState({ savedActiveSidebarItem: data.activeSidebarItem });
         this.setState({ userStatus: data.userStatus });

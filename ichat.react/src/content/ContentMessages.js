@@ -3,7 +3,7 @@ import "./ContentMessages.css";
 import "lib/simplebar.css";
 import ContentMessageItem from "./ContentMessageItem";
 import SimpleBar from "simplebar-react";
-import AuthService from "services/AuthService";
+import ApiService from "services/ApiService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class ContentMessages extends React.Component {
     this.fetchData = this.fetchData.bind(this);
     this.onNewChannelMessage = this.onNewChannelMessage.bind(this);
     this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
       props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
@@ -87,7 +87,7 @@ class ContentMessages extends React.Component {
   }
 
   fetchData(props) {
-    return this.authService
+    return this.apiService
       .fetch(`/api/messages/${props.section}/${props.id}`)
       .then(messageGroups => this.setState({ messageGroups }))
       .then(() => this.scrollToBottom());

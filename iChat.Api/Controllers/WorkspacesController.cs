@@ -1,11 +1,10 @@
-﻿using iChat.Api.Dtos;
+﻿using iChat.Api.Data;
+using iChat.Api.Dtos;
 using iChat.Api.Services;
-using iChat.Api.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using iChat.Api.Extensions;
-using iChat.Api.Models;
 
 namespace iChat.Api.Controllers
 {
@@ -20,7 +19,7 @@ namespace iChat.Api.Controllers
         private readonly IUserService _userService;
 
         public WorkspacesController(iChatContext context, IWorkspaceService workspaceService,
-            IIdentityService identityService, IUserService userService, 
+            IIdentityService identityService, IUserService userService,
             IChannelService channelService, IConversationService conversationService)
         {
             _workspaceService = workspaceService;
@@ -32,6 +31,7 @@ namespace iChat.Api.Controllers
 
         // POST api/workspaces
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] WorkspaceDto workspaceDto)
         {
             if (await _userService.IsEmailRegisteredAsync(workspaceDto.Email))
@@ -40,7 +40,7 @@ namespace iChat.Api.Controllers
             }
 
             var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
-            var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceId);
+            var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceDto.DisplayName, workspaceId);
             await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
 
             await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
@@ -49,14 +49,6 @@ namespace iChat.Api.Controllers
             await _conversationService.StartSelfConversationAsync(userId, workspaceId);
 
             return Ok();
-        }
-
-        // GET api/workspaces
-        public async Task<ActionResult<Workspace>> GetWorkspaceAsync()
-        {
-            var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkspaceId());
-
-            return Ok(workspace);
         }
     }
 }

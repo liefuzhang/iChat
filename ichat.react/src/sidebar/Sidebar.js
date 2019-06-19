@@ -4,7 +4,6 @@ import SidebarItemConversation from "./SidebarItem.Conversation";
 import SidebarItemChannel from "./SidebarItem.Channel";
 import SidebarItemJoinChannel from "./SidebarItem.JoinChannel";
 import SidebarHeader from "./SidebarHeader";
-import AuthService from "services/AuthService";
 import Modal from "modals/Modal";
 import CreateChannelForm from "modalForms/CreateChannelForm";
 import StartConversationForm from "modalForms/StartConversationForm";
@@ -12,12 +11,13 @@ import SimpleBar from "simplebar-react";
 import "lib/simplebar.css";
 import { Loader, Image, Segment } from "semantic-ui-react";
 import { Icon, Popup } from "semantic-ui-react";
+import ApiService from "services/ApiService";
 
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
 
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     this.onCreateChannel = this.onCreateChannel.bind(this);
     this.onCloseCreateChannel = this.onCloseCreateChannel.bind(this);
     this.onChannelCreated = this.onChannelCreated.bind(this);
@@ -93,13 +93,13 @@ class Sidebar extends React.Component {
   }
 
   fetchChannels() {
-    return this.authService
+    return this.apiService
       .fetch("/api/channels/forUser")
       .then(channels => this.setState({ channels }));
   }
 
   fetchConversations() {
-    return this.authService
+    return this.apiService
       .fetch("/api/conversations/recent")
       .then(conversations => this.setState({ conversations: conversations }));
   }

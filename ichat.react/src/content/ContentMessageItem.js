@@ -1,14 +1,14 @@
 import React from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import "./ContentMessageItem.css";
-import AuthService from "services/AuthService";
+import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
   }
 
   onHoverMessageItem(event) {
@@ -20,7 +20,7 @@ class ContentMessageItem extends React.Component {
   }
 
   onDownloadClick(id, name) {
-    this.authService
+    this.apiService
       .fetchFile(`/api/messages/downloadFile/${id}`, name)
       .catch(error => {
         toast.error(`Download file failed: ${error}`);

@@ -1,8 +1,8 @@
 import React from "react";
 import "./InvitePeopleForm.css";
-import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
 import { Icon, Popup } from "semantic-ui-react";
+import ApiService from "services/ApiService";
 
 class InvitePeopleForm extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class InvitePeopleForm extends React.Component {
     this.addAnotherEmail = this.addAnotherEmail.bind(this);
     this.removeEmail = this.removeEmail.bind(this);
     this.onEmailFormSubmit = this.onEmailFormSubmit.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
 
     this.state = {
       emailsToInvite: ["", "", ""]
@@ -43,7 +43,7 @@ class InvitePeopleForm extends React.Component {
       .querySelector("button[type='submit']")
       .classList.add("disabled-button");
 
-    this.authService
+    this.apiService
       .fetch(`/api/users/invite`, {
         method: "POST",
         body: JSON.stringify(emails)

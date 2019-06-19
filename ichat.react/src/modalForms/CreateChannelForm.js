@@ -1,26 +1,26 @@
 import React from "react";
-import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class CreateChannelForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.onCreateChannelFormSubmit = this.onCreateChannelFormSubmit.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
   }
 
   onCreateChannelFormSubmit(event) {
     event.preventDefault();
 
-    event.currentTarget.querySelector(
-      "button[type='submit']"
-    ).classList.add("disabled-button");
+    event.currentTarget
+      .querySelector("button[type='submit']")
+      .classList.add("disabled-button");
 
     let name = event.target.elements["name"].value;
     let topic = event.target.elements["topic"].value;
 
-    this.authService
+    this.apiService
       .fetch(`/api/channels`, {
         method: "POST",
         body: JSON.stringify({

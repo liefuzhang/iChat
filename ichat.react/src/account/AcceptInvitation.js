@@ -1,6 +1,7 @@
 import React from "react";
 import "./AccountCommon.css";
 import AuthService from "../services/AuthService";
+import { toast } from "react-toastify";
 
 class AcceptInvitation extends React.Component {
   constructor(props) {
@@ -22,7 +23,28 @@ class AcceptInvitation extends React.Component {
     let name = event.target.elements["name"].value;
     let password = event.target.elements["password"].value;
     if (this.email && password && this.code) {
-      this.authService.acceptInvitation(this.email, password, name, this.code);
+      this.apiService
+        .fetch(
+          `/api/users/acceptInvitation`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: this.email,
+              password: password,
+              name: name,
+              code: this.code
+            })
+          },
+          false,
+          true // no auth
+        )
+        .then(() => {
+          this.authService.login(this.email, this.password);
+        })
+        .catch(error => {
+          toast.error(`Create account failed: ${error}`);
+          return Promise.reject();
+        });
     }
   }
 

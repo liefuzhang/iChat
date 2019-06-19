@@ -1,8 +1,8 @@
 import React from "react";
 import "./JoinChannelForm.css";
-import AuthService from "services/AuthService";
 import { Dropdown } from "semantic-ui-react";
 import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class JoinChannelForm extends React.Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class JoinChannelForm extends React.Component {
 
     this.onJoinChannelFormSubmit = this.onJoinChannelFormSubmit.bind(this);
     this.changeSelectedChannel = this.changeSelectedChannel.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
 
     this.state = {
       channelList: undefined
@@ -27,7 +27,7 @@ class JoinChannelForm extends React.Component {
       .querySelector("button[type='submit']")
       .classList.add("disabled-button");
 
-    this.authService
+    this.apiService
       .fetch(`/api/channels/join`, {
         method: "POST",
         body: JSON.stringify(this.selectedChannelId)
@@ -46,7 +46,7 @@ class JoinChannelForm extends React.Component {
   }
 
   componentDidMount() {
-    this.authService.fetch("/api/channels/allUnsubscribed").then(channels => {
+    this.apiService.fetch("/api/channels/allUnsubscribed").then(channels => {
       let channelList = channels.map(c => {
         return { key: c.id, text: c.name, value: c.id };
       });

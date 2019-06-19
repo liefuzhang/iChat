@@ -1,7 +1,6 @@
 import React from "react";
 import "./ContentFooter.Editor.css";
 import QuillService from "services/QuillService";
-import AuthService from "services/AuthService";
 import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
 import { Icon, Popup } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
@@ -11,12 +10,14 @@ import { EmojiConvertor } from "emoji-js";
 import { NimblePicker } from "emoji-mart";
 import "lib/emoji-mart.css";
 import "lib/emoji.css";
+import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class ContentFooterEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     this.isSendingTypingMessage = false;
     this.keydownEventHandler = this.keydownEventHandler.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
@@ -62,7 +63,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   fecthUsers() {
-    this.authService.fetch("/api/users").then(users => {
+    this.apiService.fetch("/api/users").then(users => {
       let currentUserId = this.props.userProfile.id;
       this.userList = users.filter(u => u.id !== currentUserId);
     });
@@ -106,7 +107,7 @@ class ContentFooterEditor extends React.Component {
       mentionUserIds.push(+groups[1]);
     }
 
-    this.authService.fetch(
+    this.apiService.fetch(
       `/api/messages/${this.props.section}/${this.props.id}`,
       {
         method: "POST",
@@ -115,7 +116,9 @@ class ContentFooterEditor extends React.Component {
           mentionUserIds: mentionUserIds
         })
       }
-    );
+    ).catch(error => {
+      toast.error(`Send message failed: ${error}`);
+    });
   }
 
   onTextChange(event) {
@@ -194,7 +197,7 @@ class ContentFooterEditor extends React.Component {
     var url = this.props.isChannel
       ? `/api/channels/notifyTyping`
       : `/api/conversations/notifyTyping`;
-    this.authService.fetch(url, {
+    this.apiService.fetch(url, {
       method: "POST",
       body: JSON.stringify(this.props.id)
     });

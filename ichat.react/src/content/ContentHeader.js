@@ -1,13 +1,13 @@
 import React from "react";
 import "./ContentHeader.css";
-import AuthService from "services/AuthService";
+import ApiService from "services/ApiService";
 
 class ContentHeader extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchData = this.fetchData.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
 
     this.state = {
       selectedChannel: {},
@@ -19,10 +19,10 @@ class ContentHeader extends React.Component {
 
   fetchData(props) {
     if (props.isChannel) {
-      this.authService.fetch(`/api/channels/${props.id}`)
+      this.apiService.fetch(`/api/channels/${props.id}`)
         .then(channel => this.setState({ selectedChannel: channel }));
     } else {
-      this.authService.fetch(`/api/conversations/${props.id}`)
+      this.apiService.fetch(`/api/conversations/${props.id}`)
         .then(conversation => this.setState({ selectedConversation: conversation }));
     }
   }

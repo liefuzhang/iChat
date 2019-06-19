@@ -102,7 +102,7 @@ namespace iChat.Api.Controllers {
         public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto)
         {
             var workspaceId = 1;
-            var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, workspaceId);
+            var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, loginDto.Email, workspaceId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
             await _conversationService.StartSelfConversationAsync(userId, workspaceId);
 

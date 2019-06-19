@@ -167,6 +167,8 @@ namespace iChat.Api.Migrations
 
                     b.Property<byte[]>("PasswordSalt");
 
+                    b.Property<string>("PhoneNumber");
+
                     b.Property<int>("Status");
 
                     b.Property<int>("WorkspaceId");

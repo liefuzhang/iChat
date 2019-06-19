@@ -1,8 +1,8 @@
 import React from "react";
 import "./StartConversationForm.css";
-import AuthService from "services/AuthService";
 import { Dropdown } from "semantic-ui-react";
 import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class StartConversationForm extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class StartConversationForm extends React.Component {
       this
     );
     this.changeConversationUser = this.changeConversationUser.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
 
     this.state = {
       userList: []
@@ -30,7 +30,7 @@ class StartConversationForm extends React.Component {
       .querySelector("button[type='submit']")
       .classList.add("disabled-button");
 
-    this.authService
+    this.apiService
       .fetch(`/api/conversations/start`, {
         method: "POST",
         body: JSON.stringify(this.conversationUserIds)
@@ -49,7 +49,7 @@ class StartConversationForm extends React.Component {
   }
 
   componentDidMount() {
-    this.authService.fetch("/api/users").then(users => {
+    this.apiService.fetch("/api/users").then(users => {
       let currentUserId = this.props.userProfile.id;
       let userList = users
         .filter(u => u.id !== currentUserId)

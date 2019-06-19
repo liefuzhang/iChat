@@ -1,15 +1,15 @@
 import React from "react";
-import AuthService from "services/AuthService";
 import "./SetStatusForm.css";
 import UserStatus from "services/UserStatusService";
 import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class SetStatusForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.onSetStatusFormSubmit = this.onSetStatusFormSubmit.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     this.statusList = new UserStatus().getStatusList();
 
     this.state = {
@@ -25,7 +25,7 @@ class SetStatusForm extends React.Component {
       .querySelector("button[type='submit']")
       .classList.add("disabled-button");
 
-    this.authService
+    this.apiService
       .fetch(`/api/users/status`, {
         method: "POST",
         body: JSON.stringify(this.state.selectedStatus)

@@ -1,15 +1,15 @@
 import React from "react";
-import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
 import { Icon, Progress } from "semantic-ui-react";
 import "./UploadFileForm.css";
+import ApiService from "services/ApiService";
 
 class UploadFileForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.onUploadFileFormSubmit = this.onUploadFileFormSubmit.bind(this);
-    this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     let maxFileCount = 3;
     this.files = this.props.files;
     if (this.files.length > maxFileCount) {
@@ -40,7 +40,7 @@ class UploadFileForm extends React.Component {
     let url = this.props.isChannel
       ? `/api/messages/channel/${this.props.id}/uploadFile`
       : `/api/messages/conversation/${this.props.id}/uploadFile`;
-    this.authService
+    this.apiService
       .fetch(
         url,
         {

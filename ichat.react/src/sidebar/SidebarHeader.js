@@ -8,6 +8,7 @@ import SetStatusForm from "modalForms/SetStatusForm";
 import AuthService from "services/AuthService";
 import UserStatusService from "services/UserStatusService";
 import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class SidebarHeader extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class SidebarHeader extends React.Component {
     this.onCloseSetStatus = this.onCloseSetStatus.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     this.UserStatusService = new UserStatusService();
 
     this.state = {
@@ -64,7 +66,7 @@ class SidebarHeader extends React.Component {
   }
 
   onClearStatus(event) {
-    this.authService
+    this.apiService
       .fetch(`/api/users/clearStatus`, {
         method: "POST"
       })

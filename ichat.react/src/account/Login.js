@@ -3,12 +3,15 @@ import "./Login.css";
 import "./AccountCommon.css";
 import AuthService from "services/AuthService";
 import CloseButton from "components/CloseButton";
+import ApiService from "services/ApiService";
+import { toast } from "react-toastify";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
 
     this.authService = new AuthService(props);
+    this.apiService = new ApiService(props);
     this.showCreateWorkSpace = this.showCreateWorkSpace.bind(this);
     this.onAccountFormSubmit = this.onAccountFormSubmit.bind(this);
     this.onWorkspaceFormSubmit = this.onWorkspaceFormSubmit.bind(this);
@@ -35,16 +38,23 @@ class Login extends React.Component {
     let email = event.target.elements["email"].value;
     let password = event.target.elements["password"].value;
     let workspace = event.target.elements["workspace"].value;
+    let displayName = event.target.elements["displayName"].value;
     if (email && password && workspace) {
-      this.authService
-        .fetch(`/api/workspaces/register`, {
-          method: "POST",
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            workspaceName: workspace
-          })
-        })
+      this.apiService
+        .fetch(
+          `/api/workspaces/register`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: email,
+              password: password,
+              workspaceName: workspace,
+              displayName: displayName
+            })
+          },
+          false,
+          true  // no auth
+        )
         .then(() => {
           document
             .querySelector("#workspaceContainer")
@@ -58,7 +68,10 @@ class Login extends React.Component {
             createdWorkspaceOwnerEmail: email,
             createdWorkspaceOwnerPassword: password
           });
-        });
+        })
+        .catch(error => {
+          toast.error(`Create workspace failed: ${error}`);
+        });;
     }
   }
 
@@ -165,16 +178,22 @@ class Login extends React.Component {
                   className="form-control"
                   name="email"
                   type="email"
-                  placeholder="Email"
+                  placeholder="Your Email"
                   required
                 />
                 <input
                   className="form-control"
                   name="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder="Your Password"
                   minLength="6"
                   required
+                />
+                <input
+                  className="form-control"
+                  name="displayName"
+                  type="text"
+                  placeholder="Your Display Name"
                 />
                 <button type="submit" className="btn form-control">
                   Create

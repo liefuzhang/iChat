@@ -1,13 +1,13 @@
 import React from "react";
 import "./SidebarItem.css";
 import { Link } from "react-router-dom";
-import AuthService from "services/AuthService";
 import { Popup } from "semantic-ui-react";
+import ApiService from "services/ApiService";
 
 function SidebarItemConversation(props) {
   function setActiveSidebarItem() {
-    var authService = new AuthService(props);
-    authService.fetch(`/api/app/activeSidebarItem`, {
+    var apiService = new ApiService(props);
+    apiService.fetch(`/api/app/activeSidebarItem`, {
       method: "POST",
       body: JSON.stringify({
         isChannel: false,
@@ -15,7 +15,7 @@ function SidebarItemConversation(props) {
       })
     });
   }
-  
+
   let truncateNameThreshold = 18;
   return (
     <Link
