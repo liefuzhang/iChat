@@ -3,13 +3,13 @@
 }
 
 .message-container .message-scrollable .message-item-container {
-  padding: 6px 20px 3px 20px;
+  padding: 4px 20px 2px 20px;
   display: flex;
 }
 
 .message-container .message-scrollable .message-item-container .message-title {
   line-height: 1;
-  padding-bottom: 3px;
+  padding-bottom: 2px;
 }
 
 .message-container .message-scrollable .message-item-container .message-time {
@@ -72,13 +72,22 @@
 }
 
 .message-content .file-container {
-  margin: 5px 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
 }
 
 .message-content .file-container .file-item {
   width: 300px;
+  margin-left: 0;
+  margin-right: 12px;
 }
 
 .message-content .file-container .file-item:hover {
   cursor: pointer;
+}
+
+.message-content p {
+  line-height: 1.6;
 }

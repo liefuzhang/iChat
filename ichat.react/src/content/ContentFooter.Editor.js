@@ -99,7 +99,13 @@ class ContentFooterEditor extends React.Component {
   }
 
   onSubmitMessage(message, pureText) {
-    if (!pureText && !this.mention.mentionRegex.test(message)) return;
+    let emojiRegex = /<span class="emoji-container">/;
+    if (
+      !pureText &&
+      !this.mention.mentionRegex.test(message) &&
+      !emojiRegex.test(message)
+    )
+      return;
     var mentionUserIds = [];
     var groups;
     this.mention.mentionRegex.lastIndex = 0;
@@ -107,18 +113,17 @@ class ContentFooterEditor extends React.Component {
       mentionUserIds.push(+groups[1]);
     }
 
-    this.apiService.fetch(
-      `/api/messages/${this.props.section}/${this.props.id}`,
-      {
+    this.apiService
+      .fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
         method: "POST",
         body: JSON.stringify({
           message: message,
           mentionUserIds: mentionUserIds
         })
-      }
-    ).catch(error => {
-      toast.error(`Send message failed: ${error}`);
-    });
+      })
+      .catch(error => {
+        toast.error(`Send message failed: ${error}`);
+      });
   }
 
   onTextChange(event) {
@@ -387,7 +392,7 @@ class ContentFooterEditor extends React.Component {
     this.quillService.insertHtml(
       index,
       this.quillService.getSpanTagName(),
-      `<span class='emoji-container'>${imgHtml}</span>`
+      `<span class="emoji-container">${imgHtml}</span>`
     );
 
     this.quillService.setCursorIndex(index + 1, 0);

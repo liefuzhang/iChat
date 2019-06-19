@@ -81,14 +81,6 @@
   right: -7px;
 }
 
-.message-editor-container .emoji-container {
-  height: 24px;
-  width: 24px;
-  display: inline-block;
-  font-size: 24px;
-  line-height: 24px;
-}
-
 /* overrides for quill editor */
 .ql-container {
   border: none !important;
