@@ -52,11 +52,3 @@
   position: absolute;
   top: -60px;
 }
-
-.message-container .emoji-container {
-  height: 21px;
-  width: 21px;
-  display: inline-block;
-  font-size: 21px;
-  line-height: 21px;
-}

@@ -1,12 +1,14 @@
 import React from "react";
 import "./AccountCommon.css";
-import AuthService from "../services/AuthService";
+import ApiService from "services/ApiService";
+import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
 
 class AcceptInvitation extends React.Component {
   constructor(props) {
     super(props);
 
+    this.apiService = new ApiService(props);
     this.authService = new AuthService(props);
     this.onAcceptInvitationFormSubmit = this.onAcceptInvitationFormSubmit.bind(
       this
@@ -16,6 +18,7 @@ class AcceptInvitation extends React.Component {
     this.workspaceName = searchParams.get("workspaceName");
     this.email = searchParams.get("email");
     this.code = searchParams.get("code");
+    this.onPasswordChange = this.onPasswordChange.bind(this);
   }
 
   onAcceptInvitationFormSubmit(event) {
@@ -39,12 +42,26 @@ class AcceptInvitation extends React.Component {
           true // no auth
         )
         .then(() => {
-          this.authService.login(this.email, this.password);
+          this.authService.login(this.email, password);
         })
         .catch(error => {
           toast.error(`Create account failed: ${error}`);
           return Promise.reject();
         });
+    }
+  }
+
+  onPasswordChange() {
+    let password = document.querySelector(
+      "#acceptInvitation input[name='password']"
+    );
+    let confirmPassword = document.querySelector(
+      "#acceptInvitation input[name='confirmPassword']"
+    );
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setCustomValidity("Passwords don't match");
+    } else {
+      confirmPassword.setCustomValidity("");
     }
   }
 
@@ -59,7 +76,9 @@ class AcceptInvitation extends React.Component {
               method="post"
               onSubmit={this.onAcceptInvitationFormSubmit}
             >
-              <p>Enter your name and password to create account.</p>
+              <p className="form-description">
+                Enter your name and password to create account.
+              </p>
               <input
                 className="form-control"
                 name="name"
@@ -71,6 +90,17 @@ class AcceptInvitation extends React.Component {
                 name="password"
                 type="password"
                 placeholder="Password"
+                minLength="6"
+                onInput={this.onPasswordChange}
+                required
+              />
+              <input
+                className="form-control"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                minLength="6"
+                onInput={this.onPasswordChange}
                 required
               />
               <button type="submit" className="btn form-control">

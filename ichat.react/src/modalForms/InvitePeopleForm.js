@@ -39,9 +39,8 @@ class InvitePeopleForm extends React.Component {
     let emails = this.state.emailsToInvite.filter(e => e && !!e.trim());
     if (emails.length === 0) return;
 
-    event.currentTarget
-      .querySelector("button[type='submit']")
-      .classList.add("disabled-button");
+    let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
 
     this.apiService
       .fetch(`/api/users/invite`, {
@@ -54,6 +53,7 @@ class InvitePeopleForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Send Invitation failed: ${error}`);
+        button.classList.remove("disabled-button");
       });
   }
 

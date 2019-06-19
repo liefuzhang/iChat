@@ -21,9 +21,8 @@ class SetStatusForm extends React.Component {
     event.preventDefault();
     if (!this.state.selectedStatus) return;
 
-    event.currentTarget
-      .querySelector("button[type='submit']")
-      .classList.add("disabled-button");
+    let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
 
     this.apiService
       .fetch(`/api/users/status`, {
@@ -36,6 +35,7 @@ class SetStatusForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Save status failed: ${error}`);
+        button.classList.remove("disabled-button");
       });
   }
 

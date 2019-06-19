@@ -16,6 +16,7 @@ class Login extends React.Component {
     this.onAccountFormSubmit = this.onAccountFormSubmit.bind(this);
     this.onWorkspaceFormSubmit = this.onWorkspaceFormSubmit.bind(this);
     this.onOwnerAccountFormSubmit = this.onOwnerAccountFormSubmit.bind(this);
+    this.onPasswordChange = this.onPasswordChange.bind(this);
 
     this.state = {
       createdWorkspaceName: "",
@@ -37,8 +38,10 @@ class Login extends React.Component {
     event.preventDefault();
     let email = event.target.elements["email"].value;
     let password = event.target.elements["password"].value;
+    let confirmPassword = event.target.elements["confirmPassword"].value;
     let workspace = event.target.elements["workspace"].value;
     let displayName = event.target.elements["displayName"].value;
+
     if (email && password && workspace) {
       this.apiService
         .fetch(
@@ -53,7 +56,7 @@ class Login extends React.Component {
             })
           },
           false,
-          true  // no auth
+          true // no auth
         )
         .then(() => {
           document
@@ -71,7 +74,7 @@ class Login extends React.Component {
         })
         .catch(error => {
           toast.error(`Create workspace failed: ${error}`);
-        });;
+        });
     }
   }
 
@@ -82,6 +85,18 @@ class Login extends React.Component {
       this.state.createdWorkspaceOwnerEmail,
       this.state.createdWorkspaceOwnerPassword
     );
+  }
+
+  onPasswordChange() {
+    let password = document.querySelector("#workspace input[name='password']");
+    let confirmPassword = document.querySelector(
+      "#workspace input[name='confirmPassword']"
+    );
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setCustomValidity("Passwords don't match");
+    } else {
+      confirmPassword.setCustomValidity("");
+    }
   }
 
   showCreateWorkSpace() {
@@ -110,7 +125,9 @@ class Login extends React.Component {
                 method="post"
                 onSubmit={this.onAccountFormSubmit}
               >
-                <p>Enter email address and password to log in.</p>
+                <p className="form-description">
+                  Enter email address and password to log in.
+                </p>
                 <input
                   className="form-control"
                   name="email"
@@ -164,7 +181,9 @@ class Login extends React.Component {
                 method="post"
                 onSubmit={this.onWorkspaceFormSubmit}
               >
-                <p>Enter details to create workspace.</p>
+                <p className="form-description">
+                  Enter details to create workspace.
+                </p>
                 <input
                   className="form-control"
                   name="workspace"
@@ -187,6 +206,16 @@ class Login extends React.Component {
                   type="password"
                   placeholder="Your Password"
                   minLength="6"
+                  onInput={this.onPasswordChange}
+                  required
+                />
+                <input
+                  className="form-control"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm Password"
+                  minLength="6"
+                  onInput={this.onPasswordChange}
                   required
                 />
                 <input
@@ -216,7 +245,7 @@ class Login extends React.Component {
                 method="post"
                 onSubmit={this.onOwnerAccountFormSubmit}
               >
-                <p>
+                <p className="form-description">
                   Click <b>Continue</b> to login as{" "}
                   <b>{this.state.createdWorkspaceOwnerEmail}</b>.
                 </p>

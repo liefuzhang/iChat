@@ -139,7 +139,7 @@ namespace iChat.Api.Services
                     throw new Exception($"User with email \"{email}\" has already been invited.");
                 }
 
-                if (_context.Users.Any(u => u.Email == email && u.WorkspaceId == workspace.Id))
+                if (_context.Users.Any(u => u.Email == email))
                 {
                     // user has already joined workspace
                     throw new Exception($"User with email \"{email}\" already exists.");

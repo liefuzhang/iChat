@@ -26,9 +26,8 @@ class UploadFileForm extends React.Component {
     event.preventDefault();
     if (this.files.length === 0) return;
 
-    event.currentTarget.querySelector(
-      "button[type='submit']"
-    ).classList.add("disabled-button");
+     let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
 
     this.setState({
       showUploadingBar: true
@@ -54,6 +53,7 @@ class UploadFileForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Upload file failed: ${error}`);
+        button.classList.remove("disabled-button");
       });
   }
 

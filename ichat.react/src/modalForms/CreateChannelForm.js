@@ -13,9 +13,8 @@ class CreateChannelForm extends React.Component {
   onCreateChannelFormSubmit(event) {
     event.preventDefault();
 
-    event.currentTarget
-      .querySelector("button[type='submit']")
-      .classList.add("disabled-button");
+    let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
 
     let name = event.target.elements["name"].value;
     let topic = event.target.elements["topic"].value;
@@ -34,6 +33,7 @@ class CreateChannelForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Create channel failed: ${error}`);
+        button.classList.remove("disabled-button");
       });
   }
 

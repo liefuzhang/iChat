@@ -26,9 +26,8 @@ class StartConversationForm extends React.Component {
     if (!this.conversationUserIds || this.conversationUserIds.length === 0)
       return;
 
-    event.currentTarget
-      .querySelector("button[type='submit']")
-      .classList.add("disabled-button");
+     let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
 
     this.apiService
       .fetch(`/api/conversations/start`, {
@@ -41,6 +40,7 @@ class StartConversationForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Start conversation failed: ${error}`);
+        button.classList.remove("disabled-button");
       });
   }
 
