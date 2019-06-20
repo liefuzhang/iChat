@@ -27,3 +27,9 @@
   flex: 0 0 26px;
   font-size: 14px;
 }
+
+.sidebar-active-item,
+.sidebar-active-item:hover {
+  background-color: rgb(207, 35, 81);
+  color: white;
+}

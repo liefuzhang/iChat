@@ -144,12 +144,6 @@ class Sidebar extends React.Component {
             {this.state.channels.map(c => {
               let active = false;
               if (this.props.isChannel && this.props.id === c.id) active = true;
-              if (
-                this.props.isChannel &&
-                this.props.id === 0 &&
-                c.name === "general"
-              )
-                active = true;
               return (
                 <SidebarItemChannel key={c.id} channel={c} active={active} />
               );
