@@ -4,4 +4,38 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin: 0 -20px;
   padding: 0 20px;
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.content-header-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.content-header-details {
+  flex: 1 1 auto;
+}
+
+.content-header-toolbar {
+  flex: 0 0 auto;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.content-header-toolbar-item {
+  margin-right: 10px;
+  box-sizing: border-box;
+  width: 24px;
+}
+
+.content-header-toolbar-item:hover {
+  color: #297fa3;
+  cursor: pointer;
+}
+
+.content-header-toolbar-item i.icon {
+  font-size: 1.2rem;
 }

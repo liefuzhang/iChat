@@ -153,9 +153,9 @@ class SidebarHeader extends React.Component {
           </div>
           {this.state.isDropdownModalOpen && (
             <DropdownModal onClose={this.onCloseDropdown}>
-              <div className="sidebar-header-dropdown panel">
-                <section className="sidebar-header-dropdown-section">
-                  <div className="sidebar-header-dropdown-section-header">
+              <div className="dropdown-container panel">
+                <section className="dropdown-section">
+                  <div className="dropdown-section-header">
                     <img
                       className="user-identicon"
                       src={this.props.userProfile.identiconPath}
@@ -174,8 +174,8 @@ class SidebarHeader extends React.Component {
                     <li onClick={this.onEditProfile}>Profile</li>
                   </ul>
                 </section>
-                <section className="sidebar-header-dropdown-section">
-                  <div className="sidebar-header-dropdown-section-header">
+                <section className="dropdown-section">
+                  <div className="dropdown-section-header">
                     {this.props.userProfile.workspaceName}
                   </div>
                   <ul>

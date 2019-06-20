@@ -68,7 +68,7 @@ class ContentMessageItem extends React.Component {
                           <span title={file.name}>{file.name}</span>
                         </div>
                       }
-                      key={file.name + file.lastModified}
+                      key={file.name + file.id}
                       content="Click to download"
                       inverted
                       position="top center"

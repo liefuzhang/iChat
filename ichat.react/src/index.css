@@ -320,3 +320,44 @@ i.icon {
   font-weight: 600;
   transition: all 0s ease 0.5s;
 }
+
+.dropdown-container {
+  position: fixed;
+  z-index: 100;
+  background-color: white;
+  color: #333;
+  padding: 5px 22px;
+  left: 12px;
+  top: 66px;
+  min-width: 220px;
+  transition: all 0.3s;
+}
+
+.dropdown-section {
+  margin: 0 -22px;
+  padding: 5px 22px;
+}
+
+.dropdown-section + .dropdown-section {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 10px;
+}
+
+.dropdown-section ul li {
+  cursor: pointer;
+  margin: 0 -22px;
+  padding: 4px 22px;
+}
+
+.dropdown-section ul li:hover {
+  background: #259;
+  color: white;
+}
+
+.dropdown-section-header {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}

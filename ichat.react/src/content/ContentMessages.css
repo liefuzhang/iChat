@@ -39,11 +39,12 @@
   + .message-group-header-container
   .message-group-header {
   position: fixed;
-  top: 28px;
+  top: 48px;
   left: 220px;
   z-index: 100;
   width: calc(100% - 220px);
   min-width: 540px;
+  padding: 0;
 }
 
 .message-container .message-group-header {
