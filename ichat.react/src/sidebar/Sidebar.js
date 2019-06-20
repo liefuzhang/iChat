@@ -106,9 +106,7 @@ class Sidebar extends React.Component {
 
   fecthDataOnLoad() {
     Promise.all([this.fetchChannels(), this.fetchConversations()]).then(() => {
-      setTimeout(() => {
-        this.setState({ isPageLoading: false });
-      }, 1000);
+      this.setState({ isPageLoading: false });
     });
   }
 

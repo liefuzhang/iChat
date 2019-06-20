@@ -12,38 +12,34 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services
-{
-    public class IdentityService : IIdentityService
-    {
+namespace iChat.Api.Services {
+    public class IdentityService : IIdentityService {
         private readonly iChatContext _context;
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
         private readonly IWorkspaceService _workspaceService;
+        private readonly IChannelService _channelService;
 
         public IdentityService(iChatContext context, IOptions<AppSettings> appSettings, IMapper mapper,
-            IUserService userService, IWorkspaceService workspaceService)
-        {
+            IUserService userService, IWorkspaceService workspaceService, IChannelService channelService) {
             _context = context;
             _mapper = mapper;
             _userService = userService;
             _workspaceService = workspaceService;
             _appSettings = appSettings.Value;
+            _channelService = channelService;
         }
 
-        public async Task<UserProfileDto> AuthenticateAsync(string email, string password)
-        {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
+        public async Task<UserProfileDto> AuthenticateAsync(string email, string password) {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) {
                 throw new Exception("Invalid input.");
             }
 
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
             // check if email exists
-            if (user == null || !user.VerifyPassword(password))
-            {
+            if (user == null || !user.VerifyPassword(password)) {
                 throw new Exception("Email or password is incorrect.");
             }
 
@@ -51,24 +47,20 @@ namespace iChat.Api.Services
             return await GetProfileAsync(user);
         }
 
-        public async Task<UserProfileDto> GetUserProfileAsync(int userId, int workspaceId)
-        {
+        public async Task<UserProfileDto> GetUserProfileAsync(int userId, int workspaceId) {
             var user = await _userService.GetUserByIdAsync(userId, workspaceId);
 
-            if (user == null)
-            {
+            if (user == null) {
                 throw new Exception("Cannot find user profile.");
             }
 
             return await GetProfileAsync(user);
         }
 
-        private string GenerateAccessToken(int userId)
-        {
+        private string GenerateAccessToken(int userId) {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
+            var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, userId.ToString())
@@ -80,10 +72,10 @@ namespace iChat.Api.Services
             return tokenHandler.WriteToken(token);
         }
 
-        private async Task<UserProfileDto> GetProfileAsync(User user)
-        {
+        private async Task<UserProfileDto> GetProfileAsync(User user) {
             var dto = _mapper.Map<UserProfileDto>(user);
             dto.WorkspaceName = (await _workspaceService.GetWorkspaceByIdAsync(user.WorkspaceId))?.Name;
+            dto.DefaultChannelId = await _channelService.GetDefaultChannelGeneralIdAsync(user.WorkspaceId);
             dto.Token = GenerateAccessToken(user.Id);
 
             return dto;

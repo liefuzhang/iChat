@@ -25,3 +25,7 @@
   background: #259;
 }
 
+.sidebar-header-dropdown.dropdown-container{
+  left: 12px;
+  top: 66px;
+}

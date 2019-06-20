@@ -33,15 +33,5 @@ namespace iChat.Api.Controllers
 
             return Ok(sessionData);
         }
-
-        // POST api/app/activeSidebarItem
-        [HttpPost("activeSidebarItem")]
-        public async Task<IActionResult> SetActiveSidebarItemAsync(ActiveSidebarItem item)
-        {
-            await _cacheService.SetActiveSidebarItemAsync(item.IsChannel, item.ItemId,
-                User.GetUserId(), User.GetWorkspaceId());
-
-            return Ok();
-        }
     }
 }

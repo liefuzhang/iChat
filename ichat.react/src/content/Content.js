@@ -17,9 +17,7 @@ class Content extends React.Component {
   }
 
   onFinishLoading() {
-    setTimeout(() => {
-      this.setState({ isPageLoading: false });
-    }, 1000);
+    this.setState({ isPageLoading: false });
   }
 
   render() {
@@ -32,7 +30,7 @@ class Content extends React.Component {
             <Image src="https://react.semantic-ui.com/images/wireframe/short-paragraph.png" />
           </Segment>
         )}
-        <ContentHeader isChannel={this.props.isChannel} id={this.props.id} />
+        <ContentHeader {...this.props} />
         <ContentMessages
           section={this.props.section}
           id={this.props.id}

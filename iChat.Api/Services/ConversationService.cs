@@ -105,8 +105,7 @@ namespace iChat.Api.Services {
             return userIds.Count() == 1 && userIds.Single() == userId;
         }
 
-        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId)
-        {
+        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId) {
             var currentUser = await _userService.GetUserByIdAsync(currentUserId, workspaceId);
             if (currentUser == null)
                 return;
@@ -117,7 +116,16 @@ namespace iChat.Api.Services {
             _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
         }
 
+        public bool IsUserInConversation(int id, int userId) {
+            return _context.ConversationUsers.Any(cu => cu.UserId == userId &&
+                       cu.ConversationId == id);
+        }
+
         public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId) {
+            if (!IsUserInConversation(id, userId)) {
+                throw new ArgumentException($"User is not in conversation.");
+            }
+
             var conversation = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                             c.Id == id)
@@ -127,7 +135,7 @@ namespace iChat.Api.Services {
             conversationDto.Name = await GetConversationNameAsync(id, userId, workspaceId);
             return conversationDto;
         }
-        
+
         public async Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId) {
             var recentConversationItems = await _cacheService.GetRecentConversationItemsForUserAsync(userId, workspaceId);
             var recentConversationIds = recentConversationItems.Select(i => i.ConversationId);

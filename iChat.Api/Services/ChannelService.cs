@@ -8,10 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services
-{
-    public class ChannelService : IChannelService
-    {
+namespace iChat.Api.Services {
+    public class ChannelService : IChannelService {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
         private ICacheService _cacheService;
@@ -19,8 +17,7 @@ namespace iChat.Api.Services
         private readonly INotificationService _notificationService;
 
         public ChannelService(iChatContext context, IUserService userService,
-            ICacheService cacheService, IMapper mapper, INotificationService notificationService)
-        {
+            ICacheService cacheService, IMapper mapper, INotificationService notificationService) {
             _context = context;
             _userService = userService;
             _cacheService = cacheService;
@@ -28,8 +25,7 @@ namespace iChat.Api.Services
             _notificationService = notificationService;
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId)
-        {
+        public async Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId) {
             var unreadChannels = await _cacheService.GetUnreadChannelForUserAsync(userId, workspaceId);
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
@@ -37,8 +33,7 @@ namespace iChat.Api.Services
                         cs.ChannelId == c.Id))
                 .ToListAsync();
 
-            var channelDtos = channels.Select(c =>
-            {
+            var channelDtos = channels.Select(c => {
                 var dto = _mapper.Map<ChannelDto>(c);
                 var unreadChannel = unreadChannels.SingleOrDefault(uc => uc.ChannelId == c.Id);
                 dto.HasUnreadMessage = unreadChannel != null;
@@ -49,42 +44,45 @@ namespace iChat.Api.Services
             return channelDtos;
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetAllChannelsAsync(int workspaceId)
-        {
+        public async Task<IEnumerable<ChannelDto>> GetAllChannelsAsync(int workspaceId) {
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId)
                 .ToListAsync();
 
-            var channelDtos = channels.Select(async c =>
-            {
+            var channelDtos = channels.Select(c => {
                 var dto = _mapper.Map<ChannelDto>(c);
                 return dto;
             });
 
-            return await Task.WhenAll(channelDtos);
+            return channelDtos;
         }
 
-        public async Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId)
-        {
+        public async Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId) {
             var allChannels = await GetAllChannelsAsync(workspaceId);
             var subscribedChannels = await GetChannelsForUserAsync(userId, workspaceId);
             return allChannels.Where(c => !subscribedChannels.Any(sc => sc.Id == c.Id));
         }
 
-        public async Task<ChannelDto> GetChannelByIdAsync(int id, int workspaceId)
-        {
+        public bool IsUserSubscribedToChannel(int channelId, int userId) {
+            return _context.ChannelSubscriptions.Any(cs => cs.UserId == userId &&
+                        cs.ChannelId == channelId);
+        }
+
+        public async Task<ChannelDto> GetChannelByIdAsync(int id, int userId, int workspaceId) {
+            if (!IsUserSubscribedToChannel(id, userId)) {
+                throw new ArgumentException($"User is not subsribed to channel.");
+            }
+
             var channel = await _context.Channels.AsNoTracking()
-                .Where(c => c.WorkspaceId == workspaceId &&
-                    c.Id == id)
-                .SingleOrDefaultAsync();
+                    .Where(c => c.WorkspaceId == workspaceId &&
+                        c.Id == id)
+                    .SingleOrDefaultAsync();
 
             return _mapper.Map<ChannelDto>(channel);
         }
 
-        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "")
-        {
-            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName))
-            {
+        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "") {
+            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName)) {
                 throw new ArgumentException($"Channel \"{channelName}\" already exists.");
             }
 
@@ -96,22 +94,19 @@ namespace iChat.Api.Services
             return channel.Id;
         }
 
-        public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId)
-        {
+        public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId) {
             return await _context.ChannelSubscriptions
                 .Where(cs => cs.ChannelId == channelId)
                 .Select(cs => cs.UserId)
                 .ToListAsync();
         }
 
-        public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
-        {
+        public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId) {
             var user = await _userService.GetUserByIdAsync(userId, workspaceId);
-            var channel = await GetChannelByIdAsync(channelId, workspaceId);
+            var channel = await GetChannelByIdAsync(channelId, userId, workspaceId);
 
-            if (user == null || channel == null)
-            {
-                throw new ArgumentException("User and channel are not in the same workspace");
+            if (user == null || channel == null) {
+                throw new ArgumentException("Cannot find user or channel");
             }
 
             var channelSubscription = new ChannelSubscription(channelId, userId);
@@ -120,10 +115,15 @@ namespace iChat.Api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId)
-        {
-            if (workspaceId < 1)
-            {
+        public async Task RemoveUserFromChannelAsync(int channelId, int userId) {
+            var channelSubscription = _context.ChannelSubscriptions
+                .Single(cs => cs.ChannelId == channelId && cs.UserId == userId);
+            _context.ChannelSubscriptions.Remove(channelSubscription);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId) {
+            if (workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -131,10 +131,8 @@ namespace iChat.Api.Services
             await CreateChannelAsync(iChatConstants.DefaultChannelRandom, workspaceId, "Another random channel");
         }
 
-        public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId)
-        {
-            if (userId < 1 || workspaceId < 1)
-            {
+        public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId) {
+            if (userId < 1 || workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -145,8 +143,7 @@ namespace iChat.Api.Services
             await AddUserToChannelAsync(defaultChannelRandom.Id, userId, workspaceId);
         }
 
-        private async Task<Channel> GetChannelByNameAsync(string name, int workspaceId)
-        {
+        private async Task<Channel> GetChannelByNameAsync(string name, int workspaceId) {
             var channel = await _context.Channels.AsNoTracking()
                 .Where(c => c.Name == name &&
                     c.WorkspaceId == workspaceId)
@@ -155,10 +152,8 @@ namespace iChat.Api.Services
             return channel;
         }
 
-        public async Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId)
-        {
-            if (workspaceId < 1)
-            {
+        public async Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId) {
+            if (workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
@@ -166,11 +161,9 @@ namespace iChat.Api.Services
             return defaultChannelGeneral.Id;
         }
 
-        public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId)
-        {
+        public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId) {
             var currentUser = await _userService.GetUserByIdAsync(currentUserId, workspaceId);
-            if (currentUser == null)
-            {
+            if (currentUser == null) {
                 return;
             }
 

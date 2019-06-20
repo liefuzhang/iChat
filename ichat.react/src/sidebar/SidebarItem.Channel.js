@@ -2,23 +2,11 @@ import React from "react";
 import "./SidebarItem.css";
 import { Link } from "react-router-dom";
 import { Popup } from "semantic-ui-react";
-import ApiService from "services/ApiService";
 
 function SidebarItemChannel(props) {
-  function setActiveSidebarItem() {
-    var apiService = new ApiService(props);
-    apiService.fetch(`/api/app/activeSidebarItem`, {
-      method: "POST",
-      body: JSON.stringify({
-        isChannel: true,
-        itemId: props.channel.id
-      })
-    });
-  }
-
   let truncateNameThreshold = 18;
   return (
-    <Link to={`/channel/${props.channel.id}`} onClick={setActiveSidebarItem}>
+    <Link to={`/channel/${props.channel.id}`}>
       <Popup
         trigger={
           <div
@@ -31,7 +19,7 @@ function SidebarItemChannel(props) {
             }
           >
             <span className="sidebar-item-name">
-              #&nbsp;{props.channel.name}
+              {props.channel.name}
             </span>
             <span
               className={

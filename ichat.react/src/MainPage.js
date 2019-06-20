@@ -29,16 +29,19 @@ class MainPage extends React.Component {
     this.state = {
       savedActiveSidebarItem: undefined,
       userStatus: undefined,
-      isPageLoading: true,
-      userProfile: this.profileService.getProfile()
+      userProfile: this.profileService.getProfile(),
+      userSessionDataLoaded: false
     };
   }
 
   onUserSessionDataChange() {
     this.apiService.fetch(`/api/app/userSessionData`).then(data => {
       if (data) {
-        this.setState({ savedActiveSidebarItem: data.activeSidebarItem });
-        this.setState({ userStatus: data.userStatus });
+        this.setState({
+          savedActiveSidebarItem: data.activeSidebarItem,
+          userStatus: data.userStatus,
+          userSessionDataLoaded: true
+        });
       }
     });
   }
@@ -70,26 +73,32 @@ class MainPage extends React.Component {
       (this.state.savedActiveSidebarItem &&
       this.state.savedActiveSidebarItem.itemId
         ? this.state.savedActiveSidebarItem.itemId
-        : 0);
+        : this.state.userProfile.defaultChannelId);
+
     return (
-      <div id="mainPage">
-        <Sidebar
-          isChannel={isChannel}
-          id={id}
-          userProfile={this.state.userProfile}
-          userStatus={this.state.userStatus}
-          onUserSessionDataChange={this.onUserSessionDataChange}
-          onProfileUpdated={this.onProfileUpdated}
-          hubConnection={this.connection}
-          {...this.props}
-        />
-        <Content
-          isChannel={isChannel}
-          id={id}
-          section={section}
-          hubConnection={this.connection}
-          userProfile={this.state.userProfile}
-        />
+      <div className="main-page-container">
+        {this.state.userSessionDataLoaded && (
+          <div id="mainPage">
+            <Sidebar
+              isChannel={isChannel}
+              id={id}
+              userProfile={this.state.userProfile}
+              userStatus={this.state.userStatus}
+              onUserSessionDataChange={this.onUserSessionDataChange}
+              onProfileUpdated={this.onProfileUpdated}
+              hubConnection={this.connection}
+              {...this.props}
+            />
+            <Content
+              isChannel={isChannel}
+              id={id}
+              section={section}
+              hubConnection={this.connection}
+              userProfile={this.state.userProfile}
+              {...this.props}
+            />
+          </div>
+        )}
       </div>
     );
   }

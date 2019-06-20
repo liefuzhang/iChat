@@ -153,7 +153,7 @@ class SidebarHeader extends React.Component {
           </div>
           {this.state.isDropdownModalOpen && (
             <DropdownModal onClose={this.onCloseDropdown}>
-              <div className="dropdown-container panel">
+              <div className="sidebar-header-dropdown dropdown-container panel">
                 <section className="dropdown-section">
                   <div className="dropdown-section-header">
                     <img

@@ -39,3 +39,8 @@
 .content-header-toolbar-item i.icon {
   font-size: 1.2rem;
 }
+
+.setting-dropdown.dropdown-container {
+  right: 38px;
+  top: 46px;
+}

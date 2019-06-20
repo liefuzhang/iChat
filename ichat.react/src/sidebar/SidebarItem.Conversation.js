@@ -2,26 +2,11 @@ import React from "react";
 import "./SidebarItem.css";
 import { Link } from "react-router-dom";
 import { Popup } from "semantic-ui-react";
-import ApiService from "services/ApiService";
 
 function SidebarItemConversation(props) {
-  function setActiveSidebarItem() {
-    var apiService = new ApiService(props);
-    apiService.fetch(`/api/app/activeSidebarItem`, {
-      method: "POST",
-      body: JSON.stringify({
-        isChannel: false,
-        itemId: props.conversation.id
-      })
-    });
-  }
-
   let truncateNameThreshold = 18;
   return (
-    <Link
-      to={`/conversation/${props.conversation.id}`}
-      onClick={setActiveSidebarItem}
-    >
+    <Link to={`/conversation/${props.conversation.id}`}>
       <Popup
         trigger={
           <div

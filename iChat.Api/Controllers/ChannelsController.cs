@@ -45,11 +45,7 @@ namespace iChat.Api.Controllers {
         // GET api/channels/1
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDto>> GetAsync(int id) {
-            if (id == iChatConstants.DefaultChannelIdInRequest) {
-                id = await _channelService.GetDefaultChannelGeneralIdAsync(User.GetWorkspaceId());
-            }
-
-            var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkspaceId());
+            var channel = await _channelService.GetChannelByIdAsync(id, User.GetUserId(), User.GetWorkspaceId());
             if (channel == null) {
                 return NotFound();
             }
@@ -79,6 +75,14 @@ namespace iChat.Api.Controllers {
         public async Task<IActionResult> NotifyTypingAsync([FromBody]int channelId)
         {
             await _channelService.NotifyTypingAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
+
+            return Ok();
+        }
+
+        // POST api/channels/leave
+        [HttpPost("leave")]
+        public async Task<IActionResult> LeaveChannelAsync([FromBody] int channelId) {
+            await _channelService.RemoveUserFromChannelAsync(channelId, User.GetUserId());
 
             return Ok();
         }

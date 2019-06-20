@@ -3,6 +3,7 @@ import "./ContentHeader.css";
 import ApiService from "services/ApiService";
 import { Icon, Popup } from "semantic-ui-react";
 import DropdownModal from "modals/DropdownModal";
+import { toast } from "react-toastify";
 
 class ContentHeader extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class ContentHeader extends React.Component {
     this.apiService = new ApiService(props);
     this.onSettingButtonClicked = this.onSettingButtonClicked.bind(this);
     this.onCloseSettingDropdown = this.onCloseSettingDropdown.bind(this);
+    this.onLeaveChannelClicked = this.onLeaveChannelClicked.bind(this);
 
     this.state = {
       selectedChannel: {},
@@ -57,13 +59,29 @@ class ContentHeader extends React.Component {
     });
   }
 
+  onLeaveChannelClicked() {
+    let defaultChannelId = this.props.userProfile.defaultChannelId;
+    this.apiService
+      .fetch(`/api/channels/leave`, {
+        method: "POST",
+        body: JSON.stringify(this.props.id)
+      })
+      .then(id => {
+        this.onCloseSettingDropdown();
+        this.props.history.push(`/channel/${defaultChannelId}`);
+      })
+      .catch(error => {
+        toast.error(`Leave channel failed: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div className="content-header">
         <div className="content-header-details">
           <div className="content-header-name">
             {this.props.isChannel
-              ? "#" + this.state.selectedChannel.name
+              ? this.state.selectedChannel.name
               : this.state.selectedConversation.name}
           </div>
           <div className="content-header-topic">
@@ -85,12 +103,16 @@ class ContentHeader extends React.Component {
             </span>
             {this.state.isSettingDropdownModalOpen && (
               <DropdownModal onClose={this.onCloseSettingDropdown}>
-                <div className="dropdown-container panel">
+                <div className="setting-dropdown dropdown-container panel">
                   <section className="dropdown-section">
                     <ul>
-                      {this.props.isChannel && (
-                        <li>{`Leave #${this.state.selectedChannel.name}`}</li>
-                      )}
+                      {this.props.isChannel &&
+                        this.props.id !==
+                          this.props.userProfile.defaultChannelId && (
+                          <li onClick={this.onLeaveChannelClicked}>{`Leave ${
+                            this.state.selectedChannel.name
+                          }`}</li>
+                        )}
                     </ul>
                   </section>
                 </div>
