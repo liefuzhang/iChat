@@ -23,14 +23,14 @@ class MainPage extends React.Component {
       return console.error(err.toString());
     });
 
-    this.userProfile = this.profileService.getProfile();
-
     this.onUserSessionDataChange = this.onUserSessionDataChange.bind(this);
+    this.onProfileUpdated = this.onProfileUpdated.bind(this);
 
     this.state = {
       savedActiveSidebarItem: undefined,
       userStatus: undefined,
-      isPageLoading: true
+      isPageLoading: true,
+      userProfile: this.profileService.getProfile()
     };
   }
 
@@ -39,6 +39,15 @@ class MainPage extends React.Component {
       if (data) {
         this.setState({ savedActiveSidebarItem: data.activeSidebarItem });
         this.setState({ userStatus: data.userStatus });
+      }
+    });
+  }
+
+  onProfileUpdated() {
+    this.apiService.fetch(`/api/identity/userProfile`).then(profile => {
+      if (profile) {
+        this.profileService.setProfile(profile);
+        this.setState({ userProfile: profile });
       }
     });
   }
@@ -67,9 +76,10 @@ class MainPage extends React.Component {
         <Sidebar
           isChannel={isChannel}
           id={id}
-          userProfile={this.userProfile}
+          userProfile={this.state.userProfile}
           userStatus={this.state.userStatus}
           onUserSessionDataChange={this.onUserSessionDataChange}
+          onProfileUpdated={this.onProfileUpdated}
           hubConnection={this.connection}
           {...this.props}
         />
@@ -78,7 +88,7 @@ class MainPage extends React.Component {
           id={id}
           section={section}
           hubConnection={this.connection}
-          userProfile={this.userProfile}
+          userProfile={this.state.userProfile}
         />
       </div>
     );

@@ -95,6 +95,14 @@ namespace iChat.Api.Controllers {
             return Ok();
         }
 
+        // POST api/users/editProfile
+        [HttpPost("editProfile")]
+        public async Task<IActionResult> EditProfile(UserEditDto userDto)
+        {
+            await _userService.EditProfile(userDto, User.GetUserId(), User.GetWorkspaceId());
+
+            return Ok();
+        }
 
         [AllowAnonymous]
         // TODO remove after development

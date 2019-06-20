@@ -5,6 +5,7 @@ import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
 import InvitePeopleForm from "modalForms/InvitePeopleForm";
 import SetStatusForm from "modalForms/SetStatusForm";
+import EditProfileForm from "modalForms/EditProfileForm";
 import AuthService from "services/AuthService";
 import UserStatusService from "services/UserStatusService";
 import { toast } from "react-toastify";
@@ -18,7 +19,9 @@ class SidebarHeader extends React.Component {
     this.onCloseDropdown = this.onCloseDropdown.bind(this);
     this.onInvitePeople = this.onInvitePeople.bind(this);
     this.onCloseInvitePeople = this.onCloseInvitePeople.bind(this);
+    this.onCloseEditProfile = this.onCloseEditProfile.bind(this);
     this.onSetStatus = this.onSetStatus.bind(this);
+    this.onEditProfile = this.onEditProfile.bind(this);
     this.onClearStatus = this.onClearStatus.bind(this);
     this.onCloseSetStatus = this.onCloseSetStatus.bind(this);
     this.onLogout = this.onLogout.bind(this);
@@ -29,6 +32,7 @@ class SidebarHeader extends React.Component {
     this.state = {
       isInvitePeopleModalOpen: false,
       isSetStatusModalOpen: false,
+      isEditProfileModalOpen: false,
       isDropdownModalOpen: false
     };
   }
@@ -65,6 +69,13 @@ class SidebarHeader extends React.Component {
     });
   }
 
+  onEditProfile(event) {
+    this.setState({
+      isEditProfileModalOpen: true,
+      isDropdownModalOpen: false
+    });
+  }
+
   onClearStatus(event) {
     this.apiService
       .fetch(`/api/users/clearStatus`, {
@@ -84,6 +95,12 @@ class SidebarHeader extends React.Component {
   onCloseSetStatus(event) {
     this.setState({
       isSetStatusModalOpen: false
+    });
+  }
+
+  onCloseEditProfile(event) {
+    this.setState({
+      isEditProfileModalOpen: false
     });
   }
 
@@ -154,7 +171,7 @@ class SidebarHeader extends React.Component {
                       <li onClick={this.onSetStatus}>Set status</li>
                     )}
 
-                    <li>Profile</li>
+                    <li onClick={this.onEditProfile}>Profile</li>
                   </ul>
                 </section>
                 <section className="sidebar-header-dropdown-section">
@@ -178,6 +195,17 @@ class SidebarHeader extends React.Component {
               <SetStatusForm
                 onClose={this.onCloseSetStatus}
                 onSelect={this.props.onUserSessionDataChange}
+              />
+            </Modal>
+          )}
+        </div>
+        <div>
+          {this.state.isEditProfileModalOpen && (
+            <Modal onClose={this.onCloseEditProfile}>
+              <EditProfileForm
+                userProfile={this.props.userProfile}
+                onClose={this.onCloseEditProfile}
+                onProfileUpdated={this.props.onProfileUpdated}
               />
             </Modal>
           )}

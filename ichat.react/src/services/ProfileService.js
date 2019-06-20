@@ -1,6 +1,10 @@
 class ProfileService {
+  constructor() {
+    this.localStorageKey = "ichat.user";
+  }
+
   setProfile(profile) {
-    localStorage.setItem(this.localStorageKey, profile);
+    localStorage.setItem(this.localStorageKey, JSON.stringify(profile));
   }
 
   getProfile() {

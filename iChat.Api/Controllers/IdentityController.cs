@@ -1,9 +1,8 @@
-﻿using iChat.Api.Constants;
-using iChat.Api.Dtos;
+﻿using iChat.Api.Dtos;
+using iChat.Api.Extensions;
 using iChat.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Controllers
@@ -21,30 +20,24 @@ namespace iChat.Api.Controllers
             _workspaceService = workspaceService;
         }
 
+        // GET api/identity/authenticate
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync(UserLoginDto loginDto)
+        public async Task<ActionResult<UserProfileDto>> AuthenticateAsync(UserLoginDto loginDto)
         {
-            var user = await _identityService.AuthenticateAsync(loginDto.Email, loginDto.Password);
-
-            if (user == null)
-            {
-                return BadRequest("Email or password is incorrect");
-            }
-
-            var workspace = await _workspaceService.GetWorkspaceByIdAsync(user.WorkspaceId);
-
-            var tokenString = _identityService.GenerateAccessToken(user.Id);
-
+            var userProfileDto = await _identityService.AuthenticateAsync(loginDto.Email, loginDto.Password);
+            
             // return basic user info (without password) and token to store on client side
-            return Ok(new
-            {
-                id = user.Id,
-                email = user.Email,
-                displayName = user.DisplayName,
-                workspaceName = workspace?.Name,
-                identiconPath = user.IdenticonPath,
-                token = tokenString
-            });
+            return userProfileDto;
+        }
+
+        // GET api/identity/userProfile
+        [HttpGet("userProfile")]
+        [Authorize]
+        public async Task<ActionResult<UserProfileDto>> GetUserProfileAsync()
+        {
+            var userProfileDto = await _identityService.GetUserProfileAsync(User.GetUserId(), User.GetWorkspaceId());
+            
+            return userProfileDto;
         }
     }
 }

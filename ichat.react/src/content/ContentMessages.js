@@ -102,7 +102,8 @@ class ContentMessages extends React.Component {
   componentDidUpdate(prevProps) {
     if (
       this.props.section !== prevProps.section ||
-      this.props.id !== prevProps.id
+      this.props.id !== prevProps.id ||
+      this.props.userProfile.displayName != prevProps.userProfile.displayName
     ) {
       this.fetchData(this.props);
     }

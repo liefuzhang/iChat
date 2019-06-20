@@ -22,7 +22,7 @@ class AuthService {
         true // no auth
       )
       .then(profile => {
-        this.profileService.setProfile(JSON.stringify(profile));
+        this.profileService.setProfile(profile);
         this.props.history.push("/");
       })
       .catch(error => {

@@ -38,7 +38,6 @@ class Login extends React.Component {
     event.preventDefault();
     let email = event.target.elements["email"].value;
     let password = event.target.elements["password"].value;
-    let confirmPassword = event.target.elements["confirmPassword"].value;
     let workspace = event.target.elements["workspace"].value;
     let displayName = event.target.elements["displayName"].value;
 

@@ -16,15 +16,13 @@ namespace iChat.Api.Services
     {
         private readonly iChatContext _context;
         private readonly IEmailHelper _emailService;
-        private readonly IIdentityService _identityService;
         private readonly IUserIdenticonHelper _userIdenticonHelper;
         private readonly IMapper _mapper;
 
-        public UserService(iChatContext context, IIdentityService identityService,
-            IEmailHelper emailService, IUserIdenticonHelper userIdenticonHelper, IMapper mapper)
+        public UserService(iChatContext context, IEmailHelper emailService,
+            IUserIdenticonHelper userIdenticonHelper, IMapper mapper)
         {
             _context = context;
-            _identityService = identityService;
             _emailService = emailService;
             _userIdenticonHelper = userIdenticonHelper;
             _mapper = mapper;
@@ -209,13 +207,25 @@ namespace iChat.Api.Services
 
         public async Task<string> GetUserStatus(int userId, int workspaceId)
         {
-            var user = await GetUserByIdAsync(userId);
+            var user = await GetUserByIdAsync(userId, workspaceId);
             if (user == null)
             {
                 throw new Exception("User cannot be found.");
             }
 
             return user.Status.ToString();
+        }
+
+        public async Task EditProfile(UserEditDto userDto, int userId, int workspaceId)
+        {
+            var user = await GetUserByIdAsync(userId, workspaceId);
+            if (user == null)
+            {
+                throw new Exception("User cannot be found.");
+            }
+
+            user.UpdateDetails(userDto.DisplayName, userDto.PhoneNumber);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -146,7 +146,7 @@ namespace iChat.Api
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-                        ValidateLifetime = true,
+                        ValidateLifetime = false,   // never expires
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,
