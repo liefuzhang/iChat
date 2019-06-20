@@ -35,6 +35,7 @@ class ContentFooterEditor extends React.Component {
     this.closeEmoji = this.closeEmoji.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
     this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
+    this.onEditorPaste = this.onEditorPaste.bind(this);
     this.userList = [];
 
     this.state = {
@@ -330,13 +331,33 @@ class ContentFooterEditor extends React.Component {
     return true;
   }
 
+  onEditorPaste(event) {
+    var imageRegex = /^image\/(gif|jpg|jpeg|tiff|png)$/i;
+    var items = event.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (imageRegex.test(items[i].type)) {
+        let file = items[i].getAsFile();
+        if (file) {
+          this.openUploadFile([file]);
+          event.stopPropagation();
+          event.preventDefault();
+          return;
+        }
+      }
+    }
+  }
+
   onFileUploaded(event) {
     if (event.currentTarget.files && event.currentTarget.files[0]) {
-      this.uploadFiles = event.currentTarget.files;
-      this.setState({
-        isUploadFileModalOpen: true
-      });
+      this.openUploadFile(event.currentTarget.files);
     }
+  }
+
+  openUploadFile(files) {
+    this.uploadFiles = files;
+    this.setState({
+      isUploadFileModalOpen: true
+    });
   }
 
   onCloseUploadFile() {
@@ -418,7 +439,7 @@ class ContentFooterEditor extends React.Component {
           )}
           <div className="message-box">
             <div className="message-editor-container">
-              <div id="messageEditor" />
+              <div id="messageEditor" onPaste={this.onEditorPaste} />
             </div>
             <div className="message-box-buttons">
               <div className="message-box-button">
