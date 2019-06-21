@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Popup } from "semantic-ui-react";
+import { Icon, Popup, Confirm } from "semantic-ui-react";
 import "./ContentMessageItem.css";
 import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
@@ -9,6 +9,11 @@ class ContentMessageItem extends React.Component {
     super(props);
 
     this.apiService = new ApiService(props);
+    this.onDeleteMessageConfirmed = this.onDeleteMessageConfirmed.bind(this);
+
+    this.state = {
+      isDeleteMessageConfirmOpen: false
+    };
   }
 
   onHoverMessageItem(event) {
@@ -27,6 +32,25 @@ class ContentMessageItem extends React.Component {
       });
   }
 
+  onDeleteMessageConfirmed(messageId) {
+    this.apiService
+      .fetch(
+        `/api/messages/${this.props.section}/${this.props.id}/deleteMessage`,
+        {
+          method: "POST",
+          body: JSON.stringify(messageId)
+        }
+      )
+      .catch(error => {
+        toast.error(`Delete message failed: ${error}`);
+      })
+      .finally(() => {
+        this.setState({
+          isDeleteMessageConfirmOpen: false
+        });
+      });
+  }
+
   render() {
     let message = this.props.message;
     return (
@@ -40,6 +64,39 @@ class ContentMessageItem extends React.Component {
         onMouseLeave={this.onLeaveMessageItem}
       >
         <img className="user-identicon" src={message.sender.identiconPath} />
+        <div className="message-toolbar">
+          <div className="message-toolbar-item">
+            {message.sender.id === this.props.userProfile.id && (
+              <Popup
+                trigger={
+                  <div
+                    className="message-toolbar-item-content"
+                    onClick={() =>
+                      this.setState({ isDeleteMessageConfirmOpen: true })
+                    }
+                  >
+                    <Icon name="trash alternate outline" />{" "}
+                  </div>
+                }
+                content="Delete message"
+                inverted
+                position="top center"
+                size="tiny"
+              />
+            )}
+            <Confirm
+              open={this.state.isDeleteMessageConfirmOpen}
+              header="Delete message"
+              content="Are you sure you want to delete this message? This cannot be undone."
+              onCancel={() =>
+                this.setState({
+                  isDeleteMessageConfirmOpen: false
+                })
+              }
+              onConfirm={() => this.onDeleteMessageConfirmed(message.id)}
+            />
+          </div>
+        </div>
         <div className="message-item">
           <div className="message-title">
             <b>{message.sender.displayName}</b>{" "}

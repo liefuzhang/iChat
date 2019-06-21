@@ -102,8 +102,7 @@ class ContentMessages extends React.Component {
   componentDidUpdate(prevProps) {
     if (
       this.props.section !== prevProps.section ||
-      this.props.id !== prevProps.id ||
-      this.props.userProfile.displayName != prevProps.userProfile.displayName
+      this.props.id !== prevProps.id
     ) {
       this.fetchData(this.props);
     }
@@ -139,11 +138,7 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {g.messages.map(m => (
-                <ContentMessageItem
-                  key={m.id}
-                  message={m}
-                  userProfile={this.props.userProfile}
-                />
+                <ContentMessageItem key={m.id} message={m} {...this.props} />
               ))}
             </div>
           ))}

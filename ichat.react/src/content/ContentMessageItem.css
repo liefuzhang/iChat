@@ -5,6 +5,7 @@
 .message-container .message-scrollable .message-item-container {
   padding: 4px 20px 2px 20px;
   display: flex;
+  position: relative;
 }
 
 .message-container .message-scrollable .message-item-container .message-title {
@@ -33,6 +34,7 @@
 
 .message-item-container .message-content-container {
   display: flex;
+  position: relative;
 }
 
 .message-item-container .message-item {
@@ -64,11 +66,54 @@
 
 .message-item-container .message-content-container .message-time {
   position: absolute;
-  right: 10px;
+  right: 20px;
   top: 2px;
   display: inline-block;
   width: 60px;
   text-align: right;
+}
+
+.message-item-container .message-toolbar {
+  position: absolute;
+  right: 20px;
+  top: -16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: none;
+  color: #666;
+}
+
+.message-item-container .message-toolbar:hover {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.message-item-container.message-hover .message-toolbar {
+  display: block;
+}
+
+.message-item-container .message-toolbar .message-toolbar-item {
+  width: 32px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-toolbar .message-toolbar-item .message-toolbar-item-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-item-container .message-toolbar .message-toolbar-item-content:hover {
+  cursor: pointer;
+  color: #297fa3;
+}
+
+.message-item-container .message-toolbar .message-toolbar-item-content i.icon {
+  font-size: 16px;
 }
 
 .message-content .file-container {
@@ -90,4 +135,8 @@
 
 .message-content p {
   line-height: 1.6;
+}
+
+.ui.modal .content {
+  box-sizing: border-box;
 }

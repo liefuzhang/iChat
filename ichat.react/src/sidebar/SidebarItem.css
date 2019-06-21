@@ -30,6 +30,6 @@
 
 .sidebar-active-item,
 .sidebar-active-item:hover {
-  background-color: rgb(207, 35, 81);
+  background-color: #aaabb8;
   color: white;
 }
