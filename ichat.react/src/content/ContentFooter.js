@@ -1,6 +1,6 @@
 import React from "react";
 import "./ContentFooter.css";
-import ContentFooterEditor from "./ContentFooter.Editor";
+import ContentEditor from "./ContentEditor";
 import AuthService from "services/AuthService";
 
 class ContentFooter extends React.Component {
@@ -60,7 +60,9 @@ class ContentFooter extends React.Component {
   render() {
     return (
       <div className="footer">
-        <ContentFooterEditor {...this.props} />
+        <div id="footerEditor">
+          <ContentEditor containerId="footerEditor" {...this.props} />
+        </div>
         {this.state.showOtherTypingInfo && (
           <div className="message-typing-info">
             <span>{this.state.otherTypingUserName}</span>{" "}

@@ -64,39 +64,6 @@ class ContentMessageItem extends React.Component {
         onMouseLeave={this.onLeaveMessageItem}
       >
         <img className="user-identicon" src={message.sender.identiconPath} />
-        <div className="message-toolbar">
-          <div className="message-toolbar-item">
-            {message.sender.id === this.props.userProfile.id && (
-              <Popup
-                trigger={
-                  <div
-                    className="message-toolbar-item-content"
-                    onClick={() =>
-                      this.setState({ isDeleteMessageConfirmOpen: true })
-                    }
-                  >
-                    <Icon name="trash alternate outline" />{" "}
-                  </div>
-                }
-                content="Delete message"
-                inverted
-                position="top center"
-                size="tiny"
-              />
-            )}
-            <Confirm
-              open={this.state.isDeleteMessageConfirmOpen}
-              header="Delete message"
-              content="Are you sure you want to delete this message? This cannot be undone."
-              onCancel={() =>
-                this.setState({
-                  isDeleteMessageConfirmOpen: false
-                })
-              }
-              onConfirm={() => this.onDeleteMessageConfirmed(message.id)}
-            />
-          </div>
-        </div>
         <div className="message-item">
           <div className="message-title">
             <b>{message.sender.displayName}</b>{" "}
@@ -106,6 +73,40 @@ class ContentMessageItem extends React.Component {
             <div className="message-content-time">
               <span className="message-time">{message.timeString}</span>
             </div>
+            <div className="message-toolbar">
+              <div className="message-toolbar-item">
+                {message.sender.id === this.props.userProfile.id && (
+                  <Popup
+                    trigger={
+                      <div
+                        className="message-toolbar-item-content"
+                        onClick={() =>
+                          this.setState({ isDeleteMessageConfirmOpen: true })
+                        }
+                      >
+                        <Icon name="trash alternate outline" />{" "}
+                      </div>
+                    }
+                    content="Delete message"
+                    inverted
+                    position="top center"
+                    size="tiny"
+                  />
+                )}
+                <Confirm
+                  open={this.state.isDeleteMessageConfirmOpen}
+                  header="Delete message"
+                  content="Are you sure you want to delete this message? This cannot be undone."
+                  onCancel={() =>
+                    this.setState({
+                      isDeleteMessageConfirmOpen: false
+                    })
+                  }
+                  onConfirm={() => this.onDeleteMessageConfirmed(message.id)}
+                />
+              </div>
+            </div>
+
             <div className="message-content">
               {!message.hasFileAttachments && (
                 <RawMessage content={message.content} />

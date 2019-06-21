@@ -1,7 +1,7 @@
 import React from "react";
-import "./ContentFooter.Editor.css";
+import "./ContentEditor.css";
 import QuillService from "services/QuillService";
-import ContentFooterEditorUserMention from "./ContentFooter.Editor.UserMention";
+import ContentEditorUserMention from "./ContentEditor.UserMention";
 import { Icon, Popup } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
@@ -13,7 +13,7 @@ import "lib/emoji.css";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
 
-class ContentFooterEditor extends React.Component {
+class ContentEditor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -47,8 +47,10 @@ class ContentFooterEditor extends React.Component {
   }
 
   componentDidMount() {
+    this.containerElement = document.getElementById(this.props.containerId);
+
     this.quillService = new QuillService({
-      editorContainerSelector: "#messageEditor",
+      editorContainerSelector: `#${this.props.containerId} #messageEditor`,
       onSubmitMessage: this.onSubmitMessage,
       onTextChange: this.onTextChange,
       onToggleFocus: this.onToggleFocus
@@ -92,7 +94,9 @@ class ContentFooterEditor extends React.Component {
   }
 
   closeMention(event) {
-    let mentionContainer = document.querySelector(".user-mention-container");
+    let mentionContainer = this.containerElement.querySelector(
+      ".user-mention-container"
+    );
     if (event && mentionContainer.contains(event.target)) return;
     this.setState({ isMentionOpen: false }, () => {
       document.removeEventListener("click", this.closeMention);
@@ -245,12 +249,12 @@ class ContentFooterEditor extends React.Component {
   onMentionFinish() {
     this.initMention();
     this.closeMention();
-    let editor = document.querySelector(".ql-editor");
+    let editor = this.containerElement.querySelector(".ql-editor");
     editor.focus();
   }
 
   onMentionButtonClicked(event) {
-    let editor = document.querySelector(".ql-editor");
+    let editor = this.containerElement.querySelector(".ql-editor");
     editor.focus();
     let index = this.quillService.getCursorIndex();
     this.quillService.setCursorIndex(index, 0);
@@ -258,12 +262,12 @@ class ContentFooterEditor extends React.Component {
   }
 
   registerEventHandlers() {
-    var editorContainer = document.querySelector("#messageEditor");
+    var editorContainer = this.containerElement.querySelector("#messageEditor");
     editorContainer.addEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
   }
 
   unregisterEventHandlers() {
-    let editorContainer = document.querySelector("#messageEditor");
+    let editorContainer = this.containerElement.querySelector("#messageEditor");
     editorContainer.removeEventListener(
       "keydown",
       this.keydownEventHandler,
@@ -274,7 +278,7 @@ class ContentFooterEditor extends React.Component {
   }
 
   onToggleFocus() {
-    let messageBox = document.querySelector(".message-box");
+    let messageBox = this.containerElement.querySelector(".message-box");
     messageBox.classList.toggle("focus");
   }
 
@@ -361,14 +365,14 @@ class ContentFooterEditor extends React.Component {
   }
 
   onCloseUploadFile() {
-    document.querySelector("#uploadFile").value = "";
+    this.containerElement.querySelector("#uploadFile").value = "";
     this.setState({
       isUploadFileModalOpen: false
     });
   }
 
   onUploadFileButtonClicked() {
-    document.querySelector("#uploadFile").click();
+    this.containerElement.querySelector("#uploadFile").click();
   }
 
   onEmojiButtonClicked() {
@@ -417,7 +421,7 @@ class ContentFooterEditor extends React.Component {
     );
 
     this.quillService.setCursorIndex(index + 1, 0);
-    let editor = document.querySelector(".ql-editor");
+    let editor = this.containerElement.querySelector(".ql-editor");
     editor.focus();
     this.closeEmoji();
   }
@@ -428,7 +432,7 @@ class ContentFooterEditor extends React.Component {
         <form id="messageForm" method="post">
           {this.state.isMentionOpen && (
             <div className="user-mention-container">
-              <ContentFooterEditorUserMention
+              <ContentEditorUserMention
                 userList={this.state.mentionUserList}
                 onMentionSelecting={this.onMentionSelecting}
                 onMentionSelected={this.onMentionSelected}
@@ -511,4 +515,4 @@ class ContentFooterEditor extends React.Component {
   }
 }
 
-export default ContentFooterEditor;
+export default ContentEditor;

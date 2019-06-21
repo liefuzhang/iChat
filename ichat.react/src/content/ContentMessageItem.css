@@ -73,33 +73,36 @@
   text-align: right;
 }
 
-.message-item-container .message-toolbar {
+.message-content-container .message-toolbar {
   position: absolute;
   right: 20px;
-  top: -16px;
+  top: -26px;
   border: 1px solid #ddd;
   border-radius: 4px;
   display: none;
   color: #666;
 }
 
-.message-item-container .message-toolbar:hover {
+.message-content-container .message-toolbar:hover {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.message-item-container.message-hover .message-toolbar {
+.message-hover .message-content-container .message-toolbar {
   display: block;
 }
 
-.message-item-container .message-toolbar .message-toolbar-item {
+.message-content-container .message-toolbar .message-toolbar-item {
   width: 32px;
-  height: 24px;
+  height: 26px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.message-toolbar .message-toolbar-item .message-toolbar-item-content {
+.message-content-container
+  .message-toolbar
+  .message-toolbar-item
+  .message-toolbar-item-content {
   width: 100%;
   height: 100%;
   display: flex;
@@ -107,12 +110,17 @@
   align-items: center;
 }
 
-.message-item-container .message-toolbar .message-toolbar-item-content:hover {
+.message-content-container
+  .message-toolbar
+  .message-toolbar-item-content:hover {
   cursor: pointer;
   color: #297fa3;
 }
 
-.message-item-container .message-toolbar .message-toolbar-item-content i.icon {
+.message-content-container
+  .message-toolbar
+  .message-toolbar-item-content
+  i.icon {
   font-size: 16px;
 }
 
