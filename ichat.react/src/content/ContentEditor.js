@@ -230,7 +230,8 @@ class ContentEditor extends React.Component {
       this.quillService.getSpanTagName(),
       this.formatMentionUser(user)
     );
-    this.quillService.setCursorIndex(this.mention.mentionAtIndex + 1, 0);
+    this.quillService.insertText(this.mention.mentionAtIndex + 1, " "); // so that the cursor becomes visible
+    this.quillService.setCursorIndex(this.mention.mentionAtIndex + 2, 0);
     this.mention.isSelecting = false;
     this.mention.isSelectionInserted = true;
   }
@@ -240,7 +241,7 @@ class ContentEditor extends React.Component {
     this.onMentionSelecting(id);
     if (this.mention.filterName)
       this.quillService.deleteText(
-        this.mention.mentionAtIndex + 1,
+        this.mention.mentionAtIndex + 2,
         this.mention.filterName.length
       );
     this.onMentionFinish();
@@ -419,8 +420,8 @@ class ContentEditor extends React.Component {
       this.quillService.getSpanTagName(),
       `<span class="emoji-container">${imgHtml}</span>`
     );
-
-    this.quillService.setCursorIndex(index + 1, 0);
+    this.quillService.insertText(index + 1, " "); // so that the cursor becomes visible
+    this.quillService.setCursorIndex(index + 2, 0);
     let editor = this.containerElement.querySelector(".ql-editor");
     editor.focus();
     this.closeEmoji();
