@@ -78,6 +78,7 @@ class ContentEditor extends React.Component {
       filterName: "",
       isSelecting: false,
       isSelectionInserted: false,
+      isSelected: false, // true after clicked or enter pressed
       mentionRegex: /<span data-user-id="([0-9]+)" class="mentioned-user">@.+?<\/span>/g
     };
   }
@@ -221,7 +222,12 @@ class ContentEditor extends React.Component {
   }
 
   onMentionSelecting(id) {
-    if (this.state.isMentionOpen && !!this.mention.filterName) return;
+    if (
+      this.state.isMentionOpen &&
+      !!this.mention.filterName &&
+      !this.mention.isSelected
+    )
+      return;
     this.mention.isSelecting = true;
     let user = this.userList.find(u => u.id === id);
     this.quillService.deleteText(this.mention.mentionAtIndex, 1); // delete the previous @ or @userName
@@ -237,7 +243,7 @@ class ContentEditor extends React.Component {
   }
 
   onMentionSelected(id) {
-    this.closeMention();
+    this.mention.isSelected = true;
     this.onMentionSelecting(id);
     if (this.mention.filterName)
       this.quillService.deleteText(
