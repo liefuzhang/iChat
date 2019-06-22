@@ -58,17 +58,25 @@ class ContentEditor extends React.Component {
 
     this.initMention();
     this.registerEventHandlers();
-    this.populateCurrentContent();
     this.fecthUsers();
+    if (this.props.isEditing) this.populateCurrentContent();
   }
 
   componentWillUnmount() {
     this.unregisterEventHandlers();
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.submitMessage !== prevProps.submitMessage &&
+      this.props.submitMessage === true
+    ) {
+      this.quillService.submitMessage();
+    }
+  }
+
   populateCurrentContent() {
-    if (!this.props.currentContent) return;
-    this.quillService.setContent(this.props.currentContent);
+    this.quillService.setContent(this.props.message.content);
   }
 
   fecthUsers() {
@@ -118,6 +126,7 @@ class ContentEditor extends React.Component {
       !emojiRegex.test(message)
     )
       return;
+
     var mentionUserIds = [];
     var groups;
     this.mention.mentionRegex.lastIndex = 0;
@@ -125,13 +134,21 @@ class ContentEditor extends React.Component {
       mentionUserIds.push(+groups[1]);
     }
 
+    let url = this.props.isEditing
+      ? `/api/messages/${this.props.section}/${this.props.id}/update/${
+          this.props.message.id
+        }`
+      : `/api/messages/${this.props.section}/${this.props.id}`;
     this.apiService
-      .fetch(`/api/messages/${this.props.section}/${this.props.id}`, {
+      .fetch(url, {
         method: "POST",
         body: JSON.stringify({
-          message: message,
+          messageContent: message,
           mentionUserIds: mentionUserIds
         })
+      })
+      .then(() => {
+        if (this.props.onMessageSubmitted) this.props.onMessageSubmitted();
       })
       .catch(error => {
         toast.error(`Send message failed: ${error}`);

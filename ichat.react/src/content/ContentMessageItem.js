@@ -75,24 +75,25 @@ class ContentMessageItem extends React.Component {
             </div>
             <div className="message-toolbar">
               <div className="message-toolbar-item">
-                {message.sender.id === this.props.userProfile.id && (
-                  <Popup
-                    trigger={
-                      <div
-                        className="message-toolbar-item-content"
-                        onClick={() =>
-                          this.props.onEditMessageClicked(message.id)
-                        }
-                      >
-                        <Icon name="edit outline" />
-                      </div>
-                    }
-                    content="Edit message"
-                    inverted
-                    position="top center"
-                    size="tiny"
-                  />
-                )}
+                {message.sender.id === this.props.userProfile.id &&
+                  !message.hasFileAttachments && (
+                    <Popup
+                      trigger={
+                        <div
+                          className="message-toolbar-item-content"
+                          onClick={() =>
+                            this.props.onEditMessageClicked(message.id)
+                          }
+                        >
+                          <Icon name="edit outline" />
+                        </div>
+                      }
+                      content="Edit message"
+                      inverted
+                      position="top center"
+                      size="tiny"
+                    />
+                  )}
               </div>
               <div className="message-toolbar-item">
                 {message.sender.id === this.props.userProfile.id && (
@@ -129,7 +130,10 @@ class ContentMessageItem extends React.Component {
 
             <div className="message-content">
               {!message.hasFileAttachments && (
-                <RawMessage content={message.content} />
+                <RawMessage
+                  content={message.content}
+                  edited={message.contentEdited}
+                />
               )}
               {message.hasFileAttachments && (
                 <div className="file-container">
@@ -164,7 +168,24 @@ class ContentMessageItem extends React.Component {
 }
 
 function RawMessage(props) {
-  return <div dangerouslySetInnerHTML={{ __html: props.content }} />;
+  var content = props.content;
+  if (props.edited) {
+    var template = document.createElement("template");
+    template.innerHTML = content;
+    var editedNode = document.createElement("span");
+    var textNode = document.createTextNode("(edited)");
+    editedNode.appendChild(textNode);
+    editedNode.setAttribute("class", "content-edited-text");
+    template.content.lastChild.appendChild(editedNode);
+    content = template.innerHTML;
+  }
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: content
+      }}
+    />
+  );
 }
 
 export default ContentMessageItem;

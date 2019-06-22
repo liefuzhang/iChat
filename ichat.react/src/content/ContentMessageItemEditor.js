@@ -10,7 +10,7 @@ class ContentMessageItemEditor extends React.Component {
 
     this.apiService = new ApiService(props);
 
-    this.state = {};
+    this.state = { saveChangesClicked: false };
   }
 
   render() {
@@ -25,13 +25,21 @@ class ContentMessageItemEditor extends React.Component {
             <ContentEditor
               containerId="messageItemEditor"
               isEditing={true}
-              currentContent={this.props.message.content}
+              onMessageSubmitted={this.props.onClose}
+              submitMessage={this.state.saveChangesClicked}
               {...this.props}
             />
           </div>
           <div className="message-item-editor-buttons">
-            <button className="btn white-btn" onClick={this.props.onCancel}>Cancel</button>
-            <button className="btn">Save Changes</button>
+            <button className="btn white-btn" onClick={this.props.onClose}>
+              Cancel
+            </button>
+            <button
+              className="btn"
+              onClick={() => this.setState({ saveChangesClicked: true })}
+            >
+              Save Changes
+            </button>
           </div>
         </div>
       </div>

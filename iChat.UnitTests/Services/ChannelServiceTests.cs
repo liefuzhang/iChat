@@ -40,7 +40,7 @@ namespace iChat.UnitTests.Services {
         public async Task GetChannelByIdAsync_WhenCalled_ReturnChannel() {
             _context.SeedTestData();
 
-            var result = await _channelService.GetChannelByIdAsync(SeedData.TestChannel1Id, SeedData.TestWorkspaceId);
+            var result = await _channelService.GetChannelByIdAsync(SeedData.TestChannel1Id, SeedData.TestUser1Id, SeedData.TestWorkspaceId);
 
             Assert.AreEqual(SeedData.TestChannel1Name, result.Name);
         }

@@ -6,7 +6,7 @@ namespace iChat.Api.Dtos
 {
     public class MessagePostDto
     {
-        public string Message { get; set; }
+        public string MessageContent { get; set; }
         public List<int> MentionUserIds { get; set; }
     }
 }

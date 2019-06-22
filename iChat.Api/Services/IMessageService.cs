@@ -10,6 +10,8 @@ namespace iChat.Api.Services {
         Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId);
         Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
+        Task UpdateMessageInConversationAsync(string message, int conversationId, int messageId, int currentUserId);
+        Task UpdateMessageInChannelAsync(string message, int channelId, int messageId, int currentUserId);
         Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId);
         Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId);
         Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId);

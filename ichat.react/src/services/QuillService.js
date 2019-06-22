@@ -7,6 +7,7 @@ class QuillService {
     this.spanTagName = "spanTag";
 
     this.keydownEventHandler = this.keydownEventHandler.bind(this);
+    this.submitMessage = this.submitMessage.bind(this);
 
     this.initQuill();
   }
@@ -90,22 +91,22 @@ class QuillService {
     });
   }
 
+  submitMessage() {
+    var text = this.quill.getText().trim();
+    var message = this.quill.root.innerHTML;
+    this.quill.root.innerHTML = "";
+    this.params.onSubmitMessage(message, text);
+  }
+
   initQuill() {
     this.configQuill();
-    var submitMessage = function() {
-      var text = this.quill.getText().trim();
-      var message = this.quill.root.innerHTML;
-      this.quill.root.innerHTML = "";
-      this.params.onSubmitMessage(message, text);
-    };
-    submitMessage = submitMessage.bind(this);
 
     var bindings = {
       list: {
         key: "enter",
         shiftKey: false,
-        handler: function() {
-          submitMessage();
+        handler: () => {
+          this.submitMessage();
           return false;
         }
       }

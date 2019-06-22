@@ -63,6 +63,12 @@
   text-align: right;
 }
 
+.message-content .content-edited-text {
+  margin-left: 5px;
+  font-size: 0.85em;
+  color: #999;
+}
+
 .message-content-container .message-toolbar {
   position: absolute;
   right: 20px;

@@ -14,7 +14,7 @@ class ContentMessages extends React.Component {
     this.onNewChannelMessage = this.onNewChannelMessage.bind(this);
     this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
-    this.onCancelEditingMessage = this.onCancelEditingMessage.bind(this);
+    this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
     this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
@@ -133,7 +133,7 @@ class ContentMessages extends React.Component {
     this.setState({ editingMessageId: messageId });
   }
 
-  onCancelEditingMessage() {
+  onCloseEditingMessage() {
     this.setState({ editingMessageId: undefined });
   }
 
@@ -162,7 +162,7 @@ class ContentMessages extends React.Component {
                     <ContentMessageItemEditor
                       className="content-message-item-container"
                       message={m}
-                      onCancel={this.onCancelEditingMessage}
+                      onClose={this.onCloseEditingMessage}
                       {...this.props}
                     />
                   )}
