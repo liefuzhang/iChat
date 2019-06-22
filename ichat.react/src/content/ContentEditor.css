@@ -10,6 +10,14 @@
   border-color: #666;
 }
 
+.editing-editor .message-box {
+  border: 1px solid #999;
+}
+
+.editing-editor .message-box.focus {
+  border-color: #297fa3;
+}
+
 .message-editor-container {
   flex: 1 1 auto;
   min-height: 40px;
@@ -58,6 +66,11 @@
 
 .message-box-button:hover .icon-emoji {
   color: #dba100;
+}
+
+.editing-editor .icon-paperclip,
+.editing-editor .icon-mention {
+  display: none;
 }
 
 .message-prompt {

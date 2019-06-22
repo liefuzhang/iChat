@@ -19,6 +19,10 @@ class QuillService {
     this.quill.setSelection(index, 0);
   }
 
+  setContent(content) {
+    this.quill.root.innerHTML = content;
+  }
+
   getSpanTagName() {
     return this.spanTagName;
   }
@@ -43,7 +47,11 @@ class QuillService {
     let editorContainer = document.querySelector(
       this.params.editorContainerSelector
     );
-    editorContainer.removeEventListener("keydown", this.keydownEventHandler, true); // true - event capturing phase
+    editorContainer.removeEventListener(
+      "keydown",
+      this.keydownEventHandler,
+      true
+    ); // true - event capturing phase
     let editor = document.querySelector(".ql-editor");
     editor.removeEventListener("focus", this.params.onToggleFocus);
     editor.removeEventListener("blur", this.params.onToggleFocus);

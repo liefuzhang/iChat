@@ -2,6 +2,7 @@ import React from "react";
 import "./ContentMessages.css";
 import "lib/simplebar.css";
 import ContentMessageItem from "./ContentMessageItem";
+import ContentMessageItemEditor from "./ContentMessageItemEditor";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
 
@@ -12,6 +13,8 @@ class ContentMessages extends React.Component {
     this.fetchData = this.fetchData.bind(this);
     this.onNewChannelMessage = this.onNewChannelMessage.bind(this);
     this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
+    this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
+    this.onCancelEditingMessage = this.onCancelEditingMessage.bind(this);
     this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
@@ -23,7 +26,8 @@ class ContentMessages extends React.Component {
     }
 
     this.state = {
-      messageGroups: []
+      messageGroups: [],
+      editingMessageId: undefined
     };
 
     this.scrollDetector = {
@@ -125,6 +129,14 @@ class ContentMessages extends React.Component {
     }
   }
 
+  onEditMessageClicked(messageId) {
+    this.setState({ editingMessageId: messageId });
+  }
+
+  onCancelEditingMessage() {
+    this.setState({ editingMessageId: undefined });
+  }
+
   render() {
     return (
       <div className="message-container">
@@ -138,7 +150,23 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {g.messages.map(m => (
-                <ContentMessageItem key={m.id} message={m} {...this.props} />
+                <div key={m.id}>
+                  {this.state.editingMessageId !== m.id && (
+                    <ContentMessageItem
+                      message={m}
+                      onEditMessageClicked={this.onEditMessageClicked}
+                      {...this.props}
+                    />
+                  )}
+                  {this.state.editingMessageId === m.id && (
+                    <ContentMessageItemEditor
+                      className="content-message-item-container"
+                      message={m}
+                      onCancel={this.onCancelEditingMessage}
+                      {...this.props}
+                    />
+                  )}
+                </div>
               ))}
             </div>
           ))}

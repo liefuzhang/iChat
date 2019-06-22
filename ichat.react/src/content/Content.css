@@ -48,11 +48,8 @@
   line-height: 24px;
 }
 
-#content span.span-tag {
+#content span.span-tag,
+#content span.span-tag  span[contenteditable=false] {
   display: inline-flex;
   align-items: center;
-}
-
-#content span.span-tag > span {
-  display: inline-flex;
 }

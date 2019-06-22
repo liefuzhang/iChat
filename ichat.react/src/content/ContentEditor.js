@@ -58,11 +58,17 @@ class ContentEditor extends React.Component {
 
     this.initMention();
     this.registerEventHandlers();
+    this.populateCurrentContent();
     this.fecthUsers();
   }
 
   componentWillUnmount() {
     this.unregisterEventHandlers();
+  }
+
+  populateCurrentContent() {
+    if (!this.props.currentContent) return;
+    this.quillService.setContent(this.props.currentContent);
   }
 
   fecthUsers() {
@@ -253,16 +259,19 @@ class ContentEditor extends React.Component {
     this.onMentionFinish();
   }
 
-  onMentionFinish() {
-    this.initMention();
-    this.closeMention();
+  focusOnEditor() {
     let editor = this.containerElement.querySelector(".ql-editor");
     editor.focus();
   }
 
+  onMentionFinish() {
+    this.initMention();
+    this.closeMention();
+    this.focusOnEditor();
+  }
+
   onMentionButtonClicked(event) {
-    let editor = this.containerElement.querySelector(".ql-editor");
-    editor.focus();
+    this.focusOnEditor();
     let index = this.quillService.getCursorIndex();
     this.quillService.setCursorIndex(index, 0);
     this.quillService.insertText(index, "@");
@@ -428,14 +437,13 @@ class ContentEditor extends React.Component {
     );
     this.quillService.insertText(index + 1, " "); // so that the cursor becomes visible
     this.quillService.setCursorIndex(index + 2, 0);
-    let editor = this.containerElement.querySelector(".ql-editor");
-    editor.focus();
+    this.focusOnEditor();
     this.closeEmoji();
   }
 
   render() {
     return (
-      <div>
+      <div className={this.props.isEditing ? "editing-editor" : ""}>
         <form id="messageForm" method="post">
           {this.state.isMentionOpen && (
             <div className="user-mention-container">

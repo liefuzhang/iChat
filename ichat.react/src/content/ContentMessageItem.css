@@ -2,12 +2,6 @@
   background-color: #f4f4f4;
 }
 
-.message-container .message-scrollable .message-item-container {
-  padding: 4px 20px 2px 20px;
-  display: flex;
-  position: relative;
-}
-
 .message-container .message-scrollable .message-item-container .message-title {
   line-height: 1;
   padding-bottom: 2px;
@@ -16,11 +10,7 @@
 .message-container .message-scrollable .message-item-container .message-time {
   font-size: 0.75rem;
   color: #666;
-}
-
-.message-item-container .user-identicon {
-  position: relative;
-  top: 2px;
+  margin-left: 5px;
 }
 
 .message-container .message-item-container.following-message {
@@ -66,7 +56,7 @@
 
 .message-item-container .message-content-container .message-time {
   position: absolute;
-  right: 20px;
+  right: 10px;
   top: 2px;
   display: inline-block;
   width: 60px;
@@ -88,23 +78,25 @@
 }
 
 .message-hover .message-content-container .message-toolbar {
-  display: block;
+  display: flex;
 }
 
 .message-content-container .message-toolbar .message-toolbar-item {
-  width: 32px;
-  height: 26px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.message-toolbar-item + .message-toolbar-item {
+  border-left: 1px solid #ddd;
 }
 
 .message-content-container
   .message-toolbar
   .message-toolbar-item
   .message-toolbar-item-content {
-  width: 100%;
-  height: 100%;
+  width: 36px;
+  height: 26px;
   display: flex;
   justify-content: center;
   align-items: center;

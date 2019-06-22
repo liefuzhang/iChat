@@ -108,6 +108,8 @@ button {
   height: 40px;
   border: none;
   outline: none;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
 .btn:hover {
   background: #368bc1;
@@ -134,16 +136,16 @@ button {
 .btn.white-btn:hover,
 .btn.white-btn:active {
   background-color: white;
-  box-shadow: 0 0 2px #666;
-  -moz-box-shadow: 0 0 2px #666;
-  -webkit-box-shadow: 0 0 2px #666;
+  box-shadow: 0 0 1px #999;
+  -moz-box-shadow: 0 0 1px #999;
+  -webkit-box-shadow: 0 0 1px #999;
 }
 
 .btn.disabled-button {
   background: #aaa;
-  box-shadow: 0 0 2px #999;
-  -moz-box-shadow: 0 0 2px #999;
-  -webkit-box-shadow: 0 0 2px #999;
+  box-shadow: 0 0 1px #999;
+  -moz-box-shadow: 0 0 1px #999;
+  -webkit-box-shadow: 0 0 1px #999;
   pointer-events: none;
 }
 

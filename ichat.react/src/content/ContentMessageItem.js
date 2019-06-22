@@ -56,7 +56,7 @@ class ContentMessageItem extends React.Component {
     return (
       <div
         className={
-          "message-item-container" +
+          "message-item-common-container message-item-container" +
           (message.isConsecutiveMessage ? " following-message" : "")
         }
         key={message.id}
@@ -66,8 +66,8 @@ class ContentMessageItem extends React.Component {
         <img className="user-identicon" src={message.sender.identiconPath} />
         <div className="message-item">
           <div className="message-title">
-            <b>{message.sender.displayName}</b>{" "}
-            <span className="message-time">&nbsp;{message.timeString}</span>
+            <b>{message.sender.displayName}</b>
+            <span className="message-time">{message.timeString}</span>
           </div>
           <div className="message-content-container">
             <div className="message-content-time">
@@ -81,10 +81,30 @@ class ContentMessageItem extends React.Component {
                       <div
                         className="message-toolbar-item-content"
                         onClick={() =>
+                          this.props.onEditMessageClicked(message.id)
+                        }
+                      >
+                        <Icon name="edit outline" />
+                      </div>
+                    }
+                    content="Edit message"
+                    inverted
+                    position="top center"
+                    size="tiny"
+                  />
+                )}
+              </div>
+              <div className="message-toolbar-item">
+                {message.sender.id === this.props.userProfile.id && (
+                  <Popup
+                    trigger={
+                      <div
+                        className="message-toolbar-item-content"
+                        onClick={() =>
                           this.setState({ isDeleteMessageConfirmOpen: true })
                         }
                       >
-                        <Icon name="trash alternate outline" />{" "}
+                        <Icon name="trash alternate outline" />
                       </div>
                     }
                     content="Delete message"
