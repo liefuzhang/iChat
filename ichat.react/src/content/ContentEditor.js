@@ -5,13 +5,9 @@ import ContentEditorUserMention from "./ContentEditor.UserMention";
 import { Icon, Popup } from "semantic-ui-react";
 import UploadFileForm from "modalForms/UploadFileForm";
 import Modal from "modals/Modal";
-import data from "emoji-mart/data/messenger.json";
-import { EmojiConvertor } from "emoji-js";
-import { NimblePicker } from "emoji-mart";
-import "lib/emoji-mart.css";
-import "lib/emoji.css";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
+import EmojiPicker from "components/EmojiPicker";
 
 class ContentEditor extends React.Component {
   constructor(props) {
@@ -31,10 +27,7 @@ class ContentEditor extends React.Component {
     this.onMentionButtonClicked = this.onMentionButtonClicked.bind(this);
     this.openMention = this.openMention.bind(this);
     this.closeMention = this.closeMention.bind(this);
-    this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
-    this.closeEmoji = this.closeEmoji.bind(this);
-    this.addEmoji = this.addEmoji.bind(this);
-    this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
+    this.onEmojiHtmlAdded = this.onEmojiHtmlAdded.bind(this);
     this.onEditorPaste = this.onEditorPaste.bind(this);
     this.userList = [];
 
@@ -408,54 +401,16 @@ class ContentEditor extends React.Component {
     this.containerElement.querySelector("#uploadFile").click();
   }
 
-  onEmojiButtonClicked() {
-    this.setState({ isEmojiOpen: true }, () => {
-      document.addEventListener("click", this.closeEmoji);
-      document.addEventListener("keyup", this.onEmojiKeyup);
-    });
-  }
-
-  onEmojiKeyup(event) {
-    if (
-      !event.ctrlKey &&
-      !event.shiftKey &&
-      !event.altKey &&
-      event.keyCode === 27
-    ) {
-      // esc pressed
-      this.closeEmoji();
-    }
-  }
-
-  closeEmoji(event) {
-    let emojiPicker = document.querySelector(".emoji-picker");
-    if (event && emojiPicker.contains(event.target)) return;
-    this.setState({ isEmojiOpen: false }, () => {
-      document.removeEventListener("click", this.closeEmoji);
-      document.removeEventListener("keyup", this.onEmojiKeyup);
-    });
-  }
-
-  addEmoji(event) {
-    var emoji = new EmojiConvertor();
-    emoji.img_sets.google.path =
-      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/";
-    emoji.img_sets.google.sheet =
-      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/64.png";
-    emoji.img_set = "google";
-    emoji.use_sheet = true;
-    var imgHtml = emoji.replace_colons(event.colons);
-
+  onEmojiHtmlAdded(html) {
     const index = this.quillService.getCursorIndex();
     this.quillService.insertHtml(
       index,
       this.quillService.getSpanTagName(),
-      `<span class="emoji-container">${imgHtml}</span>`
+      `<span class="emoji-container">${html}</span>`
     );
     this.quillService.insertText(index + 1, " "); // so that the cursor becomes visible
     this.quillService.setCursorIndex(index + 2, 0);
     this.focusOnEditor();
-    this.closeEmoji();
   }
 
   render() {
@@ -518,28 +473,17 @@ class ContentEditor extends React.Component {
                 )}
               </div>
               <div className="message-box-button">
-                <span onClick={this.onEmojiButtonClicked}>
-                  <Popup
-                    trigger={
-                      <Icon name="smile outline" className="icon-emoji" />
-                    }
-                    content="Add emoji"
-                    inverted
-                    position="top center"
-                    size="tiny"
-                  />
-                </span>
-              </div>
-            </div>
-            {this.state.isEmojiOpen && (
-              <div className="emoji-picker">
-                <NimblePicker
-                  set="google"
-                  data={data}
-                  onSelect={this.addEmoji}
+                <Popup
+                  trigger={
+                    <EmojiPicker onEmojiHtmlAdded={this.onEmojiHtmlAdded} />
+                  }
+                  content="Add emoji"
+                  inverted
+                  position="top center"
+                  size="tiny"
                 />
               </div>
-            )}
+            </div>
           </div>
         </form>
       </div>
