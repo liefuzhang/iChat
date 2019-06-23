@@ -77,6 +77,7 @@
   border-radius: 4px;
   display: none;
   color: #666;
+  background: white;
 }
 
 .message-content-container .message-toolbar:hover {

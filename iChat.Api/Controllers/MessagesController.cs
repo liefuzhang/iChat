@@ -158,5 +158,27 @@ namespace iChat.Api.Controllers {
 
             return Ok();
         }
+
+        // POST api/messages/conversation/1/addReaction/1
+        [HttpPost("conversation/{conversationId}/addReaction/{messageId}")]
+        public async Task<IActionResult> AddReactionToMessageInConversationAsync(int conversationId, int messageId, [FromBody]string emojiColons) {
+            await _messageService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+
+            var userIds = (await _conversationService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            _notificationService.SendNewConversationMessageNotificationAsync(userIds, conversationId);
+
+            return Ok();
+        }
+
+        // POST api/messages/channel/1/addReaction/1
+        [HttpPost("channel/{channelId}/addReaction/{messageId}")]
+        public async Task<IActionResult> AddReactionToMessageInChannelAsync(int channelId, int messageId, [FromBody]string emojiColons) {
+            await _messageService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+
+            var userIds = (await _channelService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            _notificationService.SendNewChannelMessageNotificationAsync(userIds, channelId);
+
+            return Ok();
+        }
     }
 }

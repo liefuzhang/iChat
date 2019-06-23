@@ -139,7 +139,6 @@ namespace iChat.Api.Services {
             await UpdateMessageContent(messageInDb, messageContent);
         }
 
-
         public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId) {
             var messageInDb = _context.ChannelMessages.Single(cm => cm.SenderId == currentUserId && cm.ChannelId == channelId &&
                                                                     cm.Id == messageId);
@@ -171,7 +170,6 @@ namespace iChat.Api.Services {
             var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
             await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
         }
-
 
         public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId) {
             if (!files.Any()) {
@@ -220,6 +218,19 @@ namespace iChat.Api.Services {
             }
 
             return false;
+        }
+
+        public async Task AddReactionToMessageAsync(int messageId, string emojiColons, int userId) {
+            var messageReaction = await _context.MessageReactions.SingleOrDefaultAsync(mr => mr.MessageId == messageId && mr.EmojiColons == emojiColons);
+            if (messageReaction == null) {
+                messageReaction = new MessageReaction(messageId, emojiColons);
+                _context.MessageReactions.Add(messageReaction);
+                await _context.SaveChangesAsync();
+            }
+
+            var messageReactionUser = new MessageReactionUser(messageReaction.Id, userId);
+            _context.MessageReactionUsers.Add(messageReactionUser);
+            await _context.SaveChangesAsync();
         }
     }
 }

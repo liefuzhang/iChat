@@ -10,9 +10,10 @@ namespace iChat.Api.Models {
         public int WorkspaceId { get; protected set; }
         public Workspace Workspace { get; private set; }
         public DateTime CreatedDate { get; protected set; }
-        public bool HasFileAttachments { get; set; }
-        public bool ContentEdited { get; set; }
-        public ICollection<MessageFileAttachment> MessageFileAttachments { get; set; }
+        public bool HasFileAttachments { get; protected set; }
+        public bool ContentEdited { get; protected set; }
+        public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
+        public ICollection<MessageReaction> MessageReactions { get; protected set; }
 
         public void UpdateContent(string content) {
             if (string.IsNullOrWhiteSpace(content)) {

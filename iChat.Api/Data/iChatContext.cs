@@ -16,6 +16,8 @@ namespace iChat.Api.Data {
         public DbSet<ConversationMessage> ConversationMessages { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<MessageFileAttachment> MessageFileAttachments { get; set; }
+        public DbSet<MessageReaction> MessageReactions { get; set; }
+        public DbSet<MessageReactionUser> MessageReactionUsers { get; set; }
         public DbSet<Workspace> Workspaces { get; set; }
         public DbSet<UserInvitation> UserInvitations { get; set; }
 
@@ -71,6 +73,9 @@ namespace iChat.Api.Data {
 
             modelBuilder.Entity<MessageFileAttachment>()
                 .HasKey(m => new { m.FileId, m.MessageId });
+
+            modelBuilder.Entity<MessageReactionUser>()
+                .HasKey(m => new { m.MessageReactionId, m.UserId });
         }
     }
 }

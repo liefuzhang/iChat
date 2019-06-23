@@ -12,7 +12,8 @@ class ContentMessageItem extends React.Component {
     this.onDeleteMessageConfirmed = this.onDeleteMessageConfirmed.bind(this);
 
     this.state = {
-      isDeleteMessageConfirmOpen: false
+      isDeleteMessageConfirmOpen: false,
+      isEmojiContainerOpen: false
     };
   }
 
@@ -75,8 +76,29 @@ class ContentMessageItem extends React.Component {
             </div>
             <div className="message-toolbar">
               <div className="message-toolbar-item">
-                {message.sender.id === this.props.userProfile.id &&
-                  !message.hasFileAttachments && (
+                <Popup
+                  trigger={
+                    <div
+                      className="message-toolbar-item-content"
+                      onClick={() =>
+                        this.setState({ isEmojiContainerOpen: true })
+                      }
+                    >
+                      <Icon name="smile outline" />
+                    </div>
+                  }
+                  content="Add reaction"
+                  inverted
+                  position="top center"
+                  size="tiny"
+                />
+                {this.state.isEmojiContainerOpen && (
+                  <div className="emoji-container">emoji</div>
+                )}
+              </div>
+              {message.sender.id === this.props.userProfile.id &&
+                !message.hasFileAttachments && (
+                  <div className="message-toolbar-item">
                     <Popup
                       trigger={
                         <div
@@ -93,10 +115,10 @@ class ContentMessageItem extends React.Component {
                       position="top center"
                       size="tiny"
                     />
-                  )}
-              </div>
-              <div className="message-toolbar-item">
-                {message.sender.id === this.props.userProfile.id && (
+                  </div>
+                )}
+              {message.sender.id === this.props.userProfile.id && (
+                <div className="message-toolbar-item">
                   <Popup
                     trigger={
                       <div
@@ -113,21 +135,20 @@ class ContentMessageItem extends React.Component {
                     position="top center"
                     size="tiny"
                   />
-                )}
-                <Confirm
-                  open={this.state.isDeleteMessageConfirmOpen}
-                  header="Delete message"
-                  content="Are you sure you want to delete this message? This cannot be undone."
-                  onCancel={() =>
-                    this.setState({
-                      isDeleteMessageConfirmOpen: false
-                    })
-                  }
-                  onConfirm={() => this.onDeleteMessageConfirmed(message.id)}
-                />
-              </div>
+                  <Confirm
+                    open={this.state.isDeleteMessageConfirmOpen}
+                    header="Delete message"
+                    content="Are you sure you want to delete this message? This cannot be undone."
+                    onCancel={() =>
+                      this.setState({
+                        isDeleteMessageConfirmOpen: false
+                      })
+                    }
+                    onConfirm={() => this.onDeleteMessageConfirmed(message.id)}
+                  />
+                </div>
+              )}
             </div>
-
             <div className="message-content">
               {!message.hasFileAttachments && (
                 <RawMessage
