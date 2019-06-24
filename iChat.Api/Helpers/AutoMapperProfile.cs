@@ -3,6 +3,7 @@ using iChat.Api.Dtos;
 using iChat.Api.Models;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace iChat.Api.Helpers {
     public class AutoMapperProfile : Profile {
@@ -12,8 +13,7 @@ namespace iChat.Api.Helpers {
             CreateMap<User, UserProfileDto>();
             CreateMap<UserProfileDto, User>();
             CreateMap<Message, MessageDto>()
-                .ForMember(dest => dest.TimeString, m => m.MapFrom(src => src.CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture)))
-                .ForMember(dest => dest.MessageReactionDtos, m => m.MapFrom(src => Mapper.Map<List<MessageReactionDto>>(src.MessageReactions)));
+                .ForMember(dest => dest.TimeString, m => m.MapFrom(src => src.CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture)));
             CreateMap<MessageDto, Message>();
             CreateMap<MessageReaction, MessageReactionDto>();
             CreateMap<MessageReactionDto, MessageReaction>();

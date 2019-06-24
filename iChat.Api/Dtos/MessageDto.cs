@@ -13,6 +13,6 @@ namespace iChat.Api.Dtos {
         public bool HasFileAttachments { get; set; }
         public bool ContentEdited { get; set; }
         public List<FileDto> FileAttachments { get; set; }
-        public List<MessageReactionDto> MessageReactionDtos { get; set; }
+        public List<MessageReactionDto> MessageReactions { get; set; }
     }
 }
