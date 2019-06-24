@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./DropdownModal.css";
 
 class DropdownModal extends React.Component {
   constructor(props) {
@@ -20,27 +19,20 @@ class DropdownModal extends React.Component {
 
   componentDidMount() {
     this.dropdownModalRoot.appendChild(this.el);
-
-    document
-      .querySelector(".dropdown-modal-panel-overlay")
-      .addEventListener("click", this.onOverlayClick);
   }
 
   componentWillUnmount() {
-    document
-      .querySelector(".dropdown-modal-panel-overlay")
-      .removeEventListener("click", this.onOverlayClick);
-
     this.dropdownModalRoot.removeChild(this.el);
   }
 
   render() {
     var modal = (
       <div className="dropdown-modal-panel-container">
-        <div className="dropdown-modal-panel-overlay">
-          <div className="dropdown-modal-panel">
-            {this.props.children}
-          </div>
+        <div
+          className="dropdown-modal-panel-overlay page-overlay"
+          onClick={this.onOverlayClick}
+        >
+          <div className="dropdown-modal-panel">{this.props.children}</div>
         </div>
       </div>
     );

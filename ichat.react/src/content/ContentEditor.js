@@ -473,15 +473,7 @@ class ContentEditor extends React.Component {
                 )}
               </div>
               <div className="message-box-button">
-                <Popup
-                  trigger={
-                    <EmojiPicker onEmojiHtmlAdded={this.onEmojiHtmlAdded} />
-                  }
-                  content="Add emoji"
-                  inverted
-                  position="top center"
-                  size="tiny"
-                />
+                <EmojiPicker onEmojiHtmlAdded={this.onEmojiHtmlAdded} tooltipText="Add emoji"/>
               </div>
             </div>
           </div>

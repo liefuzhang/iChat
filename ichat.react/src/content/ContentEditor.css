@@ -88,10 +88,11 @@
   position: relative;
 }
 
-.emoji-picker {
+.message-box-button .emoji-picker {
   position: absolute;
   bottom: 42px;
   right: -7px;
+  visibility: visible;
 }
 
 /* overrides for quill editor */

@@ -3,6 +3,7 @@ import { Icon, Popup, Confirm } from "semantic-ui-react";
 import "./ContentMessageItem.css";
 import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
+import EmojiPicker from "components/EmojiPicker";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
@@ -10,10 +11,11 @@ class ContentMessageItem extends React.Component {
 
     this.apiService = new ApiService(props);
     this.onDeleteMessageConfirmed = this.onDeleteMessageConfirmed.bind(this);
+    this.onEmojiColonsAdded = this.onEmojiColonsAdded.bind(this);
+    this.onEmojiClose = this.onEmojiClose.bind(this);
 
     this.state = {
-      isDeleteMessageConfirmOpen: false,
-      isEmojiContainerOpen: false
+      isDeleteMessageConfirmOpen: false
     };
   }
 
@@ -52,6 +54,27 @@ class ContentMessageItem extends React.Component {
       });
   }
 
+  onEmojiColonsAdded(colons) {
+    this.apiService
+      .fetch(
+        `/api/messages/${this.props.section}/${this.props.id}/addReaction/${
+          this.props.message.id
+        }`,
+        {
+          method: "POST",
+          body: JSON.stringify(colons)
+        }
+      )
+      .catch(error => {
+        toast.error(`Add reaction failed: ${error}`);
+      });
+  }
+
+  onEmojiClose() {
+    let currentMessage = document.querySelector(".message-hover");
+    currentMessage && currentMessage.classList.remove("message-hover");
+  }
+
   render() {
     let message = this.props.message;
     return (
@@ -76,25 +99,13 @@ class ContentMessageItem extends React.Component {
             </div>
             <div className="message-toolbar">
               <div className="message-toolbar-item">
-                <Popup
-                  trigger={
-                    <div
-                      className="message-toolbar-item-content"
-                      onClick={() =>
-                        this.setState({ isEmojiContainerOpen: true })
-                      }
-                    >
-                      <Icon name="smile outline" />
-                    </div>
-                  }
-                  content="Add reaction"
-                  inverted
-                  position="top center"
-                  size="tiny"
-                />
-                {this.state.isEmojiContainerOpen && (
-                  <div className="emoji-container">emoji</div>
-                )}
+                <div className="message-toolbar-item-content">
+                  <EmojiPicker
+                    onEmojiColonsAdded={this.onEmojiColonsAdded}
+                    onClose={this.onEmojiClose}
+                    tooltipText="Add reaction"
+                  />
+                </div>
               </div>
               {message.sender.id === this.props.userProfile.id &&
                 !message.hasFileAttachments && (

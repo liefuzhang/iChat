@@ -1,0 +1,13 @@
+.emoji-picker-root,
+.emoji-picker-root .icon-emoji {
+  height: 100%;
+  width: 100%;
+}
+
+.emoji-picker-container:hover {
+  cursor: default;
+}
+
+.emoji-picker {
+  visibility: hidden;
+}

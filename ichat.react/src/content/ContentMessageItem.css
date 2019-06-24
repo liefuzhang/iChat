@@ -123,6 +123,16 @@
   font-size: 16px;
 }
 
+.message-toolbar-item-content .emoji-picker {
+  position: absolute;
+  bottom: 32px;
+  right: -7px;
+}
+
+.message-toolbar-item-content .emoji-picker-root .icon-emoji {
+  line-height: 26px;
+}
+
 .message-content .file-container {
   margin: 0;
   padding: 0;
