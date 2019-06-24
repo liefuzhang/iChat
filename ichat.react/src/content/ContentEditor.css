@@ -31,6 +31,7 @@
   font-size: 1.2rem;
   align-self: flex-end;
   display: flex;
+  max-height: 40px;
 }
 
 .message-box-buttons input[type="file"] {
@@ -50,6 +51,12 @@
 .message-box-buttons .message-box-button:hover {
   cursor: pointer;
   font-size: 1.5rem;
+}
+
+.message-box-button .icon {
+  width: 100%;
+  height: 100%;
+  line-height: inherit;
 }
 
 .message-box-button .icon-paperclip {

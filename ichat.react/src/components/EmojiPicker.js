@@ -16,8 +16,6 @@ class EmojiPicker extends React.Component {
     this.closeEmoji = this.closeEmoji.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
     this.onOverlayClick = this.onOverlayClick.bind(this);
-    this.top = 0;
-    this.right = 0;
 
     this.state = {
       isEmojiOpen: false

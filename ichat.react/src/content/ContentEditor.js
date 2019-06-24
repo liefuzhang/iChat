@@ -434,7 +434,7 @@ class ContentEditor extends React.Component {
             </div>
             <div className="message-box-buttons">
               <div className="message-box-button">
-                <span onClick={this.onMentionButtonClicked}>
+                <div onClick={this.onMentionButtonClicked}>
                   <Popup
                     trigger={<Icon name="at" className="icon-mention" />}
                     content="Mention user"
@@ -442,7 +442,7 @@ class ContentEditor extends React.Component {
                     position="top center"
                     size="tiny"
                   />
-                </span>
+                </div>
               </div>
               <div className="message-box-button">
                 <input
@@ -451,7 +451,7 @@ class ContentEditor extends React.Component {
                   multiple
                   onChange={this.onFileUploaded}
                 />
-                <span onClick={this.onUploadFileButtonClicked}>
+                <div onClick={this.onUploadFileButtonClicked}>
                   <Popup
                     trigger={
                       <Icon name="paperclip" className="icon-paperclip" />
@@ -461,7 +461,7 @@ class ContentEditor extends React.Component {
                     position="top center"
                     size="tiny"
                   />
-                </span>
+                </div>
                 {this.state.isUploadFileModalOpen && (
                   <Modal onClose={this.onCloseUploadFile}>
                     <UploadFileForm
