@@ -32,7 +32,9 @@ namespace iChat.Api.Services {
         }
 
         private async Task<List<MessageGroupDto>> GetMessageGroups(IQueryable<Message> baseQuery) {
-            var groups = await baseQuery.GroupBy(cm => cm.CreatedDate.Date)
+            var groups = await baseQuery
+                .Include(m => m.MessageReactions).ThenInclude(mr => mr.MessageReactionUsers)
+                .GroupBy(m => m.CreatedDate.Date)
                 .OrderBy(group => group.Key)
                 .Select(group =>
                     new MessageGroupDto {
