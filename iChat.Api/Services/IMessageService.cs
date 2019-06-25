@@ -17,5 +17,6 @@ namespace iChat.Api.Services {
         Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId);
         Task DeleteMessageAsync(int messageId, int userId);
         Task AddReactionToMessageAsync(int messageId, string emojiColons, int userId);
+        Task RemoveReactionToMessageAsync(int messageId, string emojiColons, int userId);
     }
 }

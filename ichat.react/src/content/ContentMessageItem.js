@@ -4,7 +4,7 @@ import "./ContentMessageItem.css";
 import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 import EmojiPicker from "components/EmojiPicker";
-import ContentMessageItemUserReactions from "./ContentMessageItem.UserReaction";
+import ContentMessageItemUserReactions from "./ContentMessageItem.UserReactions";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
@@ -13,6 +13,7 @@ class ContentMessageItem extends React.Component {
     this.apiService = new ApiService(props);
     this.onDeleteMessageConfirmed = this.onDeleteMessageConfirmed.bind(this);
     this.onEmojiColonsAdded = this.onEmojiColonsAdded.bind(this);
+    this.onEmojiColonsRemoved = this.onEmojiColonsRemoved.bind(this);
     this.onEmojiClose = this.onEmojiClose.bind(this);
 
     this.state = {
@@ -68,6 +69,22 @@ class ContentMessageItem extends React.Component {
       )
       .catch(error => {
         toast.error(`Add reaction failed: ${error}`);
+      });
+  }
+
+  onEmojiColonsRemoved(colons) {
+    this.apiService
+      .fetch(
+        `/api/messages/${this.props.section}/${this.props.id}/removeReaction/${
+          this.props.message.id
+        }`,
+        {
+          method: "POST",
+          body: JSON.stringify(colons)
+        }
+      )
+      .catch(error => {
+        toast.error(`Remove reaction failed: ${error}`);
       });
   }
 
@@ -198,6 +215,8 @@ class ContentMessageItem extends React.Component {
             <div className="message-reactions-container">
               <ContentMessageItemUserReactions
                 reactions={message.messageReactions}
+                onEmojiColonsAdded={this.onEmojiColonsAdded}
+                onEmojiColonsRemoved={this.onEmojiColonsRemoved}
                 {...this.props}
               />
             </div>

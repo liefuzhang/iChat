@@ -1,5 +1,5 @@
 .message-reactions {
-  height: 24px;
+  display: flex;
 }
 
 .message-reaction-container {
@@ -8,11 +8,16 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  margin-right: 6px;
 }
 
 .message-reaction {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  height: 24px;
+  line-height: 22px;
+  min-width: 30px;
   background: #f0ecec;
   border: 1px solid transparent;
   border-radius: 12px;
@@ -34,7 +39,7 @@
 }
 
 .message-reaction:active {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .message-reaction-emoji {
@@ -47,4 +52,21 @@
   margin-left: 3px;
   font-size: 0.75em;
   line-height: 1;
+}
+
+.message-reaction-add-emoji {
+  color: #666;
+  padding: 0;
+  position: relative;
+  display: none;
+}
+
+.message-reaction-add-emoji .emoji-picker {
+  position: absolute;
+  bottom: -30px;
+  left: 7px;
+}
+
+.message-reactions-hover .message-reaction-add-emoji {
+  display: inline-flex;
 }

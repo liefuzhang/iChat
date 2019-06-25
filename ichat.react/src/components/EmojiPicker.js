@@ -16,7 +16,6 @@ class EmojiPicker extends React.Component {
     this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
     this.closeEmoji = this.closeEmoji.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
-    this.onOverlayClick = this.onOverlayClick.bind(this);
 
     this.state = {
       isEmojiOpen: false
@@ -65,18 +64,14 @@ class EmojiPicker extends React.Component {
   }
 
   addEmoji(event) {
-    var imgHtml = this.emojiService.convertColonsToHtml(event.colons);
     this.closeEmoji();
 
-    if (this.props.onEmojiHtmlAdded) this.props.onEmojiHtmlAdded(imgHtml);
+    if (this.props.onEmojiHtmlAdded) {
+      var imgHtml = this.emojiService.convertColonsToHtml(event.colons);
+      this.props.onEmojiHtmlAdded(imgHtml);
+    }
     if (this.props.onEmojiColonsAdded)
       this.props.onEmojiColonsAdded(event.colons);
-  }
-
-  onOverlayClick(event) {
-    if (!event.target.closest(".emoji-picker")) {
-      this.closeEmoji();
-    }
   }
 
   render() {
@@ -100,7 +95,7 @@ class EmojiPicker extends React.Component {
           <div className="emoji-picker-container">
             <div
               className="emoji-picker-overlay page-overlay"
-              onClick={this.onOverlayClick}
+              onClick={this.closeEmoji}
             />
             <div className="emoji-picker page-overlay-content">
               <NimblePicker set="google" data={data} onSelect={this.addEmoji} />
