@@ -1,4 +1,5 @@
-﻿using iChat.Api.Dtos;
+﻿using System;
+using iChat.Api.Dtos;
 using System.Collections.Generic;
 
 namespace iChat.Api.Models
@@ -8,6 +9,7 @@ namespace iChat.Api.Models
         public int Id { get; set; }
         public int MessageId { get; set; }
         public string EmojiColons { get; set; }
+        public DateTime CreatedDate { get; private set; }
         public List<UserDto> Users { get; set; }
     }
 }
