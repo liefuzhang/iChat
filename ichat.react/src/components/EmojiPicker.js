@@ -1,5 +1,5 @@
 import React from "react";
-import { EmojiConvertor } from "emoji-js";
+import EmojiService from "services/EmojiService";
 import "lib/emoji.css";
 import { NimblePicker } from "emoji-mart";
 import "lib/emoji-mart.css";
@@ -11,6 +11,7 @@ class EmojiPicker extends React.Component {
   constructor(props) {
     super(props);
 
+    this.emojiService = new EmojiService();
     this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
     this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
     this.closeEmoji = this.closeEmoji.bind(this);
@@ -64,14 +65,7 @@ class EmojiPicker extends React.Component {
   }
 
   addEmoji(event) {
-    var emoji = new EmojiConvertor();
-    emoji.img_sets.google.path =
-      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/";
-    emoji.img_sets.google.sheet =
-      "https://unpkg.com/emoji-datasource-google@4.0.4/img/google/sheets-256/64.png";
-    emoji.img_set = "google";
-    emoji.use_sheet = true;
-    var imgHtml = emoji.replace_colons(event.colons);
+    var imgHtml = this.emojiService.convertColonsToHtml(event.colons);
     this.closeEmoji();
 
     if (this.props.onEmojiHtmlAdded) this.props.onEmojiHtmlAdded(imgHtml);

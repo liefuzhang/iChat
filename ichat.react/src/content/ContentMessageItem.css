@@ -154,3 +154,11 @@
 .ui.modal .content {
   box-sizing: border-box;
 }
+
+.message-reactions-container {
+  margin: 3px 0 3px;
+}
+
+.message-item-container.following-message .message-reactions-container {
+  margin-left: 42px;
+}

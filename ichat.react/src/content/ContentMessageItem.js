@@ -4,6 +4,7 @@ import "./ContentMessageItem.css";
 import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 import EmojiPicker from "components/EmojiPicker";
+import ContentMessageItemUserReactions from "./ContentMessageItem.UserReaction";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
@@ -193,6 +194,14 @@ class ContentMessageItem extends React.Component {
               )}
             </div>
           </div>
+          {message.messageReactions && message.messageReactions.length > 0 && (
+            <div className="message-reactions-container">
+              <ContentMessageItemUserReactions
+                reactions={message.messageReactions}
+                {...this.props}
+              />
+            </div>
+          )}
         </div>
       </div>
     );

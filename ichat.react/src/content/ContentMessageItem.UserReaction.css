@@ -1,0 +1,50 @@
+.message-reactions {
+  height: 24px;
+}
+
+.message-reaction-container {
+  height: 100%;
+  min-width: 37px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-reaction {
+  display: inline-flex;
+  align-items: center;
+  background: #f0ecec;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.message-reaction.message-reaction-reacted,
+.message-reaction.message-reaction-reacted:hover {
+  background: rgba(0, 132, 255, 0.1);
+  border-color: #297fa3;
+  color: #297fa3;
+}
+
+.message-reaction:hover {
+  cursor: pointer;
+  background: white;
+  border-color: #999;
+}
+
+.message-reaction:active {
+  font-size: 0.9rem;
+}
+
+.message-reaction-emoji {
+  display: flex;
+  padding: 2px 0 3px;
+  font-size: 1.05em;
+}
+
+.message-reaction-user-count {
+  margin-left: 3px;
+  font-size: 0.75em;
+  line-height: 1;
+}
