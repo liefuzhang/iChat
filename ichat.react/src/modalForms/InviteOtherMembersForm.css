@@ -1,0 +1,17 @@
+.invite-other-memebers-form {
+  min-height: 400px;
+}
+
+
+.invite-other-memebers-form form {
+    width: 400px;
+}
+
+.invite-other-memebers-form .dropdown {
+    box-sizing: border-box;
+    width: 400px;
+}
+
+.invite-other-memebers-form .menu {
+    box-sizing: border-box;
+}

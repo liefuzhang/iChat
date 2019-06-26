@@ -1,10 +1,11 @@
-﻿using System;
+﻿using iChat.Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using iChat.Api.Models;
 
-namespace iChat.Api.Services {
-    public interface IChannelService {
+namespace iChat.Api.Services
+{
+    public interface IChannelService
+    {
         Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId);
         Task AddUserToChannelAsync(int channelId, int userId, int workspaceId);
         Task RemoveUserFromChannelAsync(int channelId, int userId);
@@ -17,5 +18,6 @@ namespace iChat.Api.Services {
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
         Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
         Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId);
+        Task InviteOtherMembersToChannelAsync(int id, List<int> userIds, int userId, int workspaceId);
     }
 }

@@ -29,13 +29,17 @@ class Sidebar extends React.Component {
 
     if (props.hubConnection) {
       props.hubConnection.on("NewChannelMessage", this.onUpdateChannelList);
-      props.hubConnection.on("UpdateChannelList", this.onUpdateChannelList);
       props.hubConnection.on(
         "NewConversationMessage",
         this.onUpdateConversationList
       );
+      props.hubConnection.on("UpdateChannelList", this.onUpdateChannelList);
       props.hubConnection.on(
         "UpdateConversationList",
+        this.onUpdateConversationList
+      );
+      props.hubConnection.on(
+        "UpdateConversationDetails",
         this.onUpdateConversationList
       );
     }

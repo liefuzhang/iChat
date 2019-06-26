@@ -1,12 +1,13 @@
-﻿using System;
+﻿using iChat.Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using iChat.Api.Models;
 
-namespace iChat.Api.Services {
+namespace iChat.Api.Services
+{
     public interface IConversationService
     {
         Task<int> StartConversationWithOthersAsync(List<int> withUserIds, int userId, int workspaceId);
+        Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int userId, int workspaceId);
         Task<int> StartSelfConversationAsync(int userId, int workspaceId);
         bool IsUserInConversation(int id, int userId);
         Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId);

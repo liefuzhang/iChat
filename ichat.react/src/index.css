@@ -330,6 +330,7 @@ i.icon {
   color: #333;
   padding: 5px 22px;
   min-width: 220px;
+  max-width: 300px;
   transition: all 0.3s;
 }
 
@@ -347,6 +348,9 @@ i.icon {
   cursor: pointer;
   margin: 0 -22px;
   padding: 4px 22px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dropdown-section ul li:hover {

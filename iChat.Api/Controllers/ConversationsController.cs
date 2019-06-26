@@ -15,10 +15,12 @@ namespace iChat.Api.Controllers
     public class ConversationsController : ControllerBase
     {
         private readonly IConversationService _conversationService;
+        private readonly INotificationService _notificationService;
 
-        public ConversationsController(IConversationService conversationService)
+        public ConversationsController(IConversationService conversationService, INotificationService notificationService)
         {
             _conversationService = conversationService;
+            _notificationService = notificationService;
         }
 
         // GET api/conversations/recent
@@ -58,6 +60,27 @@ namespace iChat.Api.Controllers
         public async Task<IActionResult> NotifyTypingAsync([FromBody]int conversationId)
         {
             await _conversationService.NotifyTypingAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
+
+            return Ok();
+        }
+
+        // GET api/conversations/1/userIds
+        [HttpGet("{id}/userIds")]
+        public async Task<ActionResult<IEnumerable<int>>> GetAllConversationUserIdsAsync(int id)
+        {
+            var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+
+            return userIds.ToList();
+        }
+
+        // Post api/conversations/1/inviteOtherMembers
+        [HttpPost("{id}/inviteOtherMembers")]
+        public async Task<IActionResult> InviteOtherMembersToConversationAsync(int id, List<int> userIds)
+        {
+            await _conversationService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
+
+            var allConversationUserIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+            _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
 
             return Ok();
         }

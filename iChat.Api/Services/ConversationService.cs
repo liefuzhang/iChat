@@ -2,14 +2,15 @@
 using iChat.Api.Data;
 using iChat.Api.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public class ConversationService : IConversationService {
+namespace iChat.Api.Services
+{
+    public class ConversationService : IConversationService
+    {
         private readonly iChatContext _context;
         private readonly IUserService _userService;
         private ICacheService _cacheService;
@@ -17,7 +18,8 @@ namespace iChat.Api.Services {
         private readonly INotificationService _notificationService;
 
         public ConversationService(iChatContext context, IUserService userService,
-            ICacheService cacheService, IMapper mapper, INotificationService notificationService) {
+            ICacheService cacheService, IMapper mapper, INotificationService notificationService)
+        {
             _context = context;
             _userService = userService;
             _cacheService = cacheService;
@@ -25,8 +27,10 @@ namespace iChat.Api.Services {
             _notificationService = notificationService;
         }
 
-        public async Task<int> StartConversationWithOthersAsync(List<int> withUserIds, int userId, int workspaceId) {
-            if (withUserIds == null || withUserIds.Count < 1) {
+        public async Task<int> StartConversationWithOthersAsync(List<int> withUserIds, int userId, int workspaceId)
+        {
+            if (withUserIds == null || withUserIds.Count < 1)
+            {
                 throw new ArgumentException("Invalid users");
             }
 
@@ -40,8 +44,25 @@ namespace iChat.Api.Services {
             return conversationId;
         }
 
+        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int userId, int workspaceId)
+        {
+            if (userIds == null || userIds.Count < 1)
+            {
+                throw new ArgumentException("Invalid users");
+            }
+
+            if (await GetConversationByIdAsync(conversationId, userId, workspaceId) == null)
+            {
+                throw new ArgumentException("Invalid conversation");
+            }
+
+            AddUsersToConversation(userIds, conversationId);
+            await _context.SaveChangesAsync();
+        }
+
         // Self conversation will always be on the top, and not cached 
-        public async Task<int> StartSelfConversationAsync(int userId, int workspaceId) {
+        public async Task<int> StartSelfConversationAsync(int userId, int workspaceId)
+        {
             var userIds = new List<int>();
             userIds.Add(userId);
             var conversationId = await StartConversationForUsersAsync(userIds, workspaceId);
@@ -49,12 +70,16 @@ namespace iChat.Api.Services {
             return conversationId;
         }
 
-        private async Task<int> StartConversationForUsersAsync(List<int> userIds, int workspaceId) {
+        private async Task<int> StartConversationForUsersAsync(List<int> userIds, int workspaceId)
+        {
             int conversationId;
             var existingConversationId = GetConversationIdIfExists(userIds, workspaceId);
-            if (existingConversationId != null) {
+            if (existingConversationId != null)
+            {
                 conversationId = existingConversationId.Value;
-            } else {
+            }
+            else
+            {
                 var newConversation = new Conversation(workspaceId);
                 _context.Conversations.Add(newConversation);
                 await _context.SaveChangesAsync();
@@ -67,7 +92,8 @@ namespace iChat.Api.Services {
             return conversationId;
         }
 
-        private int? GetConversationIdIfExists(List<int> userIds, int workspaceId) {
+        private int? GetConversationIdIfExists(List<int> userIds, int workspaceId)
+        {
             var conversationUsers = _context.Conversations
                 .Where(c => c.WorkspaceId == workspaceId)
                 .SelectMany(c => c.ConversationUsers);
@@ -75,18 +101,22 @@ namespace iChat.Api.Services {
                 .GroupBy(cu => cu.ConversationId)
                 .Where(g => g.Select(u => u.UserId).ToHashSet().SetEquals(userIds));
 
-            return group.Count() == 0 ? null : (int?)group.Single().Key;
+            return !group.Any() ? null : (int?)group.Single().Key;
         }
 
-        private void AddUsersToConversation(List<int> userIds, int conversationId) {
-            userIds.ForEach(id => {
+        private void AddUsersToConversation(List<int> userIds, int conversationId)
+        {
+            userIds.ForEach(id =>
+            {
                 var conversationUser = new ConversationUser(conversationId, id);
                 _context.ConversationUsers.Add(conversationUser);
             });
         }
 
-        private async Task<string> GetConversationNameAsync(int conversationId, int currentUserId, int workspaceId) {
-            if (await IsSelfConversationAsync(conversationId, currentUserId)) {
+        private async Task<string> GetConversationNameAsync(int conversationId, int currentUserId, int workspaceId)
+        {
+            if (await IsSelfConversationAsync(conversationId, currentUserId))
+            {
                 var selfConversationSuffix = " (you)";
                 var userDisplayName = (await _userService.GetUserByIdAsync(currentUserId, workspaceId))?.DisplayName;
                 return userDisplayName + selfConversationSuffix;
@@ -100,15 +130,19 @@ namespace iChat.Api.Services {
             return conversationName;
         }
 
-        public async Task<bool> IsSelfConversationAsync(int conversationId, int userId) {
+        public async Task<bool> IsSelfConversationAsync(int conversationId, int userId)
+        {
             var userIds = await GetAllConversationUserIdsAsync(conversationId);
             return userIds.Count() == 1 && userIds.Single() == userId;
         }
 
-        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId) {
+        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId)
+        {
             var currentUser = await _userService.GetUserByIdAsync(currentUserId, workspaceId);
             if (currentUser == null)
+            {
                 return;
+            }
 
             var userIds = (await GetAllConversationUserIdsAsync(conversationId)).ToList();
             userIds.Remove(currentUserId);
@@ -116,13 +150,16 @@ namespace iChat.Api.Services {
             _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
         }
 
-        public bool IsUserInConversation(int id, int userId) {
+        public bool IsUserInConversation(int id, int userId)
+        {
             return _context.ConversationUsers.Any(cu => cu.UserId == userId &&
                        cu.ConversationId == id);
         }
 
-        public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId) {
-            if (!IsUserInConversation(id, userId)) {
+        public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId)
+        {
+            if (!IsUserInConversation(id, userId))
+            {
                 throw new ArgumentException($"User is not in conversation.");
             }
 
@@ -136,7 +173,8 @@ namespace iChat.Api.Services {
             return conversationDto;
         }
 
-        public async Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId) {
+        public async Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId)
+        {
             var recentConversationItems = await _cacheService.GetRecentConversationItemsForUserAsync(userId, workspaceId);
             var recentConversationIds = recentConversationItems.Select(i => i.ConversationId);
             var conversations = await _context.Conversations.AsNoTracking()
@@ -146,7 +184,8 @@ namespace iChat.Api.Services {
 
             await AddSelfConversationToBeginningAsync(userId, workspaceId, conversations);
 
-            var conversationDtos = conversations.Select(async c => {
+            var conversationDtos = conversations.Select(async c =>
+            {
                 var dto = _mapper.Map<ConversationDto>(c);
                 dto.Name = await GetConversationNameAsync(c.Id, userId, workspaceId);
                 dto.UnreadMessageCount = recentConversationItems.SingleOrDefault(i => i.ConversationId == c.Id)?.UnreadMessageCount ?? 0;
@@ -156,21 +195,24 @@ namespace iChat.Api.Services {
             return await Task.WhenAll(conversationDtos);
         }
 
-        private async Task AddSelfConversationToBeginningAsync(int userId, int workspaceId, List<Conversation> conversations) {
+        private async Task AddSelfConversationToBeginningAsync(int userId, int workspaceId, List<Conversation> conversations)
+        {
             var conversation = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.ConversationUsers.Count() == 1 &&
                     c.ConversationUsers.Any(cu => cu.UserId == userId))
                 .SingleOrDefaultAsync();
 
-            if (conversation == null) {
+            if (conversation == null)
+            {
                 return;
             }
 
             conversations.Insert(0, conversation);
         }
 
-        public async Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId) {
+        public async Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId)
+        {
             return await _context.ConversationUsers
                 .Where(cu => cu.ConversationId == conversationId)
                 .Select(cu => cu.UserId)

@@ -3,7 +3,9 @@ import "./ContentHeader.css";
 import ApiService from "services/ApiService";
 import { Icon, Popup } from "semantic-ui-react";
 import DropdownModal from "modals/DropdownModal";
+import Modal from "modals/Modal";
 import { toast } from "react-toastify";
+import InviteOtherMembersForm from "modalForms/InviteOtherMembersForm";
 
 class ContentHeader extends React.Component {
   constructor(props) {
@@ -14,11 +16,23 @@ class ContentHeader extends React.Component {
     this.onSettingButtonClicked = this.onSettingButtonClicked.bind(this);
     this.onCloseSettingDropdown = this.onCloseSettingDropdown.bind(this);
     this.onLeaveChannelClicked = this.onLeaveChannelClicked.bind(this);
+    this.onInviteOtherMembers = this.onInviteOtherMembers.bind(this);
+    this.onCloseInviteOtherMembers = this.onCloseInviteOtherMembers.bind(this);
+
+    if (props.hubConnection) {
+      props.hubConnection.on("UpdateChannelDetails", () =>
+        this.fetchData(this.props)
+      );
+      props.hubConnection.on("UpdateCoversationDetails", () =>
+        this.fetchData(this.props)
+      );
+    }
 
     this.state = {
       selectedChannel: {},
       selectedConversation: {},
-      isSettingDropdownModalOpen: false
+      isSettingDropdownModalOpen: false,
+      isInviteOtherMembersModalOpen: false
     };
 
     this.fetchData(this.props);
@@ -53,7 +67,7 @@ class ContentHeader extends React.Component {
     });
   }
 
-  onCloseSettingDropdown(event) {
+  onCloseSettingDropdown() {
     this.setState({
       isSettingDropdownModalOpen: false
     });
@@ -73,6 +87,19 @@ class ContentHeader extends React.Component {
       .catch(error => {
         toast.error(`Leave channel failed: ${error}`);
       });
+  }
+
+  onInviteOtherMembers() {
+    this.setState({
+      isInviteOtherMembersModalOpen: true,
+      isSettingDropdownModalOpen: false
+    });
+  }
+
+  onCloseInviteOtherMembers() {
+    this.setState({
+      isInviteOtherMembersModalOpen: false
+    });
   }
 
   render() {
@@ -106,6 +133,13 @@ class ContentHeader extends React.Component {
                 <div className="setting-dropdown dropdown-container panel">
                   <section className="dropdown-section">
                     <ul>
+                      <li onClick={this.onInviteOtherMembers}>
+                        {this.props.isChannel
+                          ? `Invite people to ${
+                              this.state.selectedChannel.name
+                            }`
+                          : `Invite another member`}
+                      </li>
                       {this.props.isChannel &&
                         this.props.id !==
                           this.props.userProfile.defaultChannelId && (
@@ -118,6 +152,16 @@ class ContentHeader extends React.Component {
                 </div>
               </DropdownModal>
             )}
+            <div>
+              {this.state.isInviteOtherMembersModalOpen && (
+                <Modal onClose={this.onCloseInviteOtherMembers}>
+                  <InviteOtherMembersForm
+                    onClose={this.onCloseInviteOtherMembers}
+                    {...this.props}
+                  />
+                </Modal>
+              )}
+            </div>
           </div>
         </div>
       </div>
