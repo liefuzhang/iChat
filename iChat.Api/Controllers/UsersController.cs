@@ -58,7 +58,7 @@ namespace iChat.Api.Controllers {
 
         // POST api/users/invite
         [HttpPost("invite")]
-        public async Task<IActionResult> InviteUsers(List<string> emails) {
+        public async Task<IActionResult> InviteUsersAsync(List<string> emails) {
             var user = await _userService.GetUserByIdAsync(User.GetUserId());
             var workspace = await _workspaceService.GetWorkspaceByIdAsync(User.GetWorkspaceId());
             await _userService.InviteUsersAsync(user, workspace, emails);
@@ -69,11 +69,20 @@ namespace iChat.Api.Controllers {
         // POST api/users/acceptInvitation
         [HttpPost("acceptInvitation")]
         [AllowAnonymous]
-        public async Task<IActionResult> AcceptInvitation(UserInvitationDto userInvitationDto) {
+        public async Task<IActionResult> AcceptInvitationAsync(UserInvitationDto userInvitationDto) {
             var userId = await _userService.AcceptInvitationAsync(userInvitationDto);
             var user = await _userService.GetUserByIdAsync(userId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, user.WorkspaceId);
             await _conversationService.StartSelfConversationAsync(userId, user.WorkspaceId);
+
+            return Ok();
+        }
+
+        // POST api/users/forgotPassword
+        [HttpPost("forgotPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPasswordAsync(string email)
+        {
 
             return Ok();
         }

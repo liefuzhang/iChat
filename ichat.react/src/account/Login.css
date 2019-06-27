@@ -14,11 +14,12 @@
   align-items: center;
   box-sizing: border-box;
   padding: 20px 110px 40px;
-  transition: all 1s;
+  position: relative;
 }
 .login-page .login-container .form-container form .forgot-password {
   color: #8590a6;
-  margin-top: 15px;
+  margin-top: 10px;
+  cursor: pointer;
 }
 .login-page .login-container .form-container form .forgot-password a:hover {
   text-decoration: underline;
@@ -31,16 +32,6 @@
 .login-page section .white-btn {
   width: 100%;
   box-sizing: border-box;
-}
-
-#workspaceContainer {
-  position: relative;
-}
-
-.hide-container {
-  display: none !important;
-  transition: all 1s;
-  opacity: 0;
 }
 
 .login-page .login-container .horizontal-divider {
