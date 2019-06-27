@@ -4,41 +4,37 @@ import ApiService from "services/ApiService";
 import AuthService from "services/AuthService";
 import { toast } from "react-toastify";
 
-class AcceptInvitation extends React.Component {
+class ResetPassword extends React.Component {
   constructor(props) {
     super(props);
 
     this.apiService = new ApiService(props);
     this.authService = new AuthService(props);
-    this.onAcceptInvitationFormSubmit = this.onAcceptInvitationFormSubmit.bind(
-      this
-    );
+    this.onResetPasswordFormSubmit = this.onResetPasswordFormSubmit.bind(this);
 
     let searchParams = new URLSearchParams(props.location.search);
-    this.workspaceName = searchParams.get("workspaceName");
     this.email = searchParams.get("email");
     this.code = searchParams.get("code");
     this.onPasswordChange = this.onPasswordChange.bind(this);
   }
 
-  onAcceptInvitationFormSubmit(event) {
+  onResetPasswordFormSubmit(event) {
     event.preventDefault();
 
-    let name = event.target.elements["name"].value;
     let password = event.target.elements["password"].value;
+
     if (this.email && password && this.code) {
       let button = event.currentTarget.querySelector("button[type='submit']");
       button.classList.add("disabled-button");
 
       this.apiService
         .fetch(
-          `/api/users/acceptInvitation`,
+          `/api/users/resetPassword`,
           {
             method: "POST",
             body: JSON.stringify({
               email: this.email,
               password: password,
-              name: name,
               code: this.code
             })
           },
@@ -49,7 +45,7 @@ class AcceptInvitation extends React.Component {
           this.authService.login(this.email, password);
         })
         .catch(error => {
-          toast.error(`Create account failed: ${error}`);
+          toast.error(`Reset password failed: ${error}`);
           button.classList.remove("disabled-button");
         });
     }
@@ -57,10 +53,10 @@ class AcceptInvitation extends React.Component {
 
   onPasswordChange() {
     let password = document.querySelector(
-      "#acceptInvitation input[name='password']"
+      "#resetPassword input[name='password']"
     );
     let confirmPassword = document.querySelector(
-      "#acceptInvitation input[name='confirmPassword']"
+      "#resetPassword input[name='confirmPassword']"
     );
     if (password.value !== confirmPassword.value) {
       confirmPassword.setCustomValidity("Passwords don't match");
@@ -74,21 +70,13 @@ class AcceptInvitation extends React.Component {
       <div className="login-page">
         <div className="login-container panel">
           <div className="form-container">
-            <h1>Join {this.workspaceName} on iChat</h1>
+            <h1>Reset password</h1>
             <form
-              id="acceptInvitation"
+              id="resetPassword"
               method="post"
-              onSubmit={this.onAcceptInvitationFormSubmit}
+              onSubmit={this.onResetPasswordFormSubmit}
             >
-              <p className="form-description">
-                Enter your name and password to create account.
-              </p>
-              <input
-                className="form-control"
-                name="name"
-                type="text"
-                placeholder="Display name"
-              />
+              <p className="form-description">Enter your new password.</p>
               <input
                 className="form-control"
                 name="password"
@@ -108,7 +96,7 @@ class AcceptInvitation extends React.Component {
                 required
               />
               <button type="submit" className="btn form-control">
-                Create Account
+                Reset &amp; Login
               </button>
             </form>
           </div>
@@ -118,4 +106,4 @@ class AcceptInvitation extends React.Component {
   }
 }
 
-export default AcceptInvitation;
+export default ResetPassword;

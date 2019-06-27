@@ -20,6 +20,7 @@ namespace iChat.Api.Data {
         public DbSet<MessageReactionUser> MessageReactionUsers { get; set; }
         public DbSet<Workspace> Workspaces { get; set; }
         public DbSet<UserInvitation> UserInvitations { get; set; }
+        public DbSet<ResetPasswordRequset> ResetPasswordRequsets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);

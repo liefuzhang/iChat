@@ -81,8 +81,17 @@ namespace iChat.Api.Controllers {
         // POST api/users/forgotPassword
         [HttpPost("forgotPassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPasswordAsync(string email)
-        {
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody]string email) {
+            await _userService.ForgotPasswordAsync(email);
+
+            return Ok();
+        }
+
+        // POST api/users/resetPassword
+        [HttpPost("resetPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto resetPasswordDto) {
+            await _userService.ResetPasswordAsync(resetPasswordDto);
 
             return Ok();
         }
@@ -106,8 +115,7 @@ namespace iChat.Api.Controllers {
 
         // POST api/users/editProfile
         [HttpPost("editProfile")]
-        public async Task<IActionResult> EditProfile(UserEditDto userDto)
-        {
+        public async Task<IActionResult> EditProfile(UserEditDto userDto) {
             await _userService.EditProfile(userDto, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
@@ -116,8 +124,7 @@ namespace iChat.Api.Controllers {
         [AllowAnonymous]
         // TODO remove after development
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto)
-        {
+        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto) {
             var workspaceId = 1;
             var userId = await _userService.RegisterAsync(loginDto.Email, loginDto.Password, loginDto.Email, workspaceId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);

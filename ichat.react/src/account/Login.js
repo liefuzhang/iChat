@@ -39,7 +39,12 @@ class Login extends React.Component {
     let email = event.target.elements["email"].value;
     let password = event.target.elements["password"].value;
     if (email && password) {
-      this.authService.login(email, password);
+      let button = event.currentTarget.querySelector("button[type='submit']");
+      button.classList.add("disabled-button");
+
+      this.authService.login(email, password).catch(error => {
+        button.classList.remove("disabled-button");
+      });
     }
   }
 
@@ -48,6 +53,9 @@ class Login extends React.Component {
     let email = event.target.elements["email"].value;
 
     if (email) {
+      let button = event.currentTarget.querySelector("button[type='submit']");
+      button.classList.add("disabled-button");
+
       this.apiService
         .fetch(
           `/api/users/forgotPassword`,
@@ -67,6 +75,7 @@ class Login extends React.Component {
         })
         .catch(error => {
           toast.error(`Send reset link failed: ${error}`);
+          button.classList.remove("disabled-button");
         });
     }
   }
@@ -79,6 +88,9 @@ class Login extends React.Component {
     let displayName = event.target.elements["displayName"].value;
 
     if (email && password && workspace) {
+      let button = event.currentTarget.querySelector("button[type='submit']");
+      button.classList.add("disabled-button");
+
       this.apiService
         .fetch(
           `/api/workspaces/register`,
@@ -105,6 +117,7 @@ class Login extends React.Component {
         })
         .catch(error => {
           toast.error(`Create workspace failed: ${error}`);
+          button.classList.remove("disabled-button");
         });
     }
   }
@@ -112,10 +125,17 @@ class Login extends React.Component {
   onOwnerAccountFormSubmit(event) {
     event.preventDefault();
 
-    this.authService.login(
-      this.createdWorkspaceOwnerEmail,
-      this.createdWorkspaceOwnerPassword
-    );
+    let button = event.currentTarget.querySelector("button[type='submit']");
+    button.classList.add("disabled-button");
+
+    this.authService
+      .login(
+        this.createdWorkspaceOwnerEmail,
+        this.createdWorkspaceOwnerPassword
+      )
+      .catch(error => {
+        button.classList.remove("disabled-button");
+      });
   }
 
   onPasswordChange() {
@@ -316,10 +336,7 @@ class Login extends React.Component {
                 <h1>
                   Workspace <b>{this.createdWorkspaceName}</b> Created!
                 </h1>
-                <form
-                  method="post"
-                  onSubmit={this.onOwnerAccountFormSubmit}
-                >
+                <form method="post" onSubmit={this.onOwnerAccountFormSubmit}>
                   <p className="form-description">
                     Click <b>Continue</b> to login as{" "}
                     <b>{this.createdWorkspaceOwnerEmail}</b>.

@@ -4,19 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-<<<<<<< HEAD
 namespace iChat.Api.Services {
     public interface IMessageService {
         Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int currentPage);
         Task<MessageLoadDto> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId, int currentPage);
-=======
-namespace iChat.Api.Services
-{
-    public interface IMessageService
-    {
-        Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId);
-        Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId);
->>>>>>> 6ba8ebdcb0f490958dff8a475fc8e98b8535ac34
         Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task UpdateMessageInConversationAsync(string message, int conversationId, int messageId, int currentUserId);

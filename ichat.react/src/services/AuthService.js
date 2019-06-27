@@ -11,7 +11,7 @@ class AuthService {
   }
 
   login(email, password) {
-    this.apiService
+    return this.apiService
       .fetch(
         `/api/identity/authenticate`,
         {
@@ -27,6 +27,7 @@ class AuthService {
       })
       .catch(error => {
         toast.error(`Login failed: ${error}`);
+        return Promise.reject();
       });
   }
 

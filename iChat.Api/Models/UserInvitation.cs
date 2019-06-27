@@ -31,10 +31,15 @@ namespace iChat.Api.Models {
         public int WorkspaceId { get; private set; }
         public DateTime InviteDate { get; private set; }
         public bool Acceptted { get; private set; }
+        public bool Cancelled { get; private set; }
         public Guid InvitationCode { get; private set; }
 
         public void Accept() {
             Acceptted = true;
+        }
+
+        public void Cancel() {
+            Cancelled = true;
         }
     }
 }

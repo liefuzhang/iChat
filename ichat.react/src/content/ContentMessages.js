@@ -92,13 +92,12 @@ class ContentMessages extends React.Component {
     scrollable.scrollTop = scrollable.scrollHeight;
   }
 
-  fetchData(props) {
+  fetchData(props, isLoadingHistory) {
+    if (isLoadingHistory) this.currentPage++;
     return this.apiService
       .fetch(`/api/messages/${props.section}/${props.id}/${this.currentPage}`)
       .then(messageLoad => {
-        this.currentPage = messageLoad.currentPage;
-        this.areAllPagesLoaded =
-          messageLoad.totalPage === messageLoad.currentPage;
+        this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
         this.setState({ messageGroups: messageLoad.messageGroupDtos });
       })
       .then(() => this.scrollToBottom());
@@ -115,6 +114,7 @@ class ContentMessages extends React.Component {
       this.props.section !== prevProps.section ||
       this.props.id !== prevProps.id
     ) {
+      this.currentPage = 0;
       this.fetchData(this.props);
     }
 

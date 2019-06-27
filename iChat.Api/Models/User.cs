@@ -10,21 +10,9 @@ namespace iChat.Api.Models
         protected User() { }
 
         public User(string email, string password, int workspaceId,
-            string displayName, Guid identiconGuid)
-        {
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new Exception("Password is required");
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
+            string displayName, Guid identiconGuid) {            
+            if (string.IsNullOrWhiteSpace(email)) {
                 throw new Exception("Email is required");
-            }
-
-            if (password.Length < 6)
-            {
-                throw new Exception("Password needs to have at least 6 characters");
             }
 
             Email = email;
@@ -34,11 +22,7 @@ namespace iChat.Api.Models
             IdenticonGuid = identiconGuid;
             WorkspaceId = workspaceId;
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                PasswordSalt = hmac.Key;
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
+            SetPassword(password);
         }
 
         public int Id { get; private set; }
@@ -55,6 +39,21 @@ namespace iChat.Api.Models
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
         public ICollection<ConversationUser> ConversationUsers { get; private set; }
         public string IdenticonPath => "\\" + Path.Combine(iChatConstants.IdenticonPath, $"{IdenticonGuid}{iChatConstants.IdenticonExt}");
+        
+        public void SetPassword(string password) {
+            if (string.IsNullOrWhiteSpace(password)) {
+                throw new Exception("Password is required");
+            }
+            
+            if (password.Length < 6) {
+                throw new Exception("Password needs to have at least 6 characters");
+            }
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512()) {
+                PasswordSalt = hmac.Key;
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
 
         public bool VerifyPassword(string password)
         {

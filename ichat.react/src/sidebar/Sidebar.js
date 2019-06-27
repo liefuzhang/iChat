@@ -50,8 +50,6 @@ class Sidebar extends React.Component {
       isCreateChannelModalOpen: false,
       isPageLoading: true
     };
-
-    this.fecthDataOnLoad();
   }
 
   onCreateChannel(event) {
@@ -108,7 +106,7 @@ class Sidebar extends React.Component {
       .then(conversations => this.setState({ conversations: conversations }));
   }
 
-  fecthDataOnLoad() {
+  componentDidMount() {
     Promise.all([this.fetchChannels(), this.fetchConversations()]).then(() => {
       this.setState({ isPageLoading: false });
     });

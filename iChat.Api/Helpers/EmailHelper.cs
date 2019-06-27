@@ -27,14 +27,9 @@ namespace iChat.Api.Helpers {
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public async Task SendUserInvitationEmailAsync(UserInvitationData data) {
-            if (string.IsNullOrWhiteSpace(data.ReceiverAddress)) {
-                throw new ArgumentException("Cannot send to empty email address.");
-            }
-            var body = ConstructUserInvitationEmailBody(data);
-
-            using (MailMessage mailMessage = new MailMessage(new MailAddress(_appSettings.GmailUserName), new MailAddress(data.ReceiverAddress))) {
-                mailMessage.Subject = $"Join iChat";
+        private async Task SendEmailAsync(string receiverAddress, string subject, string body) {
+            using (MailMessage mailMessage = new MailMessage(new MailAddress(_appSettings.GmailUserName), new MailAddress(receiverAddress))) {
+                mailMessage.Subject = subject;
                 mailMessage.Body = body;
                 mailMessage.IsBodyHtml = true;
                 var smtp = new SmtpClient {
@@ -47,6 +42,14 @@ namespace iChat.Api.Helpers {
                 };
                 await smtp.SendMailAsync(mailMessage);
             }
+        }
+
+        public async Task SendUserInvitationEmailAsync(UserInvitationData data) {
+            if (string.IsNullOrWhiteSpace(data.ReceiverAddress)) {
+                throw new ArgumentException("Cannot send to empty email address.");
+            }
+            var body = ConstructUserInvitationEmailBody(data);
+            await SendEmailAsync(data.ReceiverAddress, "Join iChat", body);
         }
 
         private string ConstructUserInvitationEmailBody(UserInvitationData data) {
@@ -65,6 +68,30 @@ namespace iChat.Api.Helpers {
             body = body.Replace("{InviterName}", HttpUtility.HtmlEncode(data.InviterName));
             body = body.Replace("{InviterEmail}", HttpUtility.HtmlEncode(data.InviterEmail));
             body = body.Replace("{JoinUrl}", joinUrl);
+            return body;
+        }
+
+        public async Task SendResetPasswordEmailAsync(string receiverAddress, Guid resetCode) {
+            if (string.IsNullOrWhiteSpace(receiverAddress)) {
+                throw new ArgumentException("Cannot send to empty email address.");
+            }
+            var body = ConstructResetPasswordEmailBody(receiverAddress, resetCode);
+
+            await SendEmailAsync(receiverAddress, "Reset your password", body);
+        }
+
+        private string ConstructResetPasswordEmailBody(string email, Guid resetCode) {
+            var emailTemplatePath = Path.Combine(iChatConstants.EmailTemplatePath, "ResetPasswordEmail.htm");
+            var resetUrl = $"{_appSettings.FrontEndUrl}/user/resetPassword" +
+                $"?email={email}&code={resetCode}";
+
+            var body = string.Empty;
+            if (!string.IsNullOrEmpty(emailTemplatePath)) {
+                using (StreamReader reader = new StreamReader(emailTemplatePath)) {
+                    body = reader.ReadToEnd();
+                }
+            }
+            body = body.Replace("{ResetUrl}", resetUrl);
             return body;
         }
     }

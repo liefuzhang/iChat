@@ -115,7 +115,6 @@ namespace iChat.Api.Services {
             var totalPage = (baseQuery.Count() - 1) / iChatConstants.DefaultMessagePageSize + 1;
 
             return new MessageLoadDto {
-                CurrentPage = ++currentPage,
                 TotalPage = totalPage,
                 MessageGroupDtos = messageGroups
             };
@@ -199,8 +198,7 @@ namespace iChat.Api.Services {
             await AttachFileToMessageAsync(messageId, newFile.Id);
         }
 
-        private async Task AttachFileToMessageAsync(int messageId, int fileId)
-        {
+        private async Task AttachFileToMessageAsync(int messageId, int fileId) {
             _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, fileId));
             await _context.SaveChangesAsync();
         }
@@ -239,13 +237,8 @@ namespace iChat.Api.Services {
             return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
         }
 
-<<<<<<< HEAD
-        public async Task DeleteMessageAsync(int messageId, int userId) {
-=======
-        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
-        {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
-            {
+        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId) {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId))) {
                 return;
             }
 
@@ -253,10 +246,8 @@ namespace iChat.Api.Services {
             await AttachFileToMessageAsync(messageId, fileId);
         }
 
-        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
-        {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
-            {
+        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId) {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId))) {
                 return;
             }
 
@@ -264,9 +255,7 @@ namespace iChat.Api.Services {
             await AttachFileToMessageAsync(messageId, fileId);
         }
 
-        public async Task DeleteMessageAsync(int messageId, int userId)
-        {
->>>>>>> 6ba8ebdcb0f490958dff8a475fc8e98b8535ac34
+        public async Task DeleteMessageAsync(int messageId, int userId) {
             var message = await _context.Messages.SingleAsync(m => m.Id == messageId && m.SenderId == userId);
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();

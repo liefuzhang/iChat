@@ -108,23 +108,11 @@ class SidebarHeader extends React.Component {
     this.authService.logout();
   }
 
-  componentDidMount() {
-    document
-      .querySelector(".sidebar-header-container")
-      .addEventListener("click", this.onHeaderClick);
-  }
-
-  componentWillUnmount() {
-    document
-      .querySelector(".sidebar-header-container")
-      .removeEventListener("click", this.onHeaderClick);
-  }
-
   render() {
     return (
       <div>
         <div className="sidebar-header">
-          <div className="sidebar-header-container">
+          <div className="sidebar-header-container" onClick={this.onHeaderClick}>
             <div>
               <span className="sidebar-header-workspace-name">
                 {this.props.userProfile.workspaceName}

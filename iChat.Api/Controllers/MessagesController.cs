@@ -133,8 +133,8 @@ namespace iChat.Api.Controllers {
         // GET api/messages/downloadFile/1
         [HttpGet("downloadFile/{fileId}")]
         public async Task<IActionResult> DownloadFileAsync(int fileId) {
-            var fileTuple = await _messageService.DownloadFileAsync(fileId, User.GetUserId(), User.GetWorkspaceId());
-            return File(fileTuple.stream, fileTuple.contentType);
+            var (stream, contentType) = await _messageService.DownloadFileAsync(fileId, User.GetUserId(), User.GetWorkspaceId());
+            return File(stream, contentType);
         }
 
         // POST api/messages/conversation/1/shareFile/1
