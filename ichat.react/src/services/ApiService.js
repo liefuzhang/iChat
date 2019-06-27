@@ -12,7 +12,6 @@ class ApiService {
   }
 
   fetch(url, options, noContentType, noAuth) {
-    options || (options = {});
     return this.fetchCommon(url, options, noContentType, noAuth)
       .then(response => {
         if (!response.ok) {
@@ -26,8 +25,7 @@ class ApiService {
   }
 
   fetchFile(url, fileName) {
-    let options = {};
-    return this.fetchCommon(url, options)
+    return this.fetchCommon(url)
       .then(response => {
         if (!response.ok) {
           return response.text().then(r => Promise.reject(r));
@@ -61,6 +59,7 @@ class ApiService {
     }
 
     var bearer = "Bearer " + token;
+    options || (options = {});
     options.headers || (options.headers = {});
     noContentType || (options.headers["Content-Type"] = "application/json");
     noAuth || (options.headers["Authorization"] = bearer);

@@ -32,11 +32,8 @@ class Content extends React.Component {
         )}
         <ContentHeader {...this.props} />
         <ContentMessages
-          section={this.props.section}
-          id={this.props.id}
-          hubConnection={this.props.hubConnection}
-          userProfile={this.props.userProfile}
           onFinishLoading={this.onFinishLoading}
+          {...this.props}
         />
         <ContentFooter
           isChannel={this.props.isChannel}

@@ -204,6 +204,24 @@ form button[type="submit"] {
   margin-top: 20px;
 }
 
+.form-with-dropdown {
+  min-height: 400px;
+}
+
+.form-with-dropdown form {
+  width: 400px;
+}
+
+.form-with-dropdown .dropdown {
+  box-sizing: border-box;
+  width: 400px;
+}
+
+.form-with-dropdown .menu {
+  box-sizing: border-box;
+  max-height: 260px !important;
+}
+
 .hide {
   display: none;
   opacity: 0;
@@ -285,7 +303,7 @@ i.icon {
   border-radius: 4px;
 }
 
-.file-item i.icon {
+.file-item i.icon.file {
   font-size: 36px;
   color: #6bcdf7;
   margin-right: 5px;

@@ -156,6 +156,7 @@ namespace iChat.Api.Services
 
             _context.ConversationMessages.Add(message);
             await _context.SaveChangesAsync();
+
             return message.Id;
         }
 
@@ -203,7 +204,12 @@ namespace iChat.Api.Services
             _context.Files.Add(newFile);
             await _context.SaveChangesAsync();
 
-            _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, newFile.Id));
+            await AttachFileToMessageAsync(messageId, newFile.Id);
+        }
+
+        private async Task AttachFileToMessageAsync(int messageId, int fileId)
+        {
+            _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, fileId));
             await _context.SaveChangesAsync();
         }
 
@@ -247,6 +253,28 @@ namespace iChat.Api.Services
 
             var file = await _context.Files.SingleAsync(f => f.Id == fileId);
             return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
+        }
+
+        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
+                return;
+            }
+
+            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
+            await AttachFileToMessageAsync(messageId, fileId);
+        }
+
+        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
+                return;
+            }
+
+            var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
+            await AttachFileToMessageAsync(messageId, fileId);
         }
 
         public async Task DeleteMessageAsync(int messageId, int userId)

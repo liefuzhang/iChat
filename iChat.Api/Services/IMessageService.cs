@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public interface IMessageService {
+namespace iChat.Api.Services
+{
+    public interface IMessageService
+    {
         Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId);
         Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId);
         Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
@@ -15,6 +17,8 @@ namespace iChat.Api.Services {
         Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId);
         Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId);
         Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId);
+        Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId);
+        Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId);
         Task DeleteMessageAsync(int messageId, int userId);
         Task AddReactionToMessageAsync(int messageId, string emojiColons, int userId);
         Task RemoveReactionToMessageAsync(int messageId, string emojiColons, int userId);

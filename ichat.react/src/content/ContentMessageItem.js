@@ -5,6 +5,7 @@ import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 import EmojiPicker from "components/EmojiPicker";
 import ContentMessageItemUserReactions from "./ContentMessageItem.UserReactions";
+import ContentMessageItemFileItem from "./ContentMessageItem.FileItem";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
@@ -27,14 +28,6 @@ class ContentMessageItem extends React.Component {
 
   onLeaveMessageItem(event) {
     event.currentTarget.classList.remove("message-hover");
-  }
-
-  onDownloadClick(id, name) {
-    this.apiService
-      .fetchFile(`/api/messages/downloadFile/${id}`, name)
-      .catch(error => {
-        toast.error(`Download file failed: ${error}`);
-      });
   }
 
   onDeleteMessageConfirmed(messageId) {
@@ -188,23 +181,10 @@ class ContentMessageItem extends React.Component {
               {message.hasFileAttachments && (
                 <div className="file-container">
                   {message.fileAttachments.map(file => (
-                    <Popup
-                      trigger={
-                        <div
-                          className="file-item"
-                          onClick={() =>
-                            this.onDownloadClick(file.id, file.name)
-                          }
-                        >
-                          <Icon name="file outline" size="large" />
-                          <span title={file.name}>{file.name}</span>
-                        </div>
-                      }
-                      key={file.name + file.id}
-                      content="Click to download"
-                      inverted
-                      position="top center"
-                      size="tiny"
+                    <ContentMessageItemFileItem
+                      key={file.id}
+                      file={file}
+                      {...this.props}
                     />
                   ))}
                 </div>
