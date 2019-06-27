@@ -54,6 +54,14 @@
   top: -60px;
 }
 
+.message-load-history {
+  font-size: 0.9rem;
+  color: #999;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
 .message-item-common-container {
   padding: 4px 20px 2px 20px;
   display: flex;

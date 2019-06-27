@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace iChat.Api.Services {
     public interface IMessageService {
-        Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId);
-        Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId);
+        Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int currentPage);
+        Task<MessageLoadDto> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId, int currentPage);
         Task<int> PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task<int> PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId, bool hasFileAttachments = false);
         Task UpdateMessageInConversationAsync(string message, int conversationId, int messageId, int currentUserId);

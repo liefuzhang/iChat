@@ -1,7 +1,5 @@
-﻿namespace iChat.Api.Constants
-{
-    public class iChatConstants
-    {
+﻿namespace iChat.Api.Constants {
+    public class iChatConstants {
         public static readonly string DefaultChannelGeneral = "general";
         public static readonly string DefaultChannelRandom = "random";
         public static readonly string IdenticonPath = "Contents\\Identicons";
@@ -16,5 +14,7 @@
         public static readonly string RedisKeyRecentUnreadChannelPrefix = "UnreadChannel";
 
         public static readonly string AwsBucketWorkspaceFileFolderPrefix = "Workspace-";
+
+        public static readonly int DefaultMessagePageSize = 20;
     }
 }

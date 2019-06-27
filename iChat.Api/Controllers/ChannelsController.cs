@@ -46,7 +46,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDto>> GetAsync(int id)
         {
-            var channel = await _channelService.GetChannelByIdAsync(id, User.GetUserId(), User.GetWorkspaceId());
+            var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkspaceId());
             if (channel == null)
             {
                 return NotFound();
@@ -105,7 +105,7 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToChannelAsync(int id, List<int> userIds)
         {
-            await _channelService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
+            await _channelService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId());
 
             var allChannelUserIds = await _channelService.GetAllChannelUserIdsAsync(id);
             _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);

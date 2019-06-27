@@ -23,7 +23,7 @@ class ContentHeader extends React.Component {
       props.hubConnection.on("UpdateChannelDetails", () =>
         this.fetchData(this.props)
       );
-      props.hubConnection.on("UpdateCoversationDetails", () =>
+      props.hubConnection.on("UpdateConversationDetails", () =>
         this.fetchData(this.props)
       );
     }

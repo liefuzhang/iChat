@@ -77,7 +77,7 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToConversationAsync(int id, List<int> userIds)
         {
-            await _conversationService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
+            await _conversationService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId());
 
             var allConversationUserIds = await _conversationService.GetAllConversationUserIdsAsync(id);
             _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);

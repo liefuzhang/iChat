@@ -44,18 +44,17 @@ namespace iChat.Api.Services
             return conversationId;
         }
 
-        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int userId, int workspaceId)
+        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int userId)
         {
             if (userIds == null || userIds.Count < 1)
             {
                 throw new ArgumentException("Invalid users");
             }
-
-            if (await GetConversationByIdAsync(conversationId, userId, workspaceId) == null)
-            {
-                throw new ArgumentException("Invalid conversation");
+            
+            if (!IsUserInConversation(conversationId, userId)) {
+                throw new ArgumentException($"User is not in conversation.");
             }
-
+            
             AddUsersToConversation(userIds, conversationId);
             await _context.SaveChangesAsync();
         }
@@ -158,11 +157,6 @@ namespace iChat.Api.Services
 
         public async Task<ConversationDto> GetConversationByIdAsync(int id, int userId, int workspaceId)
         {
-            if (!IsUserInConversation(id, userId))
-            {
-                throw new ArgumentException($"User is not in conversation.");
-            }
-
             var conversation = await _context.Conversations.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                             c.Id == id)

@@ -12,12 +12,12 @@ namespace iChat.Api.Services
         Task AddUserToDefaultChannelsAsync(int userId, int workspaceId);
         Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "");
         bool IsUserSubscribedToChannel(int channelId, int userId);
-        Task<ChannelDto> GetChannelByIdAsync(int id, int userId, int workspaceId);
+        Task<ChannelDto> GetChannelByIdAsync(int id, int workspaceId);
         Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId);
         Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId);
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
         Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
         Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId);
-        Task InviteOtherMembersToChannelAsync(int id, List<int> userIds, int userId, int workspaceId);
+        Task InviteOtherMembersToChannelAsync(int id, List<int> userIds, int userId);
     }
 }

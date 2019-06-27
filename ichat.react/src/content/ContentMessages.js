@@ -15,6 +15,8 @@ class ContentMessages extends React.Component {
     this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
+
+    this.currentPage = 0;
     this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
@@ -92,8 +94,13 @@ class ContentMessages extends React.Component {
 
   fetchData(props) {
     return this.apiService
-      .fetch(`/api/messages/${props.section}/${props.id}`)
-      .then(messageGroups => this.setState({ messageGroups }))
+      .fetch(`/api/messages/${props.section}/${props.id}/${this.currentPage}`)
+      .then(messageLoad => {
+        this.currentPage = messageLoad.currentPage;
+        this.areAllPagesLoaded =
+          messageLoad.totalPage === messageLoad.currentPage;
+        this.setState({ messageGroups: messageLoad.messageGroupDtos });
+      })
       .then(() => this.scrollToBottom());
   }
 
@@ -141,7 +148,7 @@ class ContentMessages extends React.Component {
     return (
       <div className="message-container">
         <SimpleBar className="message-scrollable">
-          {this.state.messageGroups.map(g => (
+          {this.state.messageGroups.map((g, index) => (
             <div key={g.dateString} className="message-group">
               <div className="message-group-anchor" />
               <div className="message-group-header-container">
@@ -149,6 +156,9 @@ class ContentMessages extends React.Component {
                   <span>{g.dateString}</span>
                 </div>
               </div>
+              {index === 0 && !this.areAllPagesLoaded && (
+                <div className="message-load-history">Loading history...</div>
+              )}
               {g.messages.map(m => (
                 <div key={m.id}>
                   {this.state.editingMessageId !== m.id && (
