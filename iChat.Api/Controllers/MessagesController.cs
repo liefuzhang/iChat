@@ -137,6 +137,31 @@ namespace iChat.Api.Controllers {
             return File(fileTuple.stream, fileTuple.contentType);
         }
 
+        // POST api/messages/conversation/1/shareFile/1
+        [HttpPost("conversation/{conversationId}/shareFile/{fileId}")]
+        public async Task<IActionResult> ShareFileToConversationAsync(int conversationId, int fileId)
+        {
+            await _messageService.ShareFileToConversationAsync(conversationId, fileId, User.GetUserId(), User.GetWorkspaceId());
+
+            var userIds = (await _conversationService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            _notificationService.SendNewConversationMessageNotificationAsync(userIds, conversationId);
+
+            return Ok();
+        }
+
+        // POST api/messages/channel/1/shareFile/1
+        [HttpPost("channel/{channelId}/shareFile/{fileId}")]
+        public async Task<IActionResult> ShareFileToChannelAsync(int channelId, int fileId)
+        {
+            await _messageService.ShareFileToChannelAsync(channelId, fileId, User.GetUserId(), User.GetWorkspaceId());
+
+
+            var userIds = (await _channelService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            _notificationService.SendNewChannelMessageNotificationAsync(userIds, channelId);
+
+            return Ok();
+        }
+
         // POST api/messages/conversation/1/deleteMessage
         [HttpPost("conversation/{conversationId}/deleteMessage")]
         public async Task<IActionResult> DeleteMessageFromConversationAsync(int conversationId, [FromBody]int messageId) {

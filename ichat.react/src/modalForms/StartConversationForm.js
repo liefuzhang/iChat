@@ -1,5 +1,4 @@
 import React from "react";
-import "./StartConversationForm.css";
 import { Dropdown } from "semantic-ui-react";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
@@ -62,7 +61,7 @@ class StartConversationForm extends React.Component {
 
   render() {
     return (
-      <div className="form-container start-conversation-form">
+      <div className="form-container form-with-dropdown">
         <h1 style={{ textAlign: "center" }}>Start conversation</h1>
 
         <form

@@ -1,0 +1,39 @@
+.file-item-container .file-item {
+  width: 300px;
+  margin-left: 0;
+  margin-right: 12px;
+  position: relative;
+}
+
+.file-item-container .file-item:hover {
+  cursor: pointer;
+}
+
+.file-item-container .file-item-toolbar {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: none;
+}
+
+.file-item-container .file-item:hover .file-item-toolbar {
+  display: flex;
+}
+
+.file-item-container .file-item-toolbar-item {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 1.05em;
+  opacity: 0.9;
+  margin-left: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-item-container .file-item-toolbar-item:hover {
+  color: #6bcdf7;
+}

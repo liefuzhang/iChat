@@ -2,7 +2,6 @@ import React from "react";
 import { Dropdown } from "semantic-ui-react";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
-import "./InviteOtherMembersForm.css";
 
 class InviteOtherMembersForm extends React.Component {
   constructor(props) {
@@ -73,7 +72,7 @@ class InviteOtherMembersForm extends React.Component {
 
   render() {
     return (
-      <div className="form-container invite-other-memebers-form">
+      <div className="form-container form-with-dropdown">
         <h1 style={{ textAlign: "center" }}>Invite other members</h1>
 
         <form

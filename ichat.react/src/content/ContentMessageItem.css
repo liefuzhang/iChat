@@ -137,16 +137,6 @@
   background-color: transparent;
 }
 
-.message-content .file-container .file-item {
-  width: 300px;
-  margin-left: 0;
-  margin-right: 12px;
-}
-
-.message-content .file-container .file-item:hover {
-  cursor: pointer;
-}
-
 .message-content p {
   line-height: 1.6;
 }

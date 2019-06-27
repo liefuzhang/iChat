@@ -1,5 +1,4 @@
 import React from "react";
-import "./JoinChannelForm.css";
 import { Dropdown } from "semantic-ui-react";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
@@ -13,7 +12,7 @@ class JoinChannelForm extends React.Component {
     this.apiService = new ApiService(props);
 
     this.state = {
-      channelList: undefined
+      channelList: []
     };
 
     this.selectedChannelId = undefined;
@@ -56,7 +55,7 @@ class JoinChannelForm extends React.Component {
 
   render() {
     return (
-      <div className="form-container join-channel-form">
+      <div className="form-container form-with-dropdown">
         <h1 style={{ textAlign: "center" }}>Join a channel</h1>
 
         <form
@@ -71,7 +70,7 @@ class JoinChannelForm extends React.Component {
             fluid
             search
             selection
-            options={this.state.channelList || []}
+            options={this.state.channelList}
             onChange={this.changeSelectedChannel}
           />
           <button type="submit" className="btn form-control">
