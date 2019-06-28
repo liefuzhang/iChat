@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace iChat.Api.Models {
     public abstract class Message {
@@ -14,6 +15,9 @@ namespace iChat.Api.Models {
         public bool ContentEdited { get; protected set; }
         public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
         public ICollection<MessageReaction> MessageReactions { get; protected set; }
+
+        public string DateString => CreatedDate.ToString("dddd, MMM d", CultureInfo.InvariantCulture);
+        public string TimeString => CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
 
         public void UpdateContent(string content) {
             if (string.IsNullOrWhiteSpace(content)) {

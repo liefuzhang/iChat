@@ -5,7 +5,7 @@ import ContentMessageItem from "./ContentMessageItem";
 import ContentMessageItemEditor from "./ContentMessageItemEditor";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
-import moment from "moment";
+import MessageChangeService from "services/MessageChangeService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -23,8 +23,7 @@ class ContentMessages extends React.Component {
     this.onLoadMoreHistory = this.onLoadMoreHistory.bind(this);
 
     this.apiService = new ApiService(props);
-
-    this.resetMessages();
+    this.mesageChangeService = new MessageChangeService();
 
     if (props.hubConnection) {
       props.hubConnection.on(
@@ -37,6 +36,7 @@ class ContentMessages extends React.Component {
       );
     }
 
+    this.currentPage = 1;
     this.state = {
       messageGroups: [],
       editingMessageId: undefined
@@ -111,11 +111,11 @@ class ContentMessages extends React.Component {
       )
       .then(messageLoad => {
         this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
-        this.currentMessageGroups = this.mergeMessageGroups(
+        let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
           messageLoad.messageGroupDtos,
-          this.currentMessageGroups
+          this.state.messageGroups
         );
-        this.setState({ messageGroups: this.currentMessageGroups });
+        this.setState({ messageGroups: updatedMessageGroups });
       });
   }
 
@@ -127,64 +127,56 @@ class ContentMessages extends React.Component {
     );
   }
 
-  resetMessages() {
-    this.currentPage = 1;
-    this.currentMessageGroups = [];
-  }
-
-  setIsConsecutiveMessage(newerMessage, olderMessage) {
-    let newerMessageDate = moment(newerMessage.timeString, "h:mm tt");
-    let olderMessageDate = moment(olderMessage.timeString, "h:mm tt");
-    if (newerMessageDate - olderMessageDate <= 3 * 60 * 1000)
-      newerMessage.isConsecutiveMessage = true;
-  }
-
-  mergeMessageGroups(olderMessageGroups, newerMessageGroups) {
-    let mergedMessageGroups = [];
-    if (
-      newerMessageGroups.length > 0 &&
-      olderMessageGroups[olderMessageGroups.length - 1].dateString ===
-        newerMessageGroups[0].dateString
-    ) {
-      // when message group has overlapping date
-      let firstNewerMessageGroupMessages = newerMessageGroups[0].messages;
-      let lastOlderMessageGroupMessage =
-        olderMessageGroups[olderMessageGroups.length - 1].messages;
-      this.setIsConsecutiveMessage(
-        firstNewerMessageGroupMessages[0],
-        lastOlderMessageGroupMessage[lastOlderMessageGroupMessage.length - 1]
-      );
-      newerMessageGroups[0].messages = lastOlderMessageGroupMessage.concat(
-        firstNewerMessageGroupMessages
-      );
-      mergedMessageGroups = olderMessageGroups
-        .slice(0, olderMessageGroups.length - 1)
-        .concat(newerMessageGroups);
-    } else {
-      mergedMessageGroups = olderMessageGroups.concat(newerMessageGroups);
+  handleMessageItemChange(changeType, messageId) {
+    switch (changeType) {
+      case this.mesageChangeService.CHANGE_TYPE.ADDED:
+        this.handleAddedMessageItem(messageId);
+        break;
+      case this.mesageChangeService.CHANGE_TYPE.EDITED:
+        this.handleEditedMessageItem(messageId);
+        break;
+      case this.mesageChangeService.CHANGE_TYPE.DELETED:
+        this.handleDeletedMessageItem(messageId);
+        break;
     }
+  }
 
-    return mergedMessageGroups;
+  handleAddedMessageItem(messageId) {
+    this.fetchSingleMessage(messageId).then(messageGroupDto => {
+      let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
+        this.state.messageGroups,
+        [messageGroupDto]
+      );
+      this.setState({ messageGroups: updatedMessageGroups }, () => {
+        if (messageGroupDto.messages[0].senderId === this.props.userProfile.id)
+          this.scrollToBottom();
+      });
+    });
+  }
+
+  handleEditedMessageItem(messageId) {
+    this.fetchSingleMessage(messageId).then(messageGroupDto => {
+      let updatedMessageGroups = this.mesageChangeService.handleEditedMessageItem(
+        messageGroupDto,
+        this.state.messageGroups
+      );
+      if (updatedMessageGroups)
+        this.setState({ messageGroups: updatedMessageGroups });
+    });
+  }
+
+  handleDeletedMessageItem(messageId) {
+    let updatedMessageGroups = this.mesageChangeService.handleDeletedMessageItem(
+      messageId,
+      this.state.messageGroups
+    );
+    if (updatedMessageGroups)
+      this.setState({ messageGroups: updatedMessageGroups });
   }
 
   onChannelMessageItemChange(channelId, changeType, messageId) {
     if (this.props.section === "channel" && this.props.id === channelId) {
-      switch (changeType) {
-        case 1:
-          this.fetchSingleMessage(messageId).then(messageGroupDto => {
-            this.currentMessageGroups = this.mergeMessageGroups(
-              this.currentMessageGroups,
-              [messageGroupDto]
-            );
-            this.setState({ messageGroups: this.currentMessageGroups }, () => {
-              if (
-                messageGroupDto.messages[0].senderId ===
-                this.props.userProfile.id
-              )
-                this.scrollToBottom();
-            });
-          });
-      }
+      this.handleMessageItemChange(changeType, messageId);
     }
   }
 
@@ -193,7 +185,7 @@ class ContentMessages extends React.Component {
       this.props.section === "conversation" &&
       this.props.id === conversationId
     ) {
-      this.fetchHistory();
+      this.handleMessageItemChange(changeType, messageId);
     }
   }
 
@@ -223,8 +215,8 @@ class ContentMessages extends React.Component {
       this.props.section !== prevProps.section ||
       this.props.id !== prevProps.id
     ) {
-      this.resetMessages();
-      this.fetchHistory();
+      this.currentPage = 1;
+      this.setState({ messageGroups: [] }, () => this.fetchHistory());
     }
 
     if (this.state.messageGroups.length > 0) this.scrollDetector.init();

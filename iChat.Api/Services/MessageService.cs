@@ -122,7 +122,7 @@ namespace iChat.Api.Services
                 .Select(group =>
                     new MessageGroupDto
                     {
-                        DateString = group.Key.ToString("dddd, MMM d", CultureInfo.InvariantCulture),
+                        DateString = group.First().DateString,
                         Messages = group.Select(m => _mapper.Map<MessageDto>(m))
                     })
                 .ToList();
@@ -186,7 +186,7 @@ namespace iChat.Api.Services
 
             return new MessageGroupDto()
             {
-                DateString = message.CreatedDate.ToString("dddd, MMM d", CultureInfo.InvariantCulture),
+                DateString = message.DateString,
                 Messages = messageDtos
             };
         }
@@ -219,19 +219,6 @@ namespace iChat.Api.Services
                 .SingleAsync(m => m.Id == messageId && m.ConversationId == conversationId);
 
             return await GetMessageGroupForSingleMessageAsync(message);
-        }
-
-        public async Task<MessageDto> GetOwnMessageForUserAsync(int messageId, int userId)
-        {
-            var message = await _context.Messages
-                .Include(m => m.Sender)
-                .Include(m => m.MessageReactions)
-                .SingleAsync(m => m.Id == messageId && m.SenderId == userId);
-            var messageDto = _mapper.Map<MessageDto>(message);
-
-            await AddAssociatedDataToMessagesAsync(new List<MessageDto>(new[] { messageDto }));
-
-            return messageDto;
         }
 
         public async Task<int> PostMessageToConversationAsync(string newMessageContent, int conversationId, int currentUserId,
