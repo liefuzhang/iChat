@@ -5,6 +5,7 @@ import ContentMessageItem from "./ContentMessageItem";
 import ContentMessageItemEditor from "./ContentMessageItemEditor";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
+import moment from "moment";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -115,8 +116,7 @@ class ContentMessages extends React.Component {
           this.currentMessageGroups
         );
         this.setState({ messageGroups: this.currentMessageGroups });
-      })
-      .then(() => this.scrollToBottom());
+      });
   }
 
   fetchSingleMessage(messageId) {
@@ -132,22 +132,36 @@ class ContentMessages extends React.Component {
     this.currentMessageGroups = [];
   }
 
-  mergeMessageGroups(oldMessageGroups, newMessageGroups) {
+  setIsConsecutiveMessage(newerMessage, olderMessage) {
+    let newerMessageDate = moment(newerMessage.timeString, "h:mm tt");
+    let olderMessageDate = moment(olderMessage.timeString, "h:mm tt");
+    if (newerMessageDate - olderMessageDate <= 3 * 60 * 1000)
+      newerMessage.isConsecutiveMessage = true;
+  }
+
+  mergeMessageGroups(olderMessageGroups, newerMessageGroups) {
     let mergedMessageGroups = [];
     if (
-      newMessageGroups.length > 0 &&
-      oldMessageGroups[oldMessageGroups.length - 1].dateString ===
-        newMessageGroups[0].dateString
+      newerMessageGroups.length > 0 &&
+      olderMessageGroups[olderMessageGroups.length - 1].dateString ===
+        newerMessageGroups[0].dateString
     ) {
       // when message group has overlapping date
-      newMessageGroups[0].messages = oldMessageGroups[
-        oldMessageGroups.length - 1
-      ].messages.concat(newMessageGroups[0].messages);
-      mergedMessageGroups = oldMessageGroups
-        .slice(0, oldMessageGroups.length - 1)
-        .concat(newMessageGroups);
+      let firstNewerMessageGroupMessages = newerMessageGroups[0].messages;
+      let lastOlderMessageGroupMessage =
+        olderMessageGroups[olderMessageGroups.length - 1].messages;
+      this.setIsConsecutiveMessage(
+        firstNewerMessageGroupMessages[0],
+        lastOlderMessageGroupMessage[lastOlderMessageGroupMessage.length - 1]
+      );
+      newerMessageGroups[0].messages = lastOlderMessageGroupMessage.concat(
+        firstNewerMessageGroupMessages
+      );
+      mergedMessageGroups = olderMessageGroups
+        .slice(0, olderMessageGroups.length - 1)
+        .concat(newerMessageGroups);
     } else {
-      mergedMessageGroups = oldMessageGroups.concat(newMessageGroups);
+      mergedMessageGroups = olderMessageGroups.concat(newerMessageGroups);
     }
 
     return mergedMessageGroups;
@@ -162,7 +176,13 @@ class ContentMessages extends React.Component {
               this.currentMessageGroups,
               [messageGroupDto]
             );
-            this.setState({ messageGroups: this.currentMessageGroups });
+            this.setState({ messageGroups: this.currentMessageGroups }, () => {
+              if (
+                messageGroupDto.messages[0].senderId ===
+                this.props.userProfile.id
+              )
+                this.scrollToBottom();
+            });
           });
       }
     }
@@ -191,9 +211,11 @@ class ContentMessages extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchHistory().then(() => {
-      this.props.onFinishLoading();
-    });
+    this.fetchHistory()
+      .then(() => {
+        this.props.onFinishLoading();
+      })
+      .then(() => this.scrollToBottom());
   }
 
   componentDidUpdate(prevProps) {
