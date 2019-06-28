@@ -1,4 +1,5 @@
-﻿using iChat.Api.Hubs;
+﻿using iChat.Api.Constants;
+using iChat.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,19 +15,19 @@ namespace iChat.Api.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendNewChannelMessageNotificationAsync(IEnumerable<int> userIds, int channelId)
+        public async Task SendChannelMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int channelId, MessageChangeType type, int messageId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("NewChannelMessage", channelId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ChannelMessageItemChange", channelId, type, messageId);
             }
         }
 
-        public async Task SendNewConversationMessageNotificationAsync(IEnumerable<int> userIds, int conversationId)
+        public async Task SendConversationMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int conversationId, MessageChangeType type, int messageId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("NewConversationMessage", conversationId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ConversationMessageItemChange", conversationId, type, messageId);
             }
         }
 

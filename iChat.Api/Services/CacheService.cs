@@ -87,7 +87,7 @@ namespace iChat.Api.Services
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task ClearUnreadMessageForUserAsync(int conversationId, int userId, int workspaceId)
+        public async Task ClearUnreadConversationMessageForUserAsync(int conversationId, int userId, int workspaceId)
         {
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
             var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
@@ -121,7 +121,7 @@ namespace iChat.Api.Services
         }
 
         public async Task AddUnreadChannelForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId,
-            List<int> mentionUserIds)
+            List<int> mentionUserIds = null)
         {
             foreach (var userId in userIds.Distinct())
             {
@@ -133,7 +133,7 @@ namespace iChat.Api.Services
                     items.Add(item);
                 }
 
-                if (mentionUserIds.Contains(userId))
+                if (mentionUserIds != null && mentionUserIds.Contains(userId))
                 {
                     item.IncrementUnreadMention();
                 }

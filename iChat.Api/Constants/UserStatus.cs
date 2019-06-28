@@ -1,4 +1,4 @@
-﻿namespace iChat.Api.Models {
+﻿namespace iChat.Api.Constants {
     public enum UserStatus {
         Active,
         InAMeeting,

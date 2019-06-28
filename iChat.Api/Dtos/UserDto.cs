@@ -1,4 +1,5 @@
-﻿using iChat.Api.Models;
+﻿using iChat.Api.Constants;
+using iChat.Api.Models;
 
 namespace iChat.Api.Dtos {
     public class UserDto {

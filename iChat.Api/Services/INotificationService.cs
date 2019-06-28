@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using iChat.Api.Constants;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Services
 {
     public interface INotificationService
     {
-        Task SendNewChannelMessageNotificationAsync(IEnumerable<int> userIds, int channelId);
-        Task SendNewConversationMessageNotificationAsync(IEnumerable<int> userIds, int conversationId);
+        Task SendChannelMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int channelId,
+            MessageChangeType type, int messageId);
+        Task SendConversationMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int conversationId,
+            MessageChangeType type, int messageId);
         Task SendUpdateChannelListNotificationAsync(IEnumerable<int> userIds, int channelId);
         Task SendUpdateConversationListNotificationAsync(IEnumerable<int> userIds, int conversationId);
         Task SendUserTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName, bool inChannel,

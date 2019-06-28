@@ -10,20 +10,29 @@ class ContentMessages extends React.Component {
   constructor(props) {
     super(props);
 
-    this.fetchData = this.fetchData.bind(this);
-    this.onNewChannelMessage = this.onNewChannelMessage.bind(this);
-    this.onNewConversationMessage = this.onNewConversationMessage.bind(this);
+    this.fetchHistory = this.fetchHistory.bind(this);
+    this.onChannelMessageItemChange = this.onChannelMessageItemChange.bind(
+      this
+    );
+    this.onConversationMessageItemChange = this.onConversationMessageItemChange.bind(
+      this
+    );
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
+    this.onLoadMoreHistory = this.onLoadMoreHistory.bind(this);
 
-    this.currentPage = 0;
     this.apiService = new ApiService(props);
 
+    this.resetMessages();
+
     if (props.hubConnection) {
-      props.hubConnection.on("NewChannelMessage", this.onNewChannelMessage);
       props.hubConnection.on(
-        "NewConversationMessage",
-        this.onNewConversationMessage
+        "ChannelMessageItemChange",
+        this.onChannelMessageItemChange
+      );
+      props.hubConnection.on(
+        "ConversationMessageItemChange",
+        this.onConversationMessageItemChange
       );
     }
 
@@ -92,47 +101,79 @@ class ContentMessages extends React.Component {
     scrollable.scrollTop = scrollable.scrollHeight;
   }
 
-  fetchData(props, isLoadingHistory) {
-    if (isLoadingHistory) this.currentPage++;
+  fetchHistory() {
     return this.apiService
-      .fetch(`/api/messages/${props.section}/${props.id}/${this.currentPage}`)
+      .fetch(
+        `/api/messages/${this.props.section}/${this.props.id}/${
+          this.currentPage
+        }`
+      )
       .then(messageLoad => {
         this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
-        this.setState({ messageGroups: messageLoad.messageGroupDtos });
+        this.currentMessageGroups = this.mergeMessageGroups(
+          messageLoad.messageGroupDtos,
+          this.currentMessageGroups
+        );
+        this.setState({ messageGroups: this.currentMessageGroups });
       })
       .then(() => this.scrollToBottom());
   }
 
-  componentDidMount() {
-    this.fetchData(this.props).then(() => {
-      this.props.onFinishLoading();
-    });
+  fetchSingleMessage(messageId) {
+    return this.apiService.fetch(
+      `/api/messages/${this.props.section}/${
+        this.props.id
+      }/singleMessage/${messageId}`
+    );
   }
 
-  componentDidUpdate(prevProps) {
+  resetMessages() {
+    this.currentPage = 1;
+    this.currentMessageGroups = [];
+  }
+
+  mergeMessageGroups(oldMessageGroups, newMessageGroups) {
+    let mergedMessageGroups = [];
     if (
-      this.props.section !== prevProps.section ||
-      this.props.id !== prevProps.id
+      newMessageGroups.length > 0 &&
+      oldMessageGroups[oldMessageGroups.length - 1].dateString ===
+        newMessageGroups[0].dateString
     ) {
-      this.currentPage = 0;
-      this.fetchData(this.props);
+      // when message group has overlapping date
+      newMessageGroups[0].messages = oldMessageGroups[
+        oldMessageGroups.length - 1
+      ].messages.concat(newMessageGroups[0].messages);
+      mergedMessageGroups = oldMessageGroups
+        .slice(0, oldMessageGroups.length - 1)
+        .concat(newMessageGroups);
+    } else {
+      mergedMessageGroups = oldMessageGroups.concat(newMessageGroups);
     }
 
-    if (this.state.messageGroups.length > 0) this.scrollDetector.init();
+    return mergedMessageGroups;
   }
 
-  onNewChannelMessage(channelId) {
+  onChannelMessageItemChange(channelId, changeType, messageId) {
     if (this.props.section === "channel" && this.props.id === channelId) {
-      this.fetchData(this.props);
+      switch (changeType) {
+        case 1:
+          this.fetchSingleMessage(messageId).then(messageGroupDto => {
+            this.currentMessageGroups = this.mergeMessageGroups(
+              this.currentMessageGroups,
+              [messageGroupDto]
+            );
+            this.setState({ messageGroups: this.currentMessageGroups });
+          });
+      }
     }
   }
 
-  onNewConversationMessage(conversationId) {
+  onConversationMessageItemChange(conversationId, changeType, messageId) {
     if (
       this.props.section === "conversation" &&
       this.props.id === conversationId
     ) {
-      this.fetchData(this.props);
+      this.fetchHistory();
     }
   }
 
@@ -142,6 +183,29 @@ class ContentMessages extends React.Component {
 
   onCloseEditingMessage() {
     this.setState({ editingMessageId: undefined });
+  }
+
+  onLoadMoreHistory() {
+    this.currentPage++;
+    this.fetchHistory();
+  }
+
+  componentDidMount() {
+    this.fetchHistory().then(() => {
+      this.props.onFinishLoading();
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.section !== prevProps.section ||
+      this.props.id !== prevProps.id
+    ) {
+      this.resetMessages();
+      this.fetchHistory();
+    }
+
+    if (this.state.messageGroups.length > 0) this.scrollDetector.init();
   }
 
   render() {
@@ -157,7 +221,12 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {index === 0 && !this.areAllPagesLoaded && (
-                <div className="message-load-history">Loading history...</div>
+                <div
+                  className="message-load-history"
+                  onClick={this.onLoadMoreHistory}
+                >
+                  Loading history...
+                </div>
               )}
               {g.messages.map(m => (
                 <div key={m.id}>

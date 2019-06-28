@@ -2,6 +2,7 @@
 using iChat.Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using iChat.Api.Constants;
 
 namespace iChat.Api.Services
 {

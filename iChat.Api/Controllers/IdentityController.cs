@@ -20,7 +20,7 @@ namespace iChat.Api.Controllers
             _workspaceService = workspaceService;
         }
 
-        // GET api/identity/authenticate
+        // POST api/identity/authenticate
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserProfileDto>> AuthenticateAsync(UserLoginDto loginDto)
         {
