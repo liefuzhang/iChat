@@ -66,27 +66,32 @@ class ContentMessages extends React.Component {
   }
 
   loadMoreHistory() {
-    this.fetchHistory();
+    this.fetchHistory(true);
   }
 
-  fetchHistory() {
+  fetchHistory(isLoadingMore) {
     this.isFetchingHistory = true;
     this.currentPage++;
+    let section = this.props.section;
+    let id = this.props.id;
 
     return this.apiService
-      .fetch(
-        `/api/messages/${this.props.section}/${this.props.id}/${
-          this.currentPage
-        }`
-      )
+      .fetch(`/api/messages/${section}/${id}/${this.currentPage}`)
       .then(messageLoad => {
-        if (this.isFetchingHistory) {
+        if (
+          this.isFetchingHistory &&
+          section === this.props.section &&
+          id === this.props.id
+        ) {
           this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             messageLoad.messageGroupDtos,
             this.state.messageGroups
           );
-          this.setState({ messageGroups: updatedMessageGroups });
+          this.setState({ messageGroups: updatedMessageGroups }, () => {
+            if (isLoadingMore) this.messageScrollService.resumeScrollPosition();
+            else this.messageScrollService.scrollToBottom();
+          });
         }
       })
       .catch(() => {
@@ -192,11 +197,9 @@ class ContentMessages extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchHistory()
-      .then(() => {
-        this.props.onFinishLoading();
-      })
-      .then(() => this.messageScrollService.scrollToBottom());
+    this.fetchHistory(false).then(() => {
+      this.props.onFinishLoading();
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -205,11 +208,7 @@ class ContentMessages extends React.Component {
       this.props.id !== prevProps.id
     ) {
       this.resetMessage();
-      this.setState({ messageGroups: [] }, () =>
-        this.fetchHistory().then(() =>
-          this.messageScrollService.scrollToBottom()
-        )
-      );
+      this.setState({ messageGroups: [] }, () => this.fetchHistory(false));
     }
 
     if (this.state.messageGroups.length > 0) this.messageScrollService.reset();

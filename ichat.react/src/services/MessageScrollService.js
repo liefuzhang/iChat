@@ -23,8 +23,19 @@ class MessageScrollService {
   }
 
   onScrollHandler() {
-    if (this.scrollableElement.scrollTop === 0) this.params.onScrollToTop();
+    if (this.scrollableElement.scrollTop === 0) {
+      this.savedScrollHeight = this.scrollableElement.scrollHeight;
+      this.params.onScrollToTop();
+    }
     this.calculateCurrentGroup();
+  }
+
+  resumeScrollPosition() {
+    if (this.savedScrollHeight) {
+      this.scrollableElement.scrollTop =
+        this.scrollableElement.scrollHeight - this.savedScrollHeight;
+      this.savedScrollHeight = undefined;
+    }
   }
 
   calculateMessageGroupOffsetTops() {

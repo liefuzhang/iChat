@@ -41,7 +41,7 @@
   position: fixed;
   top: 48px;
   left: 220px;
-  z-index: 100;
+  z-index: 1000;
   width: calc(100% - 220px);
   min-width: 540px;
   padding: 0;
