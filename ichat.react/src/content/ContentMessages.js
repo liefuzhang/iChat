@@ -6,12 +6,14 @@ import ContentMessageItemEditor from "./ContentMessageItemEditor";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
 import MessageChangeService from "services/MessageChangeService";
+import MessageScrollService from "../services/MessageScrollService";
 
 class ContentMessages extends React.Component {
   constructor(props) {
     super(props);
 
     this.fetchHistory = this.fetchHistory.bind(this);
+    this.loadMoreHistory = this.loadMoreHistory.bind(this);
     this.onChannelMessageItemChange = this.onChannelMessageItemChange.bind(
       this
     );
@@ -20,10 +22,17 @@ class ContentMessages extends React.Component {
     );
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
-    this.onLoadMoreHistory = this.onLoadMoreHistory.bind(this);
+    this.onScrollToTop = this.onScrollToTop.bind(this);
 
     this.apiService = new ApiService(props);
     this.mesageChangeService = new MessageChangeService();
+    this.messageScrollService = new MessageScrollService({
+      scrollableElementSelector:
+        ".message-container .simplebar-content-wrapper",
+      anchorSelector: ".message-group-anchor",
+      stickyItemClassName: "sticky-on-top",
+      onScrollToTop: this.onScrollToTop
+    });
 
     if (props.hubConnection) {
       props.hubConnection.on(
@@ -36,73 +45,34 @@ class ContentMessages extends React.Component {
       );
     }
 
-    this.currentPage = 1;
+    this.resetMessage();
     this.state = {
       messageGroups: [],
       editingMessageId: undefined
     };
 
-    this.scrollDetector = {
-      init: function() {
-        this.calculateMessageGroupOffsetTops();
-        this.scrollableElement = document.querySelector(
-          ".message-container .simplebar-content-wrapper"
-        );
-        this.scrollableElement.onscroll = this.handler.bind(this);
-        window.onresize = this.calculateMessageGroupOffsetTops;
-        this.lastGroupIndex = -1;
-        this.handler();
-      },
-      scrollableElement: undefined,
-      lastGroupIndex: -1,
-      offsetTops: [],
-      messageGroupAnchors: [],
-      calculateMessageGroupOffsetTops: function() {
-        this.messageGroupAnchors = Array.from(
-          document.querySelectorAll(".message-group-anchor")
-        );
-        this.offsetTops = this.messageGroupAnchors.map(function(a) {
-          return a.offsetTop;
-        });
-      },
-      handler: function() {
-        var adjustHeight = this.messageGroupAnchors[0].offsetHeight / 2;
-        var currentGroupIndex = -1;
-        var startIndex = this.lastGroupIndex - 1;
-        startIndex = startIndex < 0 ? 0 : startIndex;
-        for (var i = startIndex; i < this.offsetTops.length; i++) {
-          if (
-            this.scrollableElement.scrollTop <
-            this.offsetTops[i] + adjustHeight
-          ) {
-            break;
-          }
-          currentGroupIndex = i;
-        }
-        if (this.lastGroupIndex !== currentGroupIndex) {
-          let currentAnchor = document.querySelector(
-            ".message-group-anchor.sticky-on-top"
-          );
-          currentAnchor && currentAnchor.classList.remove("sticky-on-top");
-          if (currentGroupIndex !== -1) {
-            this.messageGroupAnchors[currentGroupIndex].classList.add(
-              "sticky-on-top"
-            );
-          }
-          this.lastGroupIndex = currentGroupIndex;
-        }
-      }
-    };
+    this.scrollDetector = {};
   }
 
-  scrollToBottom() {
-    var scrollable = document.querySelector(
-      ".message-container .simplebar-content-wrapper"
-    );
-    scrollable.scrollTop = scrollable.scrollHeight;
+  onScrollToTop() {
+    if (!this.areAllPagesLoaded && !this.isFetchingHistory)
+      this.loadMoreHistory();
+  }
+
+  resetMessage() {
+    this.currentPage = 0;
+    this.isFetchingHistory = false;
+    this.isFetchingSingleMessage = false;
+  }
+
+  loadMoreHistory() {
+    this.fetchHistory();
   }
 
   fetchHistory() {
+    this.isFetchingHistory = true;
+    this.currentPage++;
+
     return this.apiService
       .fetch(
         `/api/messages/${this.props.section}/${this.props.id}/${
@@ -110,12 +80,20 @@ class ContentMessages extends React.Component {
         }`
       )
       .then(messageLoad => {
-        this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
-        let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
-          messageLoad.messageGroupDtos,
-          this.state.messageGroups
-        );
-        this.setState({ messageGroups: updatedMessageGroups });
+        if (this.isFetchingHistory) {
+          this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
+          let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
+            messageLoad.messageGroupDtos,
+            this.state.messageGroups
+          );
+          this.setState({ messageGroups: updatedMessageGroups });
+        }
+      })
+      .catch(() => {
+        this.currentPage--;
+      })
+      .finally(() => {
+        this.isFetchingHistory = false;
       });
   }
 
@@ -142,27 +120,43 @@ class ContentMessages extends React.Component {
   }
 
   handleAddedMessageItem(messageId) {
-    this.fetchSingleMessage(messageId).then(messageGroupDto => {
-      let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
-        this.state.messageGroups,
-        [messageGroupDto]
-      );
-      this.setState({ messageGroups: updatedMessageGroups }, () => {
-        if (messageGroupDto.messages[0].senderId === this.props.userProfile.id)
-          this.scrollToBottom();
+    this.isFetchingSingleMessage = true;
+    this.fetchSingleMessage(messageId)
+      .then(messageGroupDto => {
+        if (this.isFetchingSingleMessage) {
+          let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
+            this.state.messageGroups,
+            [messageGroupDto]
+          );
+          this.setState({ messageGroups: updatedMessageGroups }, () => {
+            if (
+              messageGroupDto.messages[0].senderId === this.props.userProfile.id
+            )
+              this.messageScrollService.scrollToBottom();
+          });
+        }
+      })
+      .finally(() => {
+        this.isFetchingSingleMessage = false;
       });
-    });
   }
 
   handleEditedMessageItem(messageId) {
-    this.fetchSingleMessage(messageId).then(messageGroupDto => {
-      let updatedMessageGroups = this.mesageChangeService.handleEditedMessageItem(
-        messageGroupDto,
-        this.state.messageGroups
-      );
-      if (updatedMessageGroups)
-        this.setState({ messageGroups: updatedMessageGroups });
-    });
+    this.isFetchingSingleMessage = true;
+    this.fetchSingleMessage(messageId)
+      .then(messageGroupDto => {
+        if (this.isFetchingSingleMessage) {
+          let updatedMessageGroups = this.mesageChangeService.handleEditedMessageItem(
+            messageGroupDto,
+            this.state.messageGroups
+          );
+          if (updatedMessageGroups)
+            this.setState({ messageGroups: updatedMessageGroups });
+        }
+      })
+      .finally(() => {
+        this.isFetchingSingleMessage = false;
+      });
   }
 
   handleDeletedMessageItem(messageId) {
@@ -197,17 +191,12 @@ class ContentMessages extends React.Component {
     this.setState({ editingMessageId: undefined });
   }
 
-  onLoadMoreHistory() {
-    this.currentPage++;
-    this.fetchHistory();
-  }
-
   componentDidMount() {
     this.fetchHistory()
       .then(() => {
         this.props.onFinishLoading();
       })
-      .then(() => this.scrollToBottom());
+      .then(() => this.messageScrollService.scrollToBottom());
   }
 
   componentDidUpdate(prevProps) {
@@ -215,11 +204,15 @@ class ContentMessages extends React.Component {
       this.props.section !== prevProps.section ||
       this.props.id !== prevProps.id
     ) {
-      this.currentPage = 1;
-      this.setState({ messageGroups: [] }, () => this.fetchHistory());
+      this.resetMessage();
+      this.setState({ messageGroups: [] }, () =>
+        this.fetchHistory().then(() =>
+          this.messageScrollService.scrollToBottom()
+        )
+      );
     }
 
-    if (this.state.messageGroups.length > 0) this.scrollDetector.init();
+    if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
   }
 
   render() {
@@ -235,12 +228,7 @@ class ContentMessages extends React.Component {
                 </div>
               </div>
               {index === 0 && !this.areAllPagesLoaded && (
-                <div
-                  className="message-load-history"
-                  onClick={this.onLoadMoreHistory}
-                >
-                  Loading history...
-                </div>
+                <div className="message-load-history">Loading history...</div>
               )}
               {g.messages.map(m => (
                 <div key={m.id}>

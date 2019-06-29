@@ -30,6 +30,13 @@ class ContentEditor extends React.Component {
     this.onEmojiHtmlAdded = this.onEmojiHtmlAdded.bind(this);
     this.onEditorPaste = this.onEditorPaste.bind(this);
     this.userList = [];
+    
+    this.quillService = new QuillService({
+      editorContainerSelector: `#${this.props.containerId} #messageEditor`,
+      onSubmitMessage: this.onSubmitMessage,
+      onTextChange: this.onTextChange,
+      onToggleFocus: this.onToggleFocus
+    });
 
     this.state = {
       isMentionOpen: false,
@@ -42,13 +49,7 @@ class ContentEditor extends React.Component {
   componentDidMount() {
     this.containerElement = document.getElementById(this.props.containerId);
 
-    this.quillService = new QuillService({
-      editorContainerSelector: `#${this.props.containerId} #messageEditor`,
-      onSubmitMessage: this.onSubmitMessage,
-      onTextChange: this.onTextChange,
-      onToggleFocus: this.onToggleFocus
-    });
-
+    this.quillService.init();
     this.initMention();
     this.registerEventHandlers();
     this.fecthUsers();

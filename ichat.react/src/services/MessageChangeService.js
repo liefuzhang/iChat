@@ -27,13 +27,13 @@ class MessageChangeService {
     ) {
       // when message group has overlapping date
       let firstNewerMessageGroupMessages = newerMessageGroups[0].messages;
-      let lastOlderMessageGroupMessage =
+      let lastOlderMessageGroupMessages =
         olderMessageGroups[olderMessageGroups.length - 1].messages;
       this.setIsConsecutiveMessage(
         firstNewerMessageGroupMessages[0],
-        lastOlderMessageGroupMessage[lastOlderMessageGroupMessage.length - 1]
+        lastOlderMessageGroupMessages[lastOlderMessageGroupMessages.length - 1]
       );
-      newerMessageGroups[0].messages = lastOlderMessageGroupMessage.concat(
+      newerMessageGroups[0].messages = lastOlderMessageGroupMessages.concat(
         firstNewerMessageGroupMessages
       );
       mergedMessageGroups = olderMessageGroups

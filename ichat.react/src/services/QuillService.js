@@ -8,8 +8,6 @@ class QuillService {
 
     this.keydownEventHandler = this.keydownEventHandler.bind(this);
     this.submitMessage = this.submitMessage.bind(this);
-
-    this.initQuill();
   }
 
   getCursorIndex() {
@@ -98,7 +96,7 @@ class QuillService {
     this.params.onSubmitMessage(message, text);
   }
 
-  initQuill() {
+  init() {
     this.configQuill();
 
     var bindings = {
