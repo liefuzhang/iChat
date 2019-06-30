@@ -62,6 +62,7 @@ class ContentMessages extends React.Component {
 
   resetMessage() {
     this.currentPage = 0;
+    this.areAllPagesLoaded = false;
     this.isFetchingHistory = false;
     this.isFetchingSingleMessage = false;
   }
@@ -89,6 +90,9 @@ class ContentMessages extends React.Component {
             messageLoad.messageGroupDtos,
             this.state.messageGroups
           );
+          if (!isLoadingMore)
+            this.messageChannelDescriptionDto =
+              messageLoad.messageChannelDescriptionDto;
           this.setState({ messageGroups: updatedMessageGroups }, () => {
             if (isLoadingMore) this.messageScrollService.resumeScrollPosition();
             else this.messageScrollService.scrollToBottom();
@@ -224,6 +228,7 @@ class ContentMessages extends React.Component {
               <div className="message-group-anchor" />
               <ContentMessagesDescription
                 messageChannelDescriptionDto={this.messageChannelDescriptionDto}
+                isChannel={this.props.isChannel}
                 userProfile={this.props.userProfile}
               />
             </div>

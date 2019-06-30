@@ -135,10 +135,11 @@ namespace iChat.Api.Services {
             var createdByUser = await _userService.GetUserByIdAsync(channel.CreatedByUserId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
                 CreatedByUser = _mapper.Map<UserDto>(createdByUser),
-                CreatedDataString = channel.CreatedDateString
+                CreatedDateString = channel.CreatedDateString,
+                MessageChannelName = channel.Name
             };
         }
-        
+
         public async Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int currentPage) {
             if (!_channelService.IsUserSubscribedToChannel(channelId, userId)) {
                 throw new ArgumentException($"User is not subsribed to channel.");
@@ -158,7 +159,8 @@ namespace iChat.Api.Services {
             var createdByUser = await _userService.GetUserByIdAsync(conversation.CreatedByUserId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
                 CreatedByUser = _mapper.Map<UserDto>(createdByUser),
-                CreatedDataString = conversation.CreatedDateString
+                CreatedDateString = conversation.CreatedDateString,
+                MessageChannelName = conversation.Name
             };
         }
 

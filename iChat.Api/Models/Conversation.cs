@@ -25,6 +25,6 @@ namespace iChat.Api.Models {
         public int WorkspaceId { get; private set; }
         public Workspace Workspace { get; private set; }
         public ICollection<ConversationUser> ConversationUsers { get; private set; }
-        public string CreatedDateString => CreatedDate.ToString("dddd, MMM d", CultureInfo.InvariantCulture);
+        public string CreatedDateString => CreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
     }
 }

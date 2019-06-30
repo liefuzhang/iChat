@@ -30,6 +30,6 @@ namespace iChat.Api.Models {
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelMessage> ChannelMessages { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
-        public string CreatedDateString => CreatedDate.ToString("dddd, MMM d", CultureInfo.InvariantCulture);
+        public string CreatedDateString => CreatedDate.ToString("MMM dd", CultureInfo.InvariantCulture);
     }
 }

@@ -22,6 +22,7 @@ class MessageChangeService {
     let mergedMessageGroups = [];
     if (
       newerMessageGroups.length > 0 &&
+      olderMessageGroups.length > 0 &&
       olderMessageGroups[olderMessageGroups.length - 1].dateString ===
         newerMessageGroups[0].dateString
     ) {
@@ -79,6 +80,10 @@ class MessageChangeService {
         );
       }
       group.messages.splice(currentMessageIndex, 1);
+      if (group.messages.length === 0) {
+        let currentGroupIndex = currentMessageGroups.indexOf(group);
+        currentMessageGroups.splice(currentGroupIndex, 1);
+      }
       return currentMessageGroups;
     }
   }
