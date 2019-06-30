@@ -77,6 +77,16 @@ namespace iChat.Api.Data {
 
             modelBuilder.Entity<MessageReactionUser>()
                 .HasKey(m => new { m.MessageReactionId, m.UserId });
+
+            modelBuilder.Entity<Channel>()
+                .HasOne(c => c.CreatedByUser)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Conversation>()
+                .HasOne(c => c.CreatedByUser)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

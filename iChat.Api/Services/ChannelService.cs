@@ -77,12 +77,12 @@ namespace iChat.Api.Services {
             return _mapper.Map<ChannelDto>(channel);
         }
 
-        public async Task<int> CreateChannelAsync(string channelName, int workspaceId, string topic = "") {
+        public async Task<int> CreateChannelAsync(string channelName, int userId, int workspaceId, string topic = "") {
             if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName)) {
                 throw new ArgumentException($"Channel \"{channelName}\" already exists.");
             }
 
-            var channel = new Channel(channelName, workspaceId, topic);
+            var channel = new Channel(channelName, userId, workspaceId, topic);
 
             _context.Channels.Add(channel);
             await _context.SaveChangesAsync();
@@ -136,13 +136,13 @@ namespace iChat.Api.Services {
             });
         }
 
-        public async Task AddDefaultChannelsToNewWorkplaceAsync(int workspaceId) {
-            if (workspaceId < 1) {
+        public async Task AddDefaultChannelsToNewWorkplaceAsync(int userId, int workspaceId) {
+            if (userId < 1 || workspaceId < 1) {
                 throw new ArgumentException("Invalid input");
             }
 
-            await CreateChannelAsync(iChatConstants.DefaultChannelGeneral, workspaceId, "Anything that's talkable");
-            await CreateChannelAsync(iChatConstants.DefaultChannelRandom, workspaceId, "Another random channel");
+            await CreateChannelAsync(iChatConstants.DefaultChannelGeneral, userId, workspaceId, "Anything that's talkable");
+            await CreateChannelAsync(iChatConstants.DefaultChannelRandom, userId, workspaceId, "Another random channel");
         }
 
         public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId) {

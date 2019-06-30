@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace iChat.UnitTests.Extensions
-{
-    public static class SeedData
-    {
+namespace iChat.UnitTests.Extensions {
+    public static class SeedData {
         public static string TestUser1Email { get; } = "email1@test.com";
         public static string TestUser1Name { get; } = "user1";
         public static int TestUser1Id { get; private set; }
@@ -30,8 +28,8 @@ namespace iChat.UnitTests.Extensions
             TestUser2Id = user2.Entity.Id;
 
 
-            var channel1 = context.Channels.Add(new Channel(TestChannel1Name, TestWorkspaceId, "topic1"));
-            var channel2 = context.Channels.Add(new Channel(TestChannel2Name, TestWorkspaceId, "topic2"));
+            var channel1 = context.Channels.Add(new Channel(TestChannel1Name, TestUser1Id, TestWorkspaceId, "topic1"));
+            var channel2 = context.Channels.Add(new Channel(TestChannel2Name, TestUser2Id, TestWorkspaceId, "topic2"));
             context.SaveChanges();
             TestChannel1Id = channel1.Entity.Id;
             TestChannel2Id = channel2.Entity.Id;

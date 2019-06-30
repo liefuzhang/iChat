@@ -43,7 +43,7 @@ namespace iChat.Api.Controllers
             var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceDto.DisplayName, workspaceId);
             await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
 
-            await _channelService.AddDefaultChannelsToNewWorkplaceAsync(workspaceId);
+            await _channelService.AddDefaultChannelsToNewWorkplaceAsync(userId, workspaceId);
             await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
 
             await _conversationService.StartSelfConversationAsync(userId, workspaceId);

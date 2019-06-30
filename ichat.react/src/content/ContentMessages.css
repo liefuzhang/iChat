@@ -5,9 +5,13 @@
   min-height: 0;
   min-width: 500px;
   margin: 0 -20px;
+  display: flex;
+  flex-direction: column;
 }
+
 .message-container .message-scrollable {
   max-height: 100%;
+  margin-top: auto;
 }
 
 .message-container .simplebar-track.simplebar-vertical {

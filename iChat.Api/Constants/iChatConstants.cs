@@ -15,6 +15,6 @@
 
         public static readonly string AwsBucketWorkspaceFileFolderPrefix = "Workspace-";
 
-        public static readonly int DefaultMessagePageSize = 20;
+        public static readonly int DefaultMessagePageSize = 30;
     }
 }

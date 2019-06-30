@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20190613085925_AddFileAndFileMessage.Designer.cs" />
     <Compile Remove="Migrations\20190613090631_AddFileAndFileMessage.cs" />
     <Compile Remove="Migrations\20190613090631_AddFileAndFileMessage.Designer.cs" />
+    <Compile Remove="Migrations\20190630050257_AddedCreatedInfoForConversationAndChannel.cs" />
+    <Compile Remove="Migrations\20190630050257_AddedCreatedInfoForConversationAndChannel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

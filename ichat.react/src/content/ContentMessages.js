@@ -3,6 +3,7 @@ import "./ContentMessages.css";
 import "lib/simplebar.css";
 import ContentMessageItem from "./ContentMessageItem";
 import ContentMessageItemEditor from "./ContentMessageItemEditor";
+import ContentMessagesDescription from "./ContentMessages.Description";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
 import MessageChangeService from "services/MessageChangeService";
@@ -218,6 +219,15 @@ class ContentMessages extends React.Component {
     return (
       <div className="message-container">
         <SimpleBar className="message-scrollable">
+          {this.areAllPagesLoaded && (
+            <div className="message-group message-content-description">
+              <div className="message-group-anchor" />
+              <ContentMessagesDescription
+                messageChannelDescriptionDto={this.messageChannelDescriptionDto}
+                userProfile={this.props.userProfile}
+              />
+            </div>
+          )}
           {this.state.messageGroups.map((g, index) => (
             <div key={g.dateString} className="message-group">
               <div className="message-group-anchor" />

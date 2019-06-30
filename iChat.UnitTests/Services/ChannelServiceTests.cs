@@ -49,7 +49,7 @@ namespace iChat.UnitTests.Services {
         public async Task CreateChannelAsync_WhenCalled_ReturnNewChannelId() {
             const string NewChannel = "channel new";
             const string NewTopic = "topic new";
-            var result = await _channelService.CreateChannelAsync(NewChannel, SeedData.TestWorkspaceId, NewTopic);
+            var result = await _channelService.CreateChannelAsync(NewChannel, SeedData.TestUser1Id, SeedData.TestWorkspaceId, NewTopic);
 
             var channel = _context.Channels.Single();
             Assert.AreEqual(result, channel.Id);
@@ -65,7 +65,7 @@ namespace iChat.UnitTests.Services {
             string NewChannel = SeedData.TestChannel1Name;
             const string NewTopic = "topic new";
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _channelService.CreateChannelAsync(NewChannel, SeedData.TestWorkspaceId, NewTopic));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _channelService.CreateChannelAsync(NewChannel, SeedData.TestUser1Id, SeedData.TestWorkspaceId, NewTopic));
         }
     }
 }
