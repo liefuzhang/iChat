@@ -10,7 +10,13 @@ class MessageChangeService {
   }
 
   setIsConsecutiveMessage(newerMessage, olderMessage) {
-    if (newerMessage.senderId !== olderMessage.senderId) return;
+    if (
+      newerMessage.senderId !== olderMessage.senderId ||
+      olderMessage.isSystemMessage
+    ) {
+      newerMessage.isConsecutiveMessage = false;
+      return;
+    }
 
     let newerMessageDate = moment(newerMessage.timeString, "h:mm tt");
     let olderMessageDate = moment(olderMessage.timeString, "h:mm tt");

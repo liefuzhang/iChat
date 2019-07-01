@@ -11,6 +11,7 @@ namespace iChat.Api.Dtos {
         public string TimeString { get; set; }
         public bool IsConsecutiveMessage { get; set; }
         public bool HasFileAttachments { get; set; }
+        public bool IsSystemMessage { get; set; }
         public bool ContentEdited { get; set; }
         public List<FileDto> FileAttachments { get; set; }
         public List<MessageReactionDto> MessageReactions { get; set; }

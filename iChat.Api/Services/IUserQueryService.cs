@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using iChat.Api.Constants;
 
-namespace iChat.Api.Services
-{
-    public interface IUserQueryService
-    {
+namespace iChat.Api.Services {
+    public interface IUserQueryService {
         Task<User> GetUserByIdAsync(int id);
         Task<User> GetUserByIdAsync(int id, int workspaceId);
         Task<User> GetUserByEmailAsync(string email);
+        Task<string> GetUserNamesAsync(List<int> userIds, int workspaceId);
         Task<IEnumerable<UserDto>> GetAllUsersAsync(int workspaceId);
         Task<bool> IsEmailRegisteredAsync(string email);
         Task<string> GetUserStatus(int userId, int workspaceId);

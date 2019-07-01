@@ -108,7 +108,7 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToChannelAsync(int id, List<int> userIds)
         {
-            await _channelCommandService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId());
+            await _channelCommandService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allChannelUserIds = await _channelQueryService.GetAllChannelUserIdsAsync(id);
             _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);

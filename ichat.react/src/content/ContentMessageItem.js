@@ -92,7 +92,8 @@ class ContentMessageItem extends React.Component {
       <div
         className={
           "message-item-common-container message-item-container" +
-          (message.isConsecutiveMessage ? " following-message" : "")
+          (message.isConsecutiveMessage ? " following-message" : "") +
+          (message.isSystemMessage ? " system-message" : "")
         }
         key={message.id}
         onMouseOver={this.onHoverMessageItem}

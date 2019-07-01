@@ -8,29 +8,26 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.UnitTests.Services
-{
+namespace iChat.UnitTests.Services {
     [TestClass]
-    public class ChannelCommandServiceTests
-    {
+    public class ChannelCommandServiceTests {
         private iChatContext _context;
         private ChannelCommandService _channelCommandService;
 
         [TestInitialize]
-        public void Initilize()
-        {
+        public void Initilize() {
             _context = new DbContextFactory().CreateNewContext();
             var userQueryService = new Mock<IUserQueryService>();
             var channelQueryService = new Mock<IChannelQueryService>();
             var mapper = new Mock<IMapper>();
             var notificationService = new Mock<INotificationService>();
+            var messageCommandService = new Mock<IMessageCommandService>();
             _channelCommandService = new ChannelCommandService(_context, userQueryService.Object,
-                channelQueryService.Object, notificationService.Object);
+                channelQueryService.Object, notificationService.Object, messageCommandService.Object);
         }
 
         [TestMethod]
-        public async Task CreateChannelAsync_WhenCalled_ReturnNewChannelId()
-        {
+        public async Task CreateChannelAsync_WhenCalled_ReturnNewChannelId() {
             const string NewChannel = "channel new";
             const string NewTopic = "topic new";
             var result = await _channelCommandService.CreateChannelAsync(NewChannel, SeedData.TestUser1Id, SeedData.TestWorkspaceId, NewTopic);
@@ -43,8 +40,7 @@ namespace iChat.UnitTests.Services
         }
 
         [TestMethod]
-        public async Task CreateChannelAsync_WhenChannelNameExists_ThrowArgumentException()
-        {
+        public async Task CreateChannelAsync_WhenChannelNameExists_ThrowArgumentException() {
             _context.SeedTestData();
 
             string NewChannel = SeedData.TestChannel1Name;

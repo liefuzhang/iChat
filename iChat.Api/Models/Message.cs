@@ -20,7 +20,7 @@ namespace iChat.Api.Models
         public DateTime CreatedDate { get; protected set; }
         public bool HasFileAttachments { get; protected set; }
         public bool ContentEdited { get; protected set; }
-        //public bool IsSystemMessage { get; protected set; }
+        public bool IsSystemMessage { get; protected set; }
         public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
         public ICollection<MessageReaction> MessageReactions { get; protected set; }
 
