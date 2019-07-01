@@ -16,8 +16,12 @@ namespace iChat.Api.Services
         Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId);
         Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId);
         Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId);
-        Task DeleteMessageAsync(int messageId, int userId);
-        Task AddReactionToMessageAsync(int messageId, string emojiColons, int userId);
-        Task RemoveReactionToMessageAsync(int messageId, string emojiColons, int userId);
+        Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId);
+        Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId);
+        Task AddReactionToMessageInConversationAsync(int conversationId, int messageId, string emojiColons, int userId);
+        Task AddReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons, int userId);
+        Task RemoveReactionToMessageInConversationAsync(int conversationId, int messageId, string emojiColons,
+            int userId);
+        Task RemoveReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons, int userId);
     }
 }

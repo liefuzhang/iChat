@@ -210,6 +210,8 @@ namespace iChat.Api.Services
             var messageInDb = _context.ConversationMessages.Single(cm => cm.SenderId == currentUserId && cm.ConversationId == conversationId &&
                                                                          cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
+
+            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
         }
 
         public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId)
@@ -217,14 +219,29 @@ namespace iChat.Api.Services
             var messageInDb = _context.ChannelMessages.Single(cm => cm.SenderId == currentUserId && cm.ChannelId == channelId &&
                                                                     cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
+
+            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
         }
 
-
-        public async Task DeleteMessageAsync(int messageId, int userId)
+        private async Task DeleteMessageCommonAsync(int messageId, int userId)
         {
             var message = await _context.Messages.SingleAsync(m => m.Id == messageId && m.SenderId == userId);
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId)
+        {
+            await DeleteMessageCommonAsync(messageId, userId);
+
+            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
+        }
+
+        public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId)
+        {
+            await DeleteMessageCommonAsync(messageId, userId);
+
+            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Deleted);
         }
 
         private async Task<bool> EligibleForTheFileAsync(int fileId, int userId, int workspaceId)
@@ -256,7 +273,7 @@ namespace iChat.Api.Services
             return false;
         }
 
-        public async Task AddReactionToMessageAsync(int messageId, string emojiColons, int userId)
+        private async Task AddReactionToMessageCommonAsync(int messageId, string emojiColons, int userId)
         {
             var messageReaction = await _context.MessageReactions.SingleOrDefaultAsync(mr => mr.MessageId == messageId && mr.EmojiColons == emojiColons);
             if (messageReaction == null)
@@ -269,9 +286,26 @@ namespace iChat.Api.Services
             var messageReactionUser = new MessageReactionUser(messageReaction.Id, userId);
             _context.MessageReactionUsers.Add(messageReactionUser);
             await _context.SaveChangesAsync();
+
         }
 
-        public async Task RemoveReactionToMessageAsync(int messageId, string emojiColons, int userId)
+        public async Task AddReactionToMessageInConversationAsync(int conversationId, int messageId, string emojiColons,
+            int userId)
+        {
+            await AddReactionToMessageCommonAsync(messageId, emojiColons, userId);
+
+            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
+        }
+
+        public async Task AddReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons,
+            int userId)
+        {
+            await AddReactionToMessageCommonAsync(messageId, emojiColons, userId);
+
+            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
+        }
+        
+        private async Task RemoveReactionToMessageCommonAsync(int messageId, string emojiColons, int userId)
         {
             var messageReaction = await _context.MessageReactions
                 .Include(mr => mr.MessageReactionUsers)
@@ -286,5 +320,22 @@ namespace iChat.Api.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task RemoveReactionToMessageInConversationAsync(int conversationId, int messageId,
+            string emojiColons, int userId)
+        {
+            await RemoveReactionToMessageCommonAsync(messageId, emojiColons, userId);
+
+            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
+        }
+
+        public async Task RemoveReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons,
+            int userId)
+        {
+            await RemoveReactionToMessageCommonAsync(messageId, emojiColons, userId);
+
+            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
+        }
+
     }
 }
