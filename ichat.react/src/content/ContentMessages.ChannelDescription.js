@@ -1,7 +1,7 @@
 import React from "react";
 import "./ContentMessages.Description.css";
 
-class ContentMessagesDescription extends React.Component {
+class ContentMessagesChannelDescription extends React.Component {
   constructor(props) {
     super(props);
 
@@ -19,17 +19,15 @@ class ContentMessagesDescription extends React.Component {
           {this.dto.messageChannelName}
         </div>
         <p>
-          {this.props.isChannel && (
-            <span>
-              This channel has been created by {this.createdBy} on{" "}
-              {this.dto.createdDateString}. This is the very beginning of the{" "}
-              <b>{this.dto.messageChannelName}</b> channel.
-            </span>
-          )}
+          <span>
+            This channel has been created by {this.createdBy} on{" "}
+            {this.dto.createdDateString}. This is the very beginning of the{" "}
+            <b>{this.dto.messageChannelName}</b> channel.
+          </span>
         </p>
       </div>
     );
   }
 }
 
-export default ContentMessagesDescription;
+export default ContentMessagesChannelDescription;

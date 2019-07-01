@@ -1,4 +1,5 @@
-﻿using iChat.Api.Models;
+﻿using iChat.Api.Dtos;
+using iChat.Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace iChat.Api.Services
         Task<IEnumerable<ChannelDto>> GetAllUnsubscribedChannelsForUserAsync(int userId, int workspaceId);
         Task<int> GetDefaultChannelGeneralIdAsync(int workspaceId);
         Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId);
+        Task<IEnumerable<UserDto>> GetAllChannelUsersAsync(int channelId);
         Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId);
         Task InviteOtherMembersToChannelAsync(int id, List<int> userIds, int userId);
     }

@@ -3,7 +3,8 @@ import "./ContentMessages.css";
 import "lib/simplebar.css";
 import ContentMessageItem from "./ContentMessageItem";
 import ContentMessageItemEditor from "./ContentMessageItemEditor";
-import ContentMessagesDescription from "./ContentMessages.Description";
+import ContentMessagesChannelDescription from "./ContentMessages.ChannelDescription";
+import ContentMessagesConversationDescription from "./ContentMessages.ConversationDescription";
 import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
 import MessageChangeService from "services/MessageChangeService";
@@ -226,11 +227,21 @@ class ContentMessages extends React.Component {
           {this.areAllPagesLoaded && (
             <div className="message-group message-content-description">
               <div className="message-group-anchor" />
-              <ContentMessagesDescription
-                messageChannelDescriptionDto={this.messageChannelDescriptionDto}
-                isChannel={this.props.isChannel}
-                userProfile={this.props.userProfile}
-              />
+              {this.props.isChannel ? (
+                <ContentMessagesChannelDescription
+                  messageChannelDescriptionDto={
+                    this.messageChannelDescriptionDto
+                  }
+                  userProfile={this.props.userProfile}
+                />
+              ) : (
+                <ContentMessagesConversationDescription
+                  messageChannelDescriptionDto={
+                    this.messageChannelDescriptionDto
+                  }
+                  userProfile={this.props.userProfile}
+                />
+              )}
             </div>
           )}
           {this.state.messageGroups.map((g, index) => (

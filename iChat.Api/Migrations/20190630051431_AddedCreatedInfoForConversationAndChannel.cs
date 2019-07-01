@@ -11,7 +11,7 @@ namespace iChat.Api.Migrations
                 name: "CreatedByUserId",
                 table: "Conversations",
                 nullable: false,
-                defaultValue: 12);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedDate",
@@ -23,7 +23,7 @@ namespace iChat.Api.Migrations
                 name: "CreatedByUserId",
                 table: "Channels",
                 nullable: false,
-                defaultValue: 12);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedDate",

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using iChat.Api.Dtos;
 
 namespace iChat.Api.Services {
     public class ConversationService : IConversationService {
@@ -112,6 +113,22 @@ namespace iChat.Api.Services {
             return conversationName;
         }
 
+        public async Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId)
+        {
+            return await _context.ConversationUsers
+                .Where(cu => cu.ConversationId == conversationId)
+                .Select(cu => cu.UserId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserDto>> GetAllConversationUsersAsync(int conversationId)
+        {
+            var userIds = await GetAllConversationUserIdsAsync(conversationId);
+            var users = await _context.Users.Where(u => userIds.Contains(u.Id))
+                .Select(u => _mapper.Map<UserDto>(u)).ToListAsync();
+            return users;
+        }
+
         public async Task<bool> IsSelfConversationAsync(int conversationId, int userId) {
             var userIds = await GetAllConversationUserIdsAsync(conversationId);
             return userIds.Count() == 1 && userIds.Single() == userId;
@@ -177,13 +194,6 @@ namespace iChat.Api.Services {
             }
 
             conversations.Insert(0, conversation);
-        }
-
-        public async Task<IEnumerable<int>> GetAllConversationUserIdsAsync(int conversationId) {
-            return await _context.ConversationUsers
-                .Where(cu => cu.ConversationId == conversationId)
-                .Select(cu => cu.UserId)
-                .ToListAsync();
         }
     }
 }
