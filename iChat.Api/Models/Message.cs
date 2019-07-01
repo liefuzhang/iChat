@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace iChat.Api.Models {
-    public abstract class Message {
+namespace iChat.Api.Models
+{
+    public abstract class Message
+    {
         public int Id { get; protected set; }
         public int SenderId { get; protected set; }
         public User Sender { get; protected set; }
@@ -13,14 +15,17 @@ namespace iChat.Api.Models {
         public DateTime CreatedDate { get; protected set; }
         public bool HasFileAttachments { get; protected set; }
         public bool ContentEdited { get; protected set; }
+        //public bool IsSystemMessage { get; protected set; }
         public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
         public ICollection<MessageReaction> MessageReactions { get; protected set; }
 
         public string DateString => CreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
         public string TimeString => CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
 
-        public void UpdateContent(string content) {
-            if (string.IsNullOrWhiteSpace(content)) {
+        public void UpdateContent(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
                 throw new Exception("Content cannot be empty");
             }
 

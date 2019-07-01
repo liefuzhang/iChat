@@ -19,7 +19,7 @@ class ContentMessagesConversationDescription extends React.Component {
       <div className="content-message-description">
         <div className="user-identicons">
           {this.otherUserList.map(u => (
-            <img className="user-identicon" src={u.identiconPath} />
+            <img key={u.id} className="user-identicon" src={u.identiconPath} />
           ))}
         </div>
         <p>

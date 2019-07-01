@@ -14,12 +14,15 @@ namespace iChat.Api.Controllers
     [Authorize]
     public class ConversationsController : ControllerBase
     {
-        private readonly IConversationService _conversationService;
+        private readonly IConversationCommandService _conversationCommandService;
+        private readonly IConversationQueryService _conversationQueryService;
         private readonly INotificationService _notificationService;
 
-        public ConversationsController(IConversationService conversationService, INotificationService notificationService)
+        public ConversationsController(IConversationCommandService conversationCommandService,
+            IConversationQueryService conversationQueryService, INotificationService notificationService)
         {
-            _conversationService = conversationService;
+            _conversationCommandService = conversationCommandService;
+            _conversationQueryService = conversationQueryService;
             _notificationService = notificationService;
         }
 
@@ -27,7 +30,7 @@ namespace iChat.Api.Controllers
         [HttpGet("recent")]
         public async Task<ActionResult<IEnumerable<ConversationDto>>> GetRecentConversationsAsync()
         {
-            var conversations = await _conversationService
+            var conversations = await _conversationQueryService
                 .GetRecentConversationsForUserAsync(User.GetUserId(), User.GetWorkspaceId());
             return conversations.ToList();
         }
@@ -36,7 +39,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConversationDto>> GetAsync(int id)
         {
-            var conversation = await _conversationService.GetConversationByIdAsync(id, User.GetUserId(), User.GetWorkspaceId());
+            var conversation = await _conversationQueryService.GetConversationByIdAsync(id, User.GetUserId(), User.GetWorkspaceId());
             if (conversation == null)
             {
                 return NotFound();
@@ -49,7 +52,7 @@ namespace iChat.Api.Controllers
         [HttpPost("start")]
         public async Task<ActionResult<int>> StartConversationAsync(List<int> withUserIds)
         {
-            var id = await _conversationService.StartConversationWithOthersAsync(withUserIds, User.GetUserId(), User.GetWorkspaceId());
+            var id = await _conversationCommandService.StartConversationWithOthersAsync(withUserIds, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok(id);
         }
@@ -59,7 +62,7 @@ namespace iChat.Api.Controllers
         [HttpPost("notifyTyping")]
         public async Task<IActionResult> NotifyTypingAsync([FromBody]int conversationId)
         {
-            await _conversationService.NotifyTypingAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
+            await _conversationCommandService.NotifyTypingAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }
@@ -68,7 +71,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}/userIds")]
         public async Task<ActionResult<IEnumerable<int>>> GetAllConversationUserIdsAsync(int id)
         {
-            var userIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+            var userIds = await _conversationQueryService.GetAllConversationUserIdsAsync(id);
 
             return userIds.ToList();
         }
@@ -77,9 +80,9 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToConversationAsync(int id, List<int> userIds)
         {
-            await _conversationService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId());
+            await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId());
 
-            var allConversationUserIds = await _conversationService.GetAllConversationUserIdsAsync(id);
+            var allConversationUserIds = await _conversationQueryService.GetAllConversationUserIdsAsync(id);
             _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
 
             return Ok();

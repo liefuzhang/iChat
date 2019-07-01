@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace iChat.Api.Services
 {
-    public class WorkspaceService : IWorkspaceService
+    public class WorkspaceCommandService : IWorkspaceCommandService
     {
         private readonly iChatContext _context;
 
-        public WorkspaceService(iChatContext context)
+        public WorkspaceCommandService(iChatContext context)
         {
             _context = context;
         }
@@ -36,11 +36,6 @@ namespace iChat.Api.Services
             var workspace = await _context.Workspaces.SingleAsync(w => w.Id == workspaceId);
             workspace.SetOwner(userId);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<Workspace> GetWorkspaceByIdAsync(int workspaceId)
-        {
-            return await _context.Workspaces.SingleAsync(w => w.Id == workspaceId);
         }
     }
 }

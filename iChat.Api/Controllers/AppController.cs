@@ -13,12 +13,12 @@ namespace iChat.Api.Controllers
     public class AppController : ControllerBase
     {
         private readonly ICacheService _cacheService;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userQueryService;
 
-        public AppController(ICacheService cacheService, IUserService userService)
+        public AppController(ICacheService cacheService, IUserQueryService userQueryService)
         {
             _cacheService = cacheService;
-            _userService = userService;
+            _userQueryService = userQueryService;
         }
 
         // GET api/app/userSesstionData
@@ -28,7 +28,7 @@ namespace iChat.Api.Controllers
             var sessionData = new UserSessionData
             {
                 ActiveSidebarItem = await _cacheService.GetActiveSidebarItemAsync(User.GetUserId(), User.GetWorkspaceId()),
-                UserStatus = await _userService.GetUserStatus(User.GetUserId(), User.GetWorkspaceId())
+                UserStatus = await _userQueryService.GetUserStatus(User.GetUserId(), User.GetWorkspaceId())
             };
 
             return Ok(sessionData);

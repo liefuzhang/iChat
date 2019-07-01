@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 
 namespace iChat.Api.Services
 {
-    public class ChannelService : IChannelService
+    public class ChannelQueryService : IChannelQueryService
     {
         private readonly iChatContext _context;
-        private readonly IUserService _userService;
-        private ICacheService _cacheService;
+        private readonly IUserQueryService _userQueryService;
+        private readonly ICacheService _cacheService;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
 
-        public ChannelService(iChatContext context, IUserService userService,
+        public ChannelQueryService(iChatContext context, IUserQueryService userQueryService,
             ICacheService cacheService, IMapper mapper, INotificationService notificationService)
         {
             _context = context;
-            _userService = userService;
+            _userQueryService = userQueryService;
             _cacheService = cacheService;
             _mapper = mapper;
             _notificationService = notificationService;
@@ -88,21 +88,6 @@ namespace iChat.Api.Services
             return _mapper.Map<ChannelDto>(channel);
         }
 
-        public async Task<int> CreateChannelAsync(string channelName, int userId, int workspaceId, string topic = "")
-        {
-            if (await _context.Channels.AnyAsync(c => c.WorkspaceId == workspaceId && c.Name == channelName))
-            {
-                throw new ArgumentException($"Channel \"{channelName}\" already exists.");
-            }
-
-            var channel = new Channel(channelName, userId, workspaceId, topic);
-
-            _context.Channels.Add(channel);
-            await _context.SaveChangesAsync();
-
-            return channel.Id;
-        }
-
         public async Task<IEnumerable<int>> GetAllChannelUserIdsAsync(int channelId)
         {
             return await _context.ChannelSubscriptions
@@ -119,79 +104,7 @@ namespace iChat.Api.Services
             return users;
         }
 
-        public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
-        {
-            var user = await _userService.GetUserByIdAsync(userId, workspaceId);
-            var channel = await GetChannelByIdAsync(channelId, workspaceId);
-
-            if (user == null || channel == null)
-            {
-                throw new ArgumentException("Cannot find user or channel");
-            }
-
-            AddUsersToChannel(new List<int>(new[] { userId }), channelId);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RemoveUserFromChannelAsync(int channelId, int userId)
-        {
-            var channelSubscription = _context.ChannelSubscriptions
-                .Single(cs => cs.ChannelId == channelId && cs.UserId == userId);
-            _context.ChannelSubscriptions.Remove(channelSubscription);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task InviteOtherMembersToChannelAsync(int channelId, List<int> userIds, int userId)
-        {
-            if (userIds == null || userIds.Count < 1)
-            {
-                throw new ArgumentException("Invalid users");
-            }
-
-            if (!IsUserSubscribedToChannel(channelId, userId))
-            {
-                throw new ArgumentException("User is not subsribed to channel.");
-            }
-
-            AddUsersToChannel(userIds, channelId);
-            await _context.SaveChangesAsync();
-        }
-
-        private void AddUsersToChannel(List<int> userIds, int channelId)
-        {
-            userIds.ForEach(id =>
-            {
-                var channelSubscription = new ChannelSubscription(channelId, id);
-                _context.ChannelSubscriptions.Add(channelSubscription);
-            });
-        }
-
-        public async Task AddDefaultChannelsToNewWorkplaceAsync(int userId, int workspaceId)
-        {
-            if (userId < 1 || workspaceId < 1)
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
-            await CreateChannelAsync(iChatConstants.DefaultChannelGeneral, userId, workspaceId, "Anything that's talkable");
-            await CreateChannelAsync(iChatConstants.DefaultChannelRandom, userId, workspaceId, "Another random channel");
-        }
-
-        public async Task AddUserToDefaultChannelsAsync(int userId, int workspaceId)
-        {
-            if (userId < 1 || workspaceId < 1)
-            {
-                throw new ArgumentException("Invalid input");
-            }
-
-            var defaultChannelGeneral = await GetChannelByNameAsync(iChatConstants.DefaultChannelGeneral, workspaceId);
-            var defaultChannelRandom = await GetChannelByNameAsync(iChatConstants.DefaultChannelRandom, workspaceId);
-
-            await AddUserToChannelAsync(defaultChannelGeneral.Id, userId, workspaceId);
-            await AddUserToChannelAsync(defaultChannelRandom.Id, userId, workspaceId);
-        }
-
-        private async Task<Channel> GetChannelByNameAsync(string name, int workspaceId)
+        public async Task<Channel> GetChannelByNameAsync(string name, int workspaceId)
         {
             var channel = await _context.Channels.AsNoTracking()
                 .Where(c => c.Name == name &&
@@ -214,7 +127,7 @@ namespace iChat.Api.Services
 
         public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId)
         {
-            var currentUser = await _userService.GetUserByIdAsync(currentUserId, workspaceId);
+            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId, workspaceId);
             if (currentUser == null)
             {
                 return;

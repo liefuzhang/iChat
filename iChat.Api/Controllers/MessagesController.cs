@@ -18,21 +18,24 @@ namespace iChat.Api.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly INotificationService _notificationService;
-        private readonly IMessageService _messageService;
-        private readonly IChannelService _channelService;
-        private readonly IConversationService _conversationService;
+        private readonly IMessageQueryService _messageQueryService;
+        private readonly IMessageCommandService _messageCommandService;
+        private readonly IChannelQueryService _channelQueryService;
+        private readonly IConversationQueryService _conversationQueryService;
         private readonly ICacheService _cacheService;
 
         public MessagesController(INotificationService notificationService,
-            IMessageService messageService,
-            IChannelService channelService,
-            IConversationService conversationService,
+            IMessageQueryService messageQueryService,
+            IMessageCommandService messageCommandService,
+            IChannelQueryService channelQueryService,
+            IConversationQueryService conversationQueryService,
             ICacheService cacheService, IFileHelper fileHelper)
         {
             _notificationService = notificationService;
-            _messageService = messageService;
-            _channelService = channelService;
-            _conversationService = conversationService;
+            _messageQueryService = messageQueryService;
+            _messageCommandService = messageCommandService;
+            _channelQueryService = channelQueryService;
+            _conversationQueryService = conversationQueryService;
             _cacheService = cacheService;
         }
 
@@ -40,7 +43,7 @@ namespace iChat.Api.Controllers
         [HttpGet("channel/{id}/{currentPage}")]
         public async Task<ActionResult<MessageLoadDto>> GetMessagesForChannelAsync(int id, int currentPage)
         {
-            var messageLoadDto = await _messageService.GetMessagesForChannelAsync(id, User.GetUserId(), User.GetWorkspaceId(), currentPage);
+            var messageLoadDto = await _messageQueryService.GetMessagesForChannelAsync(id, User.GetUserId(), User.GetWorkspaceId(), currentPage);
 
             await _cacheService.RemoveUnreadChannelForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             await _cacheService.SetActiveSidebarItemAsync(true, id, User.GetUserId(), User.GetWorkspaceId());
@@ -54,9 +57,9 @@ namespace iChat.Api.Controllers
         [HttpGet("conversation/{id}/{currentPage}")]
         public async Task<ActionResult<MessageLoadDto>> GetMessagesForConversationAsync(int id, int currentPage)
         {
-            var messageLoadDto = await _messageService.GetMessagesForConversationAsync(id, User.GetUserId(), User.GetWorkspaceId(), currentPage);
+            var messageLoadDto = await _messageQueryService.GetMessagesForConversationAsync(id, User.GetUserId(), User.GetWorkspaceId(), currentPage);
 
-            if (!await _conversationService.IsSelfConversationAsync(id, User.GetUserId()))
+            if (!await _conversationQueryService.IsSelfConversationAsync(id, User.GetUserId()))
             {
                 await _cacheService.ClearUnreadConversationMessageForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             }
@@ -71,7 +74,7 @@ namespace iChat.Api.Controllers
         [HttpGet("channel/{channelId}/singleMessage/{messageId}")]
         public async Task<ActionResult<MessageGroupDto>> GetSingleMessagesForChannelAsync(int channelId, int messageId)
         {
-            var messageGroupDto = await _messageService.GetSingleMessagesForChannelAsync(channelId, messageId, User.GetUserId());
+            var messageGroupDto = await _messageQueryService.GetSingleMessagesForChannelAsync(channelId, messageId, User.GetUserId());
 
             await _cacheService.RemoveUnreadChannelForUserAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
             await _notificationService.SendUpdateChannelListNotificationAsync(new[] { User.GetUserId() }, channelId);
@@ -83,9 +86,9 @@ namespace iChat.Api.Controllers
         [HttpGet("conversation/{conversationId}/singleMessage/{messageId}")]
         public async Task<ActionResult<MessageGroupDto>> GetSingleMessagesForConversationAsync(int conversationId, int messageId)
         {
-            var messageGroupDto = await _messageService.GetSingleMessagesForConversationAsync(conversationId, messageId, User.GetUserId());
+            var messageGroupDto = await _messageQueryService.GetSingleMessagesForConversationAsync(conversationId, messageId, User.GetUserId());
 
-            if (!await _conversationService.IsSelfConversationAsync(conversationId, User.GetUserId()))
+            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, User.GetUserId()))
             {
                 await _cacheService.ClearUnreadConversationMessageForUserAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
             }
@@ -96,20 +99,20 @@ namespace iChat.Api.Controllers
 
         private async Task SendConversationMessageItemChangeNotificationAsync(int conversationId, int messageId, MessageChangeType type)
         {
-            var userIds = (await _conversationService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
             await _notificationService.SendConversationMessageItemChangeNotificationAsync(userIds, conversationId, type, messageId);
         }
 
         private async Task SendChannelMessageItemChangeNotificationAsync(int channelId, int messageId, MessageChangeType type)
         {
-            var userIds = (await _channelService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             await _notificationService.SendChannelMessageItemChangeNotificationAsync(userIds, channelId, type, messageId);
         }
 
         private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId)
         {
-            var userIds = (await _conversationService.GetAllConversationUserIdsAsync(conversationId)).ToList();
-            if (!await _conversationService.IsSelfConversationAsync(conversationId, User.GetUserId()))
+            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, User.GetUserId()))
             {
                 await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, User.GetWorkspaceId());
             }
@@ -119,7 +122,7 @@ namespace iChat.Api.Controllers
 
         private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, List<int> mentionUserIds = null)
         {
-            var userIds = (await _channelService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             await _cacheService.AddUnreadChannelForUsersAsync(channelId, userIds, User.GetWorkspaceId(), mentionUserIds);
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Added);
         }
@@ -128,7 +131,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{id}")]
         public async Task<IActionResult> PostMessageToConversationAsync(int id, MessagePostDto messagePostDto)
         {
-            var messageId = await _messageService.PostMessageToConversationAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.PostMessageToConversationAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewConversationMessageAsync(id, messageId);
 
             return Ok();
@@ -138,7 +141,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{id}")]
         public async Task<IActionResult> PostMessageToChannelAsync(int id, MessagePostDto messagePostDto)
         {
-            var messageId = await _messageService.PostMessageToChannelAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.PostMessageToChannelAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewChannelMessageAsync(id, messageId, messagePostDto.MentionUserIds);
 
             return Ok();
@@ -148,7 +151,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/update/{messageId}")]
         public async Task<IActionResult> UpdateMessageInConversationAsync(int conversationId, int messageId, MessagePostDto messagePostDto)
         {
-            await _messageService.UpdateMessageInConversationAsync(messagePostDto.MessageContent, conversationId, messageId, User.GetUserId());
+            await _messageCommandService.UpdateMessageInConversationAsync(messagePostDto.MessageContent, conversationId, messageId, User.GetUserId());
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
 
             return Ok();
@@ -158,7 +161,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/update/{messageId}")]
         public async Task<IActionResult> UpdateMessageInChannelAsync(int channelId, int messageId, MessagePostDto messagePostDto)
         {
-            await _messageService.UpdateMessageInChannelAsync(messagePostDto.MessageContent, channelId, messageId, User.GetUserId());
+            await _messageCommandService.UpdateMessageInChannelAsync(messagePostDto.MessageContent, channelId, messageId, User.GetUserId());
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
 
             return Ok();
@@ -168,7 +171,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToConversationAsync(IList<IFormFile> files, int conversationId)
         {
-            var messageId = await _messageService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewConversationMessageAsync(conversationId, messageId);
 
             return Ok();
@@ -178,7 +181,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToChannelAsync(IList<IFormFile> files, int channelId)
         {
-            var messageId = await _messageService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewChannelMessageAsync(channelId, messageId);
 
             return Ok();
@@ -188,7 +191,7 @@ namespace iChat.Api.Controllers
         [HttpGet("downloadFile/{fileId}")]
         public async Task<IActionResult> DownloadFileAsync(int fileId)
         {
-            var (stream, contentType) = await _messageService.DownloadFileAsync(fileId, User.GetUserId(), User.GetWorkspaceId());
+            var (stream, contentType) = await _messageCommandService.DownloadFileAsync(fileId, User.GetUserId(), User.GetWorkspaceId());
             return File(stream, contentType);
         }
 
@@ -196,7 +199,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/shareFile/{fileId}")]
         public async Task<IActionResult> ShareFileToConversationAsync(int conversationId, int fileId)
         {
-            var messageId = await _messageService.ShareFileToConversationAsync(conversationId, fileId, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.ShareFileToConversationAsync(conversationId, fileId, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewConversationMessageAsync(conversationId, messageId);
 
             return Ok();
@@ -206,7 +209,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/shareFile/{fileId}")]
         public async Task<IActionResult> ShareFileToChannelAsync(int channelId, int fileId)
         {
-            var messageId = await _messageService.ShareFileToChannelAsync(channelId, fileId, User.GetUserId(), User.GetWorkspaceId());
+            var messageId = await _messageCommandService.ShareFileToChannelAsync(channelId, fileId, User.GetUserId(), User.GetWorkspaceId());
             await NotifyForNewChannelMessageAsync(channelId, messageId);
 
             return Ok();
@@ -216,7 +219,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/deleteMessage")]
         public async Task<IActionResult> DeleteMessageFromConversationAsync(int conversationId, [FromBody]int messageId)
         {
-            await _messageService.DeleteMessageAsync(messageId, User.GetUserId());
+            await _messageCommandService.DeleteMessageAsync(messageId, User.GetUserId());
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
 
             return Ok();
@@ -226,7 +229,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/deleteMessage")]
         public async Task<IActionResult> DeleteMessageFromChannelAsync(int channelId, [FromBody]int messageId)
         {
-            await _messageService.DeleteMessageAsync(messageId, User.GetUserId());
+            await _messageCommandService.DeleteMessageAsync(messageId, User.GetUserId());
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Deleted);
 
             return Ok();
@@ -236,7 +239,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/addReaction/{messageId}")]
         public async Task<IActionResult> AddReactionToMessageInConversationAsync(int conversationId, int messageId, [FromBody]string emojiColons)
         {
-            await _messageService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+            await _messageCommandService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
 
             return Ok();
@@ -246,7 +249,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/addReaction/{messageId}")]
         public async Task<IActionResult> AddReactionToMessageInChannelAsync(int channelId, int messageId, [FromBody]string emojiColons)
         {
-            await _messageService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+            await _messageCommandService.AddReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
 
             return Ok();
@@ -256,7 +259,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/removeReaction/{messageId}")]
         public async Task<IActionResult> RemoveReactionToMessageInConversationAsync(int conversationId, int messageId, [FromBody]string emojiColons)
         {
-            await _messageService.RemoveReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+            await _messageCommandService.RemoveReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
 
             return Ok();
@@ -266,7 +269,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/removeReaction/{messageId}")]
         public async Task<IActionResult> RemoveReactionToMessageInChannelAsync(int channelId, int messageId, [FromBody]string emojiColons)
         {
-            await _messageService.RemoveReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
+            await _messageCommandService.RemoveReactionToMessageAsync(messageId, emojiColons, User.GetUserId());
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
 
             return Ok();

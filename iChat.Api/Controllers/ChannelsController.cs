@@ -15,12 +15,15 @@ namespace iChat.Api.Controllers
     [Authorize]
     public class ChannelsController : ControllerBase
     {
-        private readonly IChannelService _channelService;
+        private readonly IChannelCommandService _channelCommandService;
+        private readonly IChannelQueryService _channelQueryService;
         private readonly INotificationService _notificationService;
 
-        public ChannelsController(IChannelService channelService, INotificationService notificationService)
+        public ChannelsController(IChannelCommandService channelCommandService,
+            IChannelQueryService channelQueryService, INotificationService notificationService)
         {
-            _channelService = channelService;
+            _channelCommandService = channelCommandService;
+            _channelQueryService = channelQueryService;
             _notificationService = notificationService;
         }
 
@@ -28,7 +31,7 @@ namespace iChat.Api.Controllers
         [HttpGet("forUser")]
         public async Task<ActionResult<IEnumerable<ChannelDto>>> GetChannelsForUserAsync()
         {
-            var channels = await _channelService
+            var channels = await _channelQueryService
                 .GetChannelsForUserAsync(User.GetUserId(), User.GetWorkspaceId());
             return channels.ToList();
         }
@@ -37,7 +40,7 @@ namespace iChat.Api.Controllers
         [HttpGet("allUnsubscribed")]
         public async Task<ActionResult<IEnumerable<ChannelDto>>> GetAllUnsubscribedChannelsAsync()
         {
-            var channels = await _channelService
+            var channels = await _channelQueryService
                 .GetAllUnsubscribedChannelsForUserAsync(User.GetUserId(), User.GetWorkspaceId());
             return channels.ToList();
         }
@@ -46,7 +49,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDto>> GetAsync(int id)
         {
-            var channel = await _channelService.GetChannelByIdAsync(id, User.GetWorkspaceId());
+            var channel = await _channelQueryService.GetChannelByIdAsync(id, User.GetWorkspaceId());
             if (channel == null)
             {
                 return NotFound();
@@ -59,8 +62,8 @@ namespace iChat.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> CreateChannelAsync(ChannelCreateDto channelCreateDto)
         {
-            var id = await _channelService.CreateChannelAsync(channelCreateDto.Name, User.GetUserId(), User.GetWorkspaceId(), channelCreateDto.Topic);
-            await _channelService.AddUserToChannelAsync(id, User.GetUserId(), User.GetWorkspaceId());
+            var id = await _channelCommandService.CreateChannelAsync(channelCreateDto.Name, User.GetUserId(), User.GetWorkspaceId(), channelCreateDto.Topic);
+            await _channelCommandService.AddUserToChannelAsync(id, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok(id);
         }
@@ -69,7 +72,7 @@ namespace iChat.Api.Controllers
         [HttpPost("join")]
         public async Task<IActionResult> JoinChannelAsync([FromBody] int channelId)
         {
-            await _channelService.AddUserToChannelAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
+            await _channelCommandService.AddUserToChannelAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }
@@ -78,7 +81,7 @@ namespace iChat.Api.Controllers
         [HttpPost("notifyTyping")]
         public async Task<IActionResult> NotifyTypingAsync([FromBody]int channelId)
         {
-            await _channelService.NotifyTypingAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
+            await _channelCommandService.NotifyTypingAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }
@@ -87,7 +90,7 @@ namespace iChat.Api.Controllers
         [HttpPost("leave")]
         public async Task<IActionResult> LeaveChannelAsync([FromBody] int channelId)
         {
-            await _channelService.RemoveUserFromChannelAsync(channelId, User.GetUserId());
+            await _channelCommandService.RemoveUserFromChannelAsync(channelId, User.GetUserId());
 
             return Ok();
         }
@@ -96,7 +99,7 @@ namespace iChat.Api.Controllers
         [HttpGet("{id}/userIds")]
         public async Task<ActionResult<IEnumerable<int>>> GetAllChannelUserIdsAsync(int id)
         {
-            var userIds = await _channelService.GetAllChannelUserIdsAsync(id);
+            var userIds = await _channelQueryService.GetAllChannelUserIdsAsync(id);
 
             return userIds.ToList();
         }
@@ -105,9 +108,9 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToChannelAsync(int id, List<int> userIds)
         {
-            await _channelService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId());
+            await _channelCommandService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId());
 
-            var allChannelUserIds = await _channelService.GetAllChannelUserIdsAsync(id);
+            var allChannelUserIds = await _channelQueryService.GetAllChannelUserIdsAsync(id);
             _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);
 
             return Ok();

@@ -2,9 +2,8 @@
 using iChat.Api.Models;
 
 namespace iChat.Api.Services {
-    public interface IWorkspaceService {
-        Task<int> RegisterAsync(string name);
-        Task UpdateOwnerIdAsync(int workspaceId, int userId);
+    public interface IWorkspaceQueryService
+    {
         Task<Workspace> GetWorkspaceByIdAsync(int workspaceId);
     }
 }

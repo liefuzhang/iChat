@@ -12,21 +12,21 @@ namespace iChat.Api.Controllers
     [ApiController]
     public class WorkspacesController : ControllerBase
     {
-        private readonly IWorkspaceService _workspaceService;
-        private readonly IChannelService _channelService;
-        private readonly IConversationService _conversationService;
-        private readonly IIdentityService _identityService;
-        private readonly IUserService _userService;
+        private readonly IWorkspaceQueryService _workspaceQueryService;
+        private readonly IWorkspaceCommandService _workspaceCommandService;
+        private readonly IChannelCommandService _channelCommandService;
+        private readonly IConversationCommandService _conversationCommandService;
+        private readonly IUserQueryService _userQueryService;
+        private readonly IUserCommandService _userCommandService;
 
-        public WorkspacesController(iChatContext context, IWorkspaceService workspaceService,
-            IIdentityService identityService, IUserService userService,
-            IChannelService channelService, IConversationService conversationService)
+        public WorkspacesController(iChatContext context, IWorkspaceQueryService workspaceService, IUserQueryService userQueryService,
+            IUserCommandService userCommandService, IChannelCommandService channelCommandService, IConversationCommandService conversationCommandService)
         {
-            _workspaceService = workspaceService;
-            _identityService = identityService;
-            _userService = userService;
-            _channelService = channelService;
-            _conversationService = conversationService;
+            _workspaceQueryService = workspaceService;
+            _userQueryService = userQueryService;
+            _userCommandService = userCommandService;
+            _channelCommandService = channelCommandService;
+            _conversationCommandService = conversationCommandService;
         }
 
         // POST api/workspaces
@@ -34,19 +34,19 @@ namespace iChat.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] WorkspaceDto workspaceDto)
         {
-            if (await _userService.IsEmailRegisteredAsync(workspaceDto.Email))
+            if (await _userQueryService.IsEmailRegisteredAsync(workspaceDto.Email))
             {
                 throw new Exception($"Email \"{workspaceDto.Email}\" is already taken");
             }
 
-            var workspaceId = await _workspaceService.RegisterAsync(workspaceDto.WorkspaceName);
-            var userId = await _userService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceDto.DisplayName, workspaceId);
-            await _workspaceService.UpdateOwnerIdAsync(workspaceId, userId);
+            var workspaceId = await _workspaceCommandService.RegisterAsync(workspaceDto.WorkspaceName);
+            var userId = await _userCommandService.RegisterAsync(workspaceDto.Email, workspaceDto.Password, workspaceDto.DisplayName, workspaceId);
+            await _workspaceCommandService.UpdateOwnerIdAsync(workspaceId, userId);
 
-            await _channelService.AddDefaultChannelsToNewWorkplaceAsync(userId, workspaceId);
-            await _channelService.AddUserToDefaultChannelsAsync(userId, workspaceId);
+            await _channelCommandService.AddDefaultChannelsToNewWorkplaceAsync(userId, workspaceId);
+            await _channelCommandService.AddUserToDefaultChannelsAsync(userId, workspaceId);
 
-            await _conversationService.StartSelfConversationAsync(userId, workspaceId);
+            await _conversationCommandService.StartSelfConversationAsync(userId, workspaceId);
 
             return Ok();
         }

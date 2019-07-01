@@ -40,11 +40,16 @@ namespace iChat.Api
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IMessageParsingHelper, MessageParsingHelper>();
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IWorkspaceService, WorkspaceService>();
-            services.AddScoped<IChannelService, ChannelService>();
-            services.AddScoped<IConversationService, ConversationService>();
-            services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IUserCommandService, UserCommandService>();
+            services.AddScoped<IUserQueryService, UserQueryService>();
+            services.AddScoped<IWorkspaceQueryService, WorkspaceQueryService>();
+            services.AddScoped<IWorkspaceCommandService, WorkspaceCommandService>();
+            services.AddScoped<IChannelCommandService, ChannelCommandService>();
+            services.AddScoped<IChannelQueryService, ChannelQueryService>();
+            services.AddScoped<IConversationCommandService, ConversationCommandService>();
+            services.AddScoped<IConversationQueryService, ConversationQueryService>();
+            services.AddScoped<IMessageCommandService, MessageCommandService>();
+            services.AddScoped<IMessageQueryService, MessageQueryService>();
             services.AddScoped<IEmailHelper, EmailHelper>();
             services.AddScoped<IUserIdenticonHelper, UserIdenticonHelper>();
             services.AddScoped<ICacheService, CacheService>();
@@ -101,9 +106,9 @@ namespace iChat.Api
                     {
                         OnTokenValidated = async context =>
                         {
-                            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                            var userQueryService = context.HttpContext.RequestServices.GetRequiredService<IUserQueryService>();
                             var userId = context.Principal.GetUserId();
-                            var user = await userService.GetUserByIdAsync(userId);
+                            var user = await userQueryService.GetUserByIdAsync(userId);
 
                             if (user == null)
                             {

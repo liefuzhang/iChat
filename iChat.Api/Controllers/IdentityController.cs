@@ -12,12 +12,10 @@ namespace iChat.Api.Controllers
     public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityService;
-        private readonly IWorkspaceService _workspaceService;
 
-        public IdentityController(IIdentityService identityService, IWorkspaceService workspaceService)
+        public IdentityController(IIdentityService identityService)
         {
             _identityService = identityService;
-            _workspaceService = workspaceService;
         }
 
         // POST api/identity/authenticate
@@ -25,7 +23,7 @@ namespace iChat.Api.Controllers
         public async Task<ActionResult<UserProfileDto>> AuthenticateAsync(UserLoginDto loginDto)
         {
             var userProfileDto = await _identityService.AuthenticateAsync(loginDto.Email, loginDto.Password);
-            
+
             // return basic user info (without password) and token to store on client side
             return userProfileDto;
         }
@@ -36,7 +34,7 @@ namespace iChat.Api.Controllers
         public async Task<ActionResult<UserProfileDto>> GetUserProfileAsync()
         {
             var userProfileDto = await _identityService.GetUserProfileAsync(User.GetUserId(), User.GetWorkspaceId());
-            
+
             return userProfileDto;
         }
     }

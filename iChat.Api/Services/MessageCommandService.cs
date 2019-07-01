@@ -1,151 +1,27 @@
-﻿using AutoMapper;
-using iChat.Api.Data;
-using iChat.Api.Dtos;
+﻿using iChat.Api.Data;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Services
 {
-    public class MessageService : IMessageService
+    public class MessageCommandService : IMessageCommandService
     {
         private readonly iChatContext _context;
-        private readonly IChannelService _channelService;
-        private readonly IConversationService _conversationService;
         private readonly IMessageParsingHelper _messageParsingHelper;
-        private readonly IMapper _mapper;
         private readonly IFileHelper _fileHelper;
 
-        public MessageService(iChatContext context, IChannelService channelService, IConversationService conversationService,
-            IMessageParsingHelper messageParsingHelper, IMapper mapper, IFileHelper fileHelper)
+        public MessageCommandService(iChatContext context, IMessageParsingHelper messageParsingHelper, IFileHelper fileHelper)
         {
             _context = context;
-            _channelService = channelService;
-            _conversationService = conversationService;
             _messageParsingHelper = messageParsingHelper;
-            _mapper = mapper;
             _fileHelper = fileHelper;
-        }
-
-        private async Task<List<MessageGroupDto>> GetMessageGroups(IQueryable<Message> baseQuery)
-        {
-            var groups = await baseQuery
-                .Include(m => m.MessageReactions)
-                .GroupBy(m => m.CreatedDate.Date)
-                .OrderBy(group => group.Key)
-                .Select(group =>
-                    new MessageGroupDto
-                    {
-                        DateString = group.Key.ToString("dddd, MMM d", CultureInfo.InvariantCulture),
-                        Messages = group.Select(m => _mapper.Map<MessageDto>(m))
-                    })
-                .ToListAsync();
-
-            AllowConsecutiveMessages(groups);
-            await AddFilesToMessagesAsync(groups);
-            SortMessageReactionsByCreatedDate(groups);
-            await AddReactionUsersToMessagesAsync(groups);
-
-            return groups;
-        }
-
-        private void AllowConsecutiveMessages(List<MessageGroupDto> groups)
-        {
-            var maxDiffInMin = 3;
-            groups.ForEach(g =>
-            {
-                var messages = g.Messages.ToList();
-                for (var i = 0; i < messages.Count(); i++)
-                {
-                    if (i == 0 || messages[i - 1].SenderId != messages[i].SenderId)
-                    {
-                        continue;
-                    }
-                    var time = DateTime.Parse(messages[i].TimeString);
-                    var prevTime = DateTime.Parse(messages[i - 1].TimeString);
-                    if ((time - prevTime).Minutes <= maxDiffInMin)
-                    {
-                        messages[i].IsConsecutiveMessage = true;
-                    }
-                }
-                g.Messages = messages;
-            });
-        }
-
-        private async Task AddFilesToMessagesAsync(List<MessageGroupDto> groups)
-        {
-            var fileMessages = groups.SelectMany(g => g.Messages).Where(m => m.HasFileAttachments).ToList();
-            var fileMessageIds = fileMessages.Select(m => m.Id);
-            var files = await _context.Files.Include(f => f.MessageFileAttachments)
-                .Where(f => f.MessageFileAttachments
-                                .Any(mfa => fileMessageIds.Contains(mfa.MessageId))).ToListAsync();
-            foreach (var fileMessage in fileMessages)
-            {
-                var fileAttachments = files.Where(f => f.MessageFileAttachments.Any(mfa => mfa.MessageId == fileMessage.Id)).ToList();
-                fileMessage.FileAttachments = _mapper.Map<List<FileDto>>(fileAttachments);
-            }
-        }
-
-        private void SortMessageReactionsByCreatedDate(List<MessageGroupDto> groups)
-        {
-            var messages = groups.SelectMany(g => g.Messages).ToList();
-            messages.ForEach(m =>
-            {
-                m.MessageReactions = m.MessageReactions.OrderBy(mr => mr.CreatedDate).ToList();
-            });
-        }
-
-        private async Task AddReactionUsersToMessagesAsync(List<MessageGroupDto> groups)
-        {
-            var messageReactions = groups.SelectMany(g => g.Messages).SelectMany(m => m.MessageReactions).ToList();
-            var messageReationIds = messageReactions.Select(mr => mr.Id);
-            var messageReactionUsers = await _context.MessageReactionUsers
-                    .Include(mru => mru.User)
-                    .Where(mru => messageReationIds.Any(id => id == mru.MessageReactionId))
-                    .ToListAsync();
-            foreach (var messageReaction in messageReactions)
-            {
-                var users = messageReactionUsers.Where(mru => mru.MessageReactionId == messageReaction.Id)
-                    .Select(mru => mru.User);
-                messageReaction.Users = _mapper.Map<List<UserDto>>(users);
-            }
-        }
-
-        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId)
-        {
-            if (!_channelService.IsUserSubscribedToChannel(channelId, userId))
-            {
-                throw new ArgumentException($"User is not subsribed to channel.");
-            }
-
-            var messageGroupsBaseQuery = _context.ChannelMessages
-                .Include(m => m.Sender)
-                .Where(m => m.ChannelId == channelId && m.WorkspaceId == workspaceId);
-            var messageGroups = await GetMessageGroups(messageGroupsBaseQuery);
-
-            return messageGroups;
-        }
-
-        public async Task<IEnumerable<MessageGroupDto>> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId)
-        {
-            if (!_conversationService.IsUserInConversation(conversationId, userId))
-            {
-                throw new ArgumentException($"User is not in conversation.");
-            }
-
-            var messageGroupsBaseQuery = _context.ConversationMessages
-                .Include(m => m.Sender)
-                .Where(m => m.ConversationId == conversationId && m.WorkspaceId == workspaceId);
-            var messageGroups = await GetMessageGroups(messageGroupsBaseQuery);
-
-            return messageGroups;
         }
 
         public async Task<int> PostMessageToConversationAsync(string newMessageContent, int conversationId, int currentUserId,
@@ -222,59 +98,69 @@ namespace iChat.Api.Services
             }
         }
 
-        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
+        public async Task<int> PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
         {
             if (!files.Any())
             {
-                return;
+                throw new ArgumentException($"File list is empty.");
             }
 
             var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
             await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
+
+            return messageId;
         }
 
-        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
+        public async Task<int> PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
         {
             if (!files.Any())
             {
-                return;
+                throw new ArgumentException($"File list is empty.");
             }
 
             var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
             await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
+
+            return messageId;
         }
 
         public async Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId)
         {
             if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
             {
-                return (null, null);
+                throw new ArgumentException($"File access required.");
             }
 
             var file = await _context.Files.SingleAsync(f => f.Id == fileId);
             return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
         }
 
-        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
+        public async Task<int> ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
         {
             if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
             {
-                return;
+                throw new ArgumentException($"File access required.");
+
             }
 
             var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
             await AttachFileToMessageAsync(messageId, fileId);
+
+            return messageId;
         }
 
-        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
+        public async Task<int> ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
         {
             if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
             {
-                return;
+                throw new ArgumentException($"File access required.");
+
             }
 
             var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
             await AttachFileToMessageAsync(messageId, fileId);
+
+            return messageId;
         }
 
         public async Task DeleteMessageAsync(int messageId, int userId)
