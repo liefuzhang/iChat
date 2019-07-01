@@ -6,6 +6,7 @@
   flex-direction: column;
   padding: 0 20px;
   overflow: hidden;
+  color: #1a1a1a;
 }
 
 #content .segment {
@@ -49,7 +50,7 @@
 }
 
 #content span.span-tag,
-#content span.span-tag  span[contenteditable=false] {
+#content span.span-tag span[contenteditable="false"] {
   display: inline-flex;
   align-items: center;
 }
