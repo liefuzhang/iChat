@@ -15,14 +15,16 @@ namespace iChat.Api.Services
         private readonly IUserQueryService _userQueryService;
         private readonly IChannelQueryService _channelQueryService;
         private readonly INotificationService _notificationService;
+        private readonly IMessageCommandService _messageCommandService;
 
         public ChannelCommandService(iChatContext context, IUserQueryService userQueryService,
-            IChannelQueryService channelQueryService, INotificationService notificationService)
+            IChannelQueryService channelQueryService, INotificationService notificationService, IMessageCommandService messageCommandService)
         {
             _context = context;
             _userQueryService = userQueryService;
             _channelQueryService = channelQueryService;
             _notificationService = notificationService;
+            _messageCommandService = messageCommandService;
         }
 
         public async Task<int> CreateChannelAsync(string channelName, int userId, int workspaceId, string topic = "")

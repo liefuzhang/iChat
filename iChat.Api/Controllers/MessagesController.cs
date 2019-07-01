@@ -108,32 +108,12 @@ namespace iChat.Api.Controllers
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             await _notificationService.SendChannelMessageItemChangeNotificationAsync(userIds, channelId, type, messageId);
         }
-
-        private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId)
-        {
-            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
-            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, User.GetUserId()))
-            {
-                await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, User.GetWorkspaceId());
-            }
-
-            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Added);
-        }
-
-        private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, List<int> mentionUserIds = null)
-        {
-            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
-            await _cacheService.AddUnreadChannelForUsersAsync(channelId, userIds, User.GetWorkspaceId(), mentionUserIds);
-            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Added);
-        }
-
+        
         // POST api/messages/conversation/1
         [HttpPost("conversation/{id}")]
         public async Task<IActionResult> PostMessageToConversationAsync(int id, MessagePostDto messagePostDto)
         {
-            var messageId = await _messageCommandService.PostMessageToConversationAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewConversationMessageAsync(id, messageId);
-
+            await _messageCommandService.PostMessageToConversationAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 
@@ -141,8 +121,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{id}")]
         public async Task<IActionResult> PostMessageToChannelAsync(int id, MessagePostDto messagePostDto)
         {
-            var messageId = await _messageCommandService.PostMessageToChannelAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewChannelMessageAsync(id, messageId, messagePostDto.MentionUserIds);
+            await _messageCommandService.PostMessageToChannelAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }
@@ -171,9 +150,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToConversationAsync(IList<IFormFile> files, int conversationId)
         {
-            var messageId = await _messageCommandService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewConversationMessageAsync(conversationId, messageId);
-
+            await _messageCommandService.PostFileMessageToConversationAsync(files, conversationId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 
@@ -181,9 +158,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/uploadFile")]
         public async Task<IActionResult> UploadFilesToChannelAsync(IList<IFormFile> files, int channelId)
         {
-            var messageId = await _messageCommandService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewChannelMessageAsync(channelId, messageId);
-
+            await _messageCommandService.PostFileMessageToChannelAsync(files, channelId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 
@@ -199,9 +174,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/shareFile/{fileId}")]
         public async Task<IActionResult> ShareFileToConversationAsync(int conversationId, int fileId)
         {
-            var messageId = await _messageCommandService.ShareFileToConversationAsync(conversationId, fileId, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewConversationMessageAsync(conversationId, messageId);
-
+            await _messageCommandService.ShareFileToConversationAsync(conversationId, fileId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 
@@ -209,9 +182,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{channelId}/shareFile/{fileId}")]
         public async Task<IActionResult> ShareFileToChannelAsync(int channelId, int fileId)
         {
-            var messageId = await _messageCommandService.ShareFileToChannelAsync(channelId, fileId, User.GetUserId(), User.GetWorkspaceId());
-            await NotifyForNewChannelMessageAsync(channelId, messageId);
-
+            await _messageCommandService.ShareFileToChannelAsync(channelId, fileId, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
 

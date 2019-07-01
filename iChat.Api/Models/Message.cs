@@ -6,6 +6,11 @@ namespace iChat.Api.Models
 {
     public abstract class Message
     {
+        protected Message()
+        {
+            MessageFileAttachments = new HashSet<MessageFileAttachment>();
+        }
+
         public int Id { get; protected set; }
         public int SenderId { get; protected set; }
         public User Sender { get; protected set; }
@@ -31,6 +36,16 @@ namespace iChat.Api.Models
 
             Content = content;
             ContentEdited = true;
+        }
+
+        public void AddMessageFileAttachment(File file)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            MessageFileAttachments.Add(new MessageFileAttachment(this, file));
         }
     }
 }

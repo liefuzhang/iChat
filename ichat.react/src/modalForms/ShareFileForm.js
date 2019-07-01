@@ -10,6 +10,8 @@ class ShareFileForm extends React.Component {
 
     this.onShareFileFormSubmit = this.onShareFileFormSubmit.bind(this);
     this.changeSelectedShareWith = this.changeSelectedShareWith.bind(this);
+    this.channelPrefix = "channel_";
+    this.conversationPrefix = "conversation_";
     this.apiService = new ApiService(props);
 
     this.state = {
@@ -30,16 +32,16 @@ class ShareFileForm extends React.Component {
         let shareWithList = [];
         channels.forEach(c => {
           shareWithList.push({
-            key: `channel_${c.id}`,
+            key: `${this.channelPrefix}${c.id}`,
             text: c.name,
-            value: c.id
+            value: `${this.channelPrefix}${c.id}`
           });
         });
         conversations.forEach(c => {
           shareWithList.push({
-            key: `conversation_${c.id}`,
+            key: `${this.conversationPrefix}${c.id}`,
             text: c.name,
-            value: c.id
+            value: `${this.conversationPrefix}${c.id}`
           });
         });
         this.setState({ shareWithList: shareWithList });
@@ -55,11 +57,16 @@ class ShareFileForm extends React.Component {
     let button = event.currentTarget.querySelector("button[type='submit']");
     button.classList.add("disabled-button");
 
-    let targetName = shareWith.key.startsWith("channel")
-      ? "channel"
-      : "conversation";
+    let targetName, value;
+    if (shareWith.key.startsWith(`${this.channelPrefix}`)) {
+      targetName = "channel";
+      value = +shareWith.value.substring(this.channelPrefix.length);
+    } else {
+      targetName = "conversation";
+      value = +shareWith.value.substring(this.conversationPrefix.length);
+    }
 
-    let url = `/api/messages/${targetName}/${shareWith.value}/shareFile/${
+    let url = `/api/messages/${targetName}/${value}/shareFile/${
       this.props.file.id
     }`;
     this.apiService

@@ -2,10 +2,13 @@
 using iChat.Api.Constants;
 using iChat.Api.Data;
 using iChat.Api.Dtos;
+using iChat.Api.Helpers;
 using iChat.Api.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MessageDto = iChat.Api.Dtos.MessageDto;
@@ -20,7 +23,7 @@ namespace iChat.Api.Services
         private readonly IUserQueryService _userQueryService;
         private readonly IMapper _mapper;
 
-        public MessageQueryService(iChatContext context, IChannelQueryService channelQueryService,
+        public MessageQueryService(iChatContext context, IChannelQueryService channelQueryService, 
             IConversationQueryService conversationQueryService,
             IUserQueryService userQueryService, IMapper mapper)
         {

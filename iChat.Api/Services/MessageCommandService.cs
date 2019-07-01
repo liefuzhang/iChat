@@ -1,4 +1,5 @@
-﻿using iChat.Api.Data;
+﻿using iChat.Api.Constants;
+using iChat.Api.Data;
 using iChat.Api.Helpers;
 using iChat.Api.Models;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using File = iChat.Api.Models.File;
 
 namespace iChat.Api.Services
 {
@@ -15,36 +17,180 @@ namespace iChat.Api.Services
     {
         private readonly iChatContext _context;
         private readonly IMessageParsingHelper _messageParsingHelper;
+        private readonly IChannelQueryService _channelQueryService;
+        private readonly IConversationQueryService _conversationQueryService;
         private readonly IFileHelper _fileHelper;
+        private readonly ICacheService _cacheService;
+        private readonly INotificationService _notificationService;
 
-        public MessageCommandService(iChatContext context, IMessageParsingHelper messageParsingHelper, IFileHelper fileHelper)
+        public MessageCommandService(iChatContext context, IMessageParsingHelper messageParsingHelper, IFileHelper fileHelper, IChannelQueryService channelQueryService, IConversationQueryService conversationQueryService, ICacheService cacheService, INotificationService notificationService)
         {
             _context = context;
             _messageParsingHelper = messageParsingHelper;
             _fileHelper = fileHelper;
+            _channelQueryService = channelQueryService;
+            _conversationQueryService = conversationQueryService;
+            _cacheService = cacheService;
+            _notificationService = notificationService;
         }
 
-        public async Task<int> PostMessageToConversationAsync(string newMessageContent, int conversationId, int currentUserId,
-            int workspaceId, bool hasFileAttachments = false)
+        private async Task SendConversationMessageItemChangeNotificationAsync(int conversationId, int messageId, MessageChangeType type)
         {
-            var content = _messageParsingHelper.Parse(newMessageContent);
-            var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId, hasFileAttachments);
-
-            _context.ConversationMessages.Add(message);
-            await _context.SaveChangesAsync();
-
-            return message.Id;
+            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            await _notificationService.SendConversationMessageItemChangeNotificationAsync(userIds, conversationId, type, messageId);
         }
 
-        public async Task<int> PostMessageToChannelAsync(string newMessageContent, int channelId, int currentUserId,
-            int workspaceId, bool hasFileAttachments = false)
+        private async Task SendChannelMessageItemChangeNotificationAsync(int channelId, int messageId, MessageChangeType type)
+        {
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            await _notificationService.SendChannelMessageItemChangeNotificationAsync(userIds, channelId, type, messageId);
+        }
+
+        private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId, int userId, int workspaceId)
+        {
+            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, userId))
+            {
+                await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, workspaceId);
+            }
+
+            await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Added);
+        }
+
+        private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, int workspaceId, List<int> mentionUserIds = null)
+        {
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            await _cacheService.AddUnreadChannelForUsersAsync(channelId, userIds, workspaceId, mentionUserIds);
+            await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Added);
+        }
+
+        private async Task PostMessageToConversationCommonAsync(ConversationMessage conversationMessage)
+        {
+            _context.ConversationMessages.Add(conversationMessage);
+            await _context.SaveChangesAsync();
+
+            await NotifyForNewConversationMessageAsync(conversationMessage.ConversationId, conversationMessage.Id,
+                conversationMessage.SenderId, conversationMessage.WorkspaceId);
+        }
+
+        private async Task PostMessageToChannelCommonAsync(ChannelMessage channelMessage, List<int> mentionUserIds = null)
+        {
+            _context.ChannelMessages.Add(channelMessage);
+            await _context.SaveChangesAsync();
+
+            await NotifyForNewChannelMessageAsync(channelMessage.ChannelId, channelMessage.Id, channelMessage.WorkspaceId, mentionUserIds);
+        }
+
+        public async Task PostMessageToConversationAsync(string newMessageContent, int conversationId, int currentUserId,
+            int workspaceId)
         {
             var content = _messageParsingHelper.Parse(newMessageContent);
-            var message = new ChannelMessage(channelId, content, currentUserId, workspaceId, hasFileAttachments);
+            var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId);
 
-            _context.ChannelMessages.Add(message);
-            await _context.SaveChangesAsync();
-            return message.Id;
+            await PostMessageToConversationCommonAsync(message);
+        }
+
+        public async Task PostMessageToChannelAsync(string newMessageContent, int channelId, int currentUserId,
+            int workspaceId)
+        {
+            var content = _messageParsingHelper.Parse(newMessageContent);
+            var message = new ChannelMessage(channelId, content, currentUserId, workspaceId);
+
+            await PostMessageToChannelCommonAsync(message);
+        }
+
+        private async Task<IEnumerable<File>> UploadAndSaveFilesForMessageAsync(IList<IFormFile> files, int userId, int workspaceId)
+        {
+            var savedFiles = new List<File>();
+            foreach (var file in files)
+            {
+                var savedFileName = await _fileHelper.UploadFileAsync(file, workspaceId);
+                var newFile = new File(savedFileName, file.FileName, file.ContentType, userId, workspaceId);
+                _context.Files.Add(newFile);
+
+                await _context.SaveChangesAsync();
+
+                savedFiles.Add(newFile);
+            }
+
+            return savedFiles;
+        }
+
+        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
+        {
+            if (!files.Any())
+            {
+                throw new ArgumentException($"File list is empty.");
+            }
+
+            var savedFiles = await UploadAndSaveFilesForMessageAsync(files, userId, workspaceId);
+
+            var message = new ConversationMessage(conversationId, string.Empty, userId, workspaceId, true);
+            foreach (var file in savedFiles)
+            {
+                message.AddMessageFileAttachment(file);
+            }
+
+            await PostMessageToConversationCommonAsync(message);
+        }
+
+        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
+        {
+            if (!files.Any())
+            {
+                throw new ArgumentException($"File list is empty.");
+            }
+
+            var savedFiles = await UploadAndSaveFilesForMessageAsync(files, userId, workspaceId);
+
+            var message = new ChannelMessage(channelId, string.Empty, userId, workspaceId, true);
+            foreach (var file in savedFiles)
+            {
+                message.AddMessageFileAttachment(file);
+            }
+
+            await PostMessageToChannelCommonAsync(message);
+        }
+
+        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
+                throw new ArgumentException($"File access required.");
+
+            }
+
+            var message = new ConversationMessage(conversationId, string.Empty, userId, workspaceId, true);
+            var file = await _context.Files.SingleAsync(f => f.Id == fileId);
+            message.AddMessageFileAttachment(file);
+
+            await PostMessageToConversationCommonAsync(message);
+        }
+
+        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
+                throw new ArgumentException($"File access required.");
+
+            }
+
+            var message = new ChannelMessage(channelId, string.Empty, userId, workspaceId, true);
+            var file = await _context.Files.SingleAsync(f => f.Id == fileId);
+            message.AddMessageFileAttachment(file);
+
+            await PostMessageToChannelCommonAsync(message);
+        }
+
+        public async Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
+                throw new ArgumentException($"File access required.");
+            }
+
+            var file = await _context.Files.SingleAsync(f => f.Id == fileId);
+            return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
         }
 
         private async Task UpdateMessageContent(Message messageInDb, string message)
@@ -62,7 +208,7 @@ namespace iChat.Api.Services
         public async Task UpdateMessageInConversationAsync(string messageContent, int conversationId, int messageId, int currentUserId)
         {
             var messageInDb = _context.ConversationMessages.Single(cm => cm.SenderId == currentUserId && cm.ConversationId == conversationId &&
-                                                                    cm.Id == messageId);
+                                                                         cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
         }
 
@@ -73,95 +219,6 @@ namespace iChat.Api.Services
             await UpdateMessageContent(messageInDb, messageContent);
         }
 
-        private async Task AddNewFileForMessageAsync(string savedFileName, string fileName, string contentType, int messageId, int userId,
-            int workspaceId)
-        {
-            var newFile = new Models.File(savedFileName, fileName, contentType, userId, workspaceId);
-            _context.Files.Add(newFile);
-            await _context.SaveChangesAsync();
-
-            await AttachFileToMessageAsync(messageId, newFile.Id);
-        }
-
-        private async Task AttachFileToMessageAsync(int messageId, int fileId)
-        {
-            _context.MessageFileAttachments.Add(new MessageFileAttachment(messageId, fileId));
-            await _context.SaveChangesAsync();
-        }
-
-        private async Task UploadAndSaveFilesForMessageAsync(IList<IFormFile> files, int messageId, int userId, int workspaceId)
-        {
-            foreach (var file in files)
-            {
-                var savedFileName = await _fileHelper.UploadFileAsync(file, workspaceId);
-                await AddNewFileForMessageAsync(savedFileName, file.FileName, file.ContentType, messageId, userId, workspaceId);
-            }
-        }
-
-        public async Task<int> PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
-        {
-            if (!files.Any())
-            {
-                throw new ArgumentException($"File list is empty.");
-            }
-
-            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
-            await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
-
-            return messageId;
-        }
-
-        public async Task<int> PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
-        {
-            if (!files.Any())
-            {
-                throw new ArgumentException($"File list is empty.");
-            }
-
-            var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
-            await UploadAndSaveFilesForMessageAsync(files, messageId, userId, workspaceId);
-
-            return messageId;
-        }
-
-        public async Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId)
-        {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
-            {
-                throw new ArgumentException($"File access required.");
-            }
-
-            var file = await _context.Files.SingleAsync(f => f.Id == fileId);
-            return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
-        }
-
-        public async Task<int> ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
-        {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
-            {
-                throw new ArgumentException($"File access required.");
-
-            }
-
-            var messageId = await PostMessageToConversationAsync(string.Empty, conversationId, userId, workspaceId, true);
-            await AttachFileToMessageAsync(messageId, fileId);
-
-            return messageId;
-        }
-
-        public async Task<int> ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
-        {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
-            {
-                throw new ArgumentException($"File access required.");
-
-            }
-
-            var messageId = await PostMessageToChannelAsync(string.Empty, channelId, userId, workspaceId, true);
-            await AttachFileToMessageAsync(messageId, fileId);
-
-            return messageId;
-        }
 
         public async Task DeleteMessageAsync(int messageId, int userId)
         {

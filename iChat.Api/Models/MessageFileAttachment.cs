@@ -1,17 +1,20 @@
 ﻿using System;
 
-namespace iChat.Api.Models {
-    public class MessageFileAttachment {
-        protected MessageFileAttachment() {
-        }
+namespace iChat.Api.Models
+{
+    public class MessageFileAttachment
+    {
+        public MessageFileAttachment() { }
 
-        public MessageFileAttachment(int messageId, int fileId) {
-            if (messageId < 1 || fileId < 1) {
+        public MessageFileAttachment(Message message, File file)
+        {
+            if (message == null || file == null)
+            {
                 throw new ArgumentException("Invalid input");
             }
 
-            MessageId = messageId;
-            FileId = fileId;
+            Message = message;
+            File = file;
         }
 
         public int MessageId { get; private set; }

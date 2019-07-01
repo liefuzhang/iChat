@@ -135,14 +135,13 @@ class ContentMessages extends React.Component {
     this.fetchSingleMessage(messageId)
       .then(messageGroupDto => {
         if (this.isFetchingSingleMessage) {
+          let newMessage = messageGroupDto.messages[0];
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             this.state.messageGroups,
             [messageGroupDto]
           );
           this.setState({ messageGroups: updatedMessageGroups }, () => {
-            if (
-              messageGroupDto.messages[0].senderId === this.props.userProfile.id
-            )
+            if (newMessage.senderId === this.props.userProfile.id)
               this.messageScrollService.scrollToBottom();
           });
         }
