@@ -1,5 +1,6 @@
 import React from "react";
 import "./Content.css";
+import ApiService from "services/ApiService";
 import ContentHeader from "content/ContentHeader";
 import ContentMessages from "content/ContentMessages";
 import ContentFooter from "content/ContentFooter";
@@ -10,10 +11,41 @@ class Content extends React.Component {
     super(props);
 
     this.onFinishLoading = this.onFinishLoading.bind(this);
+    this.apiService = new ApiService(props);
+
+    if (props.hubConnection) {
+      props.hubConnection.on("UpdateConversationDetails", () =>
+        this.fetchUsers()
+      );
+    }
 
     this.state = {
-      isPageLoading: true
+      isPageLoading: true,
+      messageChannelUserList: []
     };
+  }
+
+  fetchUsers() {
+    let url = this.props.isChannel
+      ? `/api/channels/${this.props.id}/users`
+      : `/api/conversations/${this.props.id}/users`;
+
+    this.apiService
+      .fetch(url)
+      .then(users => this.setState({ messageChannelUserList: users }));
+  }
+
+  componentDidMount() {
+    this.fetchUsers();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.isChannel !== prevProps.isChannel ||
+      this.props.id !== prevProps.id
+    ) {
+      this.fetchUsers();
+    }
   }
 
   onFinishLoading() {
@@ -32,6 +64,7 @@ class Content extends React.Component {
         )}
         <ContentHeader {...this.props} />
         <ContentMessages
+          messageChannelUserList={this.state.messageChannelUserList}
           onFinishLoading={this.onFinishLoading}
           {...this.props}
         />

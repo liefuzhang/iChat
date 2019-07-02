@@ -130,12 +130,10 @@ namespace iChat.Api.Services {
         private async Task AddMessageChannelDescriptionForChannel(MessageLoadDto messageLoad, int channelId, int workspaceId) {
             var channel = await _channelQueryService.GetChannelByIdAsync(channelId, workspaceId);
             var createdByUser = await _userQueryService.GetUserByIdAsync(channel.CreatedByUserId);
-            var users = await _channelQueryService.GetAllChannelUsersAsync(channelId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
                 CreatedByUser = _mapper.Map<UserDto>(createdByUser),
                 CreatedDateString = channel.CreatedDateString,
-                MessageChannelName = channel.Name,
-                UserList = users
+                MessageChannelName = channel.Name
             };
         }
 
@@ -156,12 +154,10 @@ namespace iChat.Api.Services {
         private async Task AddMessageChannelDescriptionForConversation(MessageLoadDto messageLoad, int conversationId, int userId, int workspaceId) {
             var conversation = await _conversationQueryService.GetConversationByIdAsync(conversationId, userId, workspaceId);
             var createdByUser = await _userQueryService.GetUserByIdAsync(conversation.CreatedByUserId);
-            var users = await _conversationQueryService.GetAllConversationUsersAsync(conversationId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
                 CreatedByUser = _mapper.Map<UserDto>(createdByUser),
                 CreatedDateString = conversation.CreatedDateString,
-                MessageChannelName = conversation.Name,
-                UserList = users
+                MessageChannelName = conversation.Name
             };
         }
 

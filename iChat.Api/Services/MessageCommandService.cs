@@ -11,8 +11,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using File = iChat.Api.Models.File;
 
-namespace iChat.Api.Services {
-    public class MessageCommandService : IMessageCommandService {
+namespace iChat.Api.Services
+{
+    public class MessageCommandService : IMessageCommandService
+    {
         private readonly iChatContext _context;
         private readonly IMessageParsingHelper _messageParsingHelper;
         private readonly IChannelQueryService _channelQueryService;
@@ -23,7 +25,8 @@ namespace iChat.Api.Services {
         private readonly INotificationService _notificationService;
 
         public MessageCommandService(iChatContext context, IMessageParsingHelper messageParsingHelper, IFileHelper fileHelper, IChannelQueryService channelQueryService,
-            IUserQueryService userQueryService, IConversationQueryService conversationQueryService, ICacheService cacheService, INotificationService notificationService) {
+            IUserQueryService userQueryService, IConversationQueryService conversationQueryService, ICacheService cacheService, INotificationService notificationService)
+        {
             _context = context;
             _messageParsingHelper = messageParsingHelper;
             _fileHelper = fileHelper;
@@ -34,32 +37,38 @@ namespace iChat.Api.Services {
             _notificationService = notificationService;
         }
 
-        private async Task SendConversationMessageItemChangeNotificationAsync(int conversationId, int messageId, MessageChangeType type) {
+        private async Task SendConversationMessageItemChangeNotificationAsync(int conversationId, int messageId, MessageChangeType type)
+        {
             var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
             await _notificationService.SendConversationMessageItemChangeNotificationAsync(userIds, conversationId, type, messageId);
         }
 
-        private async Task SendChannelMessageItemChangeNotificationAsync(int channelId, int messageId, MessageChangeType type) {
+        private async Task SendChannelMessageItemChangeNotificationAsync(int channelId, int messageId, MessageChangeType type)
+        {
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             await _notificationService.SendChannelMessageItemChangeNotificationAsync(userIds, channelId, type, messageId);
         }
 
-        private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId, int userId, int workspaceId) {
+        private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId, int userId, int workspaceId)
+        {
             var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
-            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, userId)) {
+            if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, userId))
+            {
                 await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, workspaceId);
             }
 
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Added);
         }
 
-        private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, int workspaceId, List<int> mentionUserIds = null) {
+        private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, int workspaceId, List<int> mentionUserIds = null)
+        {
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             await _cacheService.AddUnreadChannelForUsersAsync(channelId, userIds, workspaceId, mentionUserIds);
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Added);
         }
 
-        private async Task PostMessageToConversationCommonAsync(ConversationMessage conversationMessage) {
+        private async Task PostMessageToConversationCommonAsync(ConversationMessage conversationMessage)
+        {
             _context.ConversationMessages.Add(conversationMessage);
             await _context.SaveChangesAsync();
 
@@ -67,7 +76,8 @@ namespace iChat.Api.Services {
                 conversationMessage.SenderId, conversationMessage.WorkspaceId);
         }
 
-        private async Task PostMessageToChannelCommonAsync(ChannelMessage channelMessage, List<int> mentionUserIds = null) {
+        private async Task PostMessageToChannelCommonAsync(ChannelMessage channelMessage, List<int> mentionUserIds = null)
+        {
             _context.ChannelMessages.Add(channelMessage);
             await _context.SaveChangesAsync();
 
@@ -75,7 +85,8 @@ namespace iChat.Api.Services {
         }
 
         public async Task PostMessageToConversationAsync(string newMessageContent, int conversationId, int currentUserId,
-            int workspaceId) {
+            int workspaceId)
+        {
             var content = _messageParsingHelper.Parse(newMessageContent);
             var message = new ConversationMessage(conversationId, content, currentUserId, workspaceId);
 
@@ -83,14 +94,27 @@ namespace iChat.Api.Services {
         }
 
         public async Task PostMessageToChannelAsync(string newMessageContent, int channelId, int currentUserId,
-            int workspaceId, List<int> mentionUserIds) {
+            int workspaceId, List<int> mentionUserIds)
+        {
             var content = _messageParsingHelper.Parse(newMessageContent);
             var message = new ChannelMessage(channelId, content, currentUserId, workspaceId);
 
             await PostMessageToChannelCommonAsync(message, mentionUserIds);
         }
 
-        public async Task PostJoinChannelMessageAsync(int channelId, List<int> userIds, int workspaceId) {
+        public async Task PostJoinConversationSystemMessageAsync(int conversationId, List<int> userIds, int workspaceId, int invitedByUserId)
+        {
+            var userNames = await _userQueryService.GetUserNamesAsync(userIds.Skip(1).ToList(), workspaceId);
+            var invitedByUserName = await _userQueryService.GetUserNamesAsync(new List<int> { invitedByUserId }, workspaceId);
+            var content = $"joined conversation" + (string.IsNullOrEmpty(userNames) ? "" : $" along with {userNames}") +
+                    $" on the invitation of {invitedByUserName}";
+            var message = new ConversationMessage(conversationId, content, userIds.First(), workspaceId, false, true);
+
+            await PostMessageToConversationCommonAsync(message);
+        }
+
+        public async Task PostJoinChannelSystemMessageAsync(int channelId, List<int> userIds, int workspaceId)
+        {
             var userNames = await _userQueryService.GetUserNamesAsync(userIds.Skip(1).ToList(), workspaceId);
             var channel = await _channelQueryService.GetChannelByIdAsync(channelId, workspaceId);
             var content = $"joined {channel.Name}" + (string.IsNullOrEmpty(userNames) ? "." : $" along with {userNames}");
@@ -99,9 +123,11 @@ namespace iChat.Api.Services {
             await PostMessageToChannelCommonAsync(message);
         }
 
-        private async Task<IEnumerable<File>> UploadAndSaveFilesForMessageAsync(IList<IFormFile> files, int userId, int workspaceId) {
+        private async Task<IEnumerable<File>> UploadAndSaveFilesForMessageAsync(IList<IFormFile> files, int userId, int workspaceId)
+        {
             var savedFiles = new List<File>();
-            foreach (var file in files) {
+            foreach (var file in files)
+            {
                 var savedFileName = await _fileHelper.UploadFileAsync(file, workspaceId);
                 var newFile = new File(savedFileName, file.FileName, file.ContentType, userId, workspaceId);
                 _context.Files.Add(newFile);
@@ -114,38 +140,46 @@ namespace iChat.Api.Services {
             return savedFiles;
         }
 
-        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId) {
-            if (!files.Any()) {
+        public async Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId)
+        {
+            if (!files.Any())
+            {
                 throw new ArgumentException($"File list is empty.");
             }
 
             var savedFiles = await UploadAndSaveFilesForMessageAsync(files, userId, workspaceId);
 
             var message = new ConversationMessage(conversationId, string.Empty, userId, workspaceId, true);
-            foreach (var file in savedFiles) {
+            foreach (var file in savedFiles)
+            {
                 message.AddMessageFileAttachment(file);
             }
 
             await PostMessageToConversationCommonAsync(message);
         }
 
-        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId) {
-            if (!files.Any()) {
+        public async Task PostFileMessageToChannelAsync(IList<IFormFile> files, int channelId, int userId, int workspaceId)
+        {
+            if (!files.Any())
+            {
                 throw new ArgumentException($"File list is empty.");
             }
 
             var savedFiles = await UploadAndSaveFilesForMessageAsync(files, userId, workspaceId);
 
             var message = new ChannelMessage(channelId, string.Empty, userId, workspaceId, true);
-            foreach (var file in savedFiles) {
+            foreach (var file in savedFiles)
+            {
                 message.AddMessageFileAttachment(file);
             }
 
             await PostMessageToChannelCommonAsync(message);
         }
 
-        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId) {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId))) {
+        public async Task ShareFileToConversationAsync(int conversationId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
                 throw new ArgumentException($"File access required.");
 
             }
@@ -157,8 +191,10 @@ namespace iChat.Api.Services {
             await PostMessageToConversationCommonAsync(message);
         }
 
-        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId) {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId))) {
+        public async Task ShareFileToChannelAsync(int channelId, int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
                 throw new ArgumentException($"File access required.");
 
             }
@@ -170,8 +206,10 @@ namespace iChat.Api.Services {
             await PostMessageToChannelCommonAsync(message);
         }
 
-        public async Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId) {
-            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId))) {
+        public async Task<(Stream stream, string contentType)> DownloadFileAsync(int fileId, int userId, int workspaceId)
+        {
+            if (!(await EligibleForTheFileAsync(fileId, userId, workspaceId)))
+            {
                 throw new ArgumentException($"File access required.");
             }
 
@@ -179,9 +217,11 @@ namespace iChat.Api.Services {
             return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
         }
 
-        private async Task UpdateMessageContent(Message messageInDb, string message) {
+        private async Task UpdateMessageContent(Message messageInDb, string message)
+        {
             var content = _messageParsingHelper.Parse(message);
-            if (content == messageInDb.Content) {
+            if (content == messageInDb.Content)
+            {
                 return;
             }
 
@@ -189,7 +229,8 @@ namespace iChat.Api.Services {
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateMessageInConversationAsync(string messageContent, int conversationId, int messageId, int currentUserId) {
+        public async Task UpdateMessageInConversationAsync(string messageContent, int conversationId, int messageId, int currentUserId)
+        {
             var messageInDb = _context.ConversationMessages.Single(cm => cm.SenderId == currentUserId && cm.ConversationId == conversationId &&
                                                                          cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
@@ -197,7 +238,8 @@ namespace iChat.Api.Services {
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
         }
 
-        public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId) {
+        public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId)
+        {
             var messageInDb = _context.ChannelMessages.Single(cm => cm.SenderId == currentUserId && cm.ChannelId == channelId &&
                                                                     cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
@@ -205,26 +247,31 @@ namespace iChat.Api.Services {
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
         }
 
-        private async Task DeleteMessageCommonAsync(int messageId, int userId) {
+        private async Task DeleteMessageCommonAsync(int messageId, int userId)
+        {
             var message = await _context.Messages.SingleAsync(m => m.Id == messageId && m.SenderId == userId);
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId) {
+        public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId)
+        {
             await DeleteMessageCommonAsync(messageId, userId);
 
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
         }
 
-        public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId) {
+        public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId)
+        {
             await DeleteMessageCommonAsync(messageId, userId);
 
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Deleted);
         }
 
-        private async Task<bool> EligibleForTheFileAsync(int fileId, int userId, int workspaceId) {
-            if (!await _context.Files.AnyAsync(f => f.Id == fileId && f.WorkspaceId == workspaceId)) {
+        private async Task<bool> EligibleForTheFileAsync(int fileId, int userId, int workspaceId)
+        {
+            if (!await _context.Files.AnyAsync(f => f.Id == fileId && f.WorkspaceId == workspaceId))
+            {
                 return false;
             }
 
@@ -235,22 +282,26 @@ namespace iChat.Api.Services {
 
             if (await _context.ChannelMessages
                 .AnyAsync(cm => messageIds.Contains(cm.Id) &&
-                                _context.ChannelSubscriptions.Any(cs => cs.ChannelId == cm.ChannelId && cs.UserId == userId))) {
+                                _context.ChannelSubscriptions.Any(cs => cs.ChannelId == cm.ChannelId && cs.UserId == userId)))
+            {
                 return true;
             }
 
             if (await _context.ConversationMessages
                 .AnyAsync(cm => messageIds.Contains(cm.Id) &&
-                                _context.ConversationUsers.Any(cu => cu.ConversationId == cm.ConversationId && cu.UserId == userId))) {
+                                _context.ConversationUsers.Any(cu => cu.ConversationId == cm.ConversationId && cu.UserId == userId)))
+            {
                 return true;
             }
 
             return false;
         }
 
-        private async Task AddReactionToMessageCommonAsync(int messageId, string emojiColons, int userId) {
+        private async Task AddReactionToMessageCommonAsync(int messageId, string emojiColons, int userId)
+        {
             var messageReaction = await _context.MessageReactions.SingleOrDefaultAsync(mr => mr.MessageId == messageId && mr.EmojiColons == emojiColons);
-            if (messageReaction == null) {
+            if (messageReaction == null)
+            {
                 messageReaction = new MessageReaction(messageId, emojiColons);
                 _context.MessageReactions.Add(messageReaction);
                 await _context.SaveChangesAsync();
@@ -263,27 +314,31 @@ namespace iChat.Api.Services {
         }
 
         public async Task AddReactionToMessageInConversationAsync(int conversationId, int messageId, string emojiColons,
-            int userId) {
+            int userId)
+        {
             await AddReactionToMessageCommonAsync(messageId, emojiColons, userId);
 
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
         }
 
         public async Task AddReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons,
-            int userId) {
+            int userId)
+        {
             await AddReactionToMessageCommonAsync(messageId, emojiColons, userId);
 
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);
         }
 
-        private async Task RemoveReactionToMessageCommonAsync(int messageId, string emojiColons, int userId) {
+        private async Task RemoveReactionToMessageCommonAsync(int messageId, string emojiColons, int userId)
+        {
             var messageReaction = await _context.MessageReactions
                 .Include(mr => mr.MessageReactionUsers)
                 .SingleAsync(mr => mr.MessageId == messageId && mr.EmojiColons == emojiColons);
             var messageReactionUser = messageReaction.MessageReactionUsers.Single(mru => mru.UserId == userId);
             messageReaction.MessageReactionUsers.Remove(messageReactionUser);
 
-            if (!messageReaction.MessageReactionUsers.Any()) {
+            if (!messageReaction.MessageReactionUsers.Any())
+            {
                 _context.MessageReactions.Remove(messageReaction);
             }
 
@@ -291,14 +346,16 @@ namespace iChat.Api.Services {
         }
 
         public async Task RemoveReactionToMessageInConversationAsync(int conversationId, int messageId,
-            string emojiColons, int userId) {
+            string emojiColons, int userId)
+        {
             await RemoveReactionToMessageCommonAsync(messageId, emojiColons, userId);
 
             await SendConversationMessageItemChangeNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
         }
 
         public async Task RemoveReactionToMessageInChannelAsync(int channelId, int messageId, string emojiColons,
-            int userId) {
+            int userId)
+        {
             await RemoveReactionToMessageCommonAsync(messageId, emojiColons, userId);
 
             await SendChannelMessageItemChangeNotificationAsync(channelId, messageId, MessageChangeType.Edited);

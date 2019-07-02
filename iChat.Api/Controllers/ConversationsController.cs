@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using iChat.Api.Dtos;
 
 namespace iChat.Api.Controllers
 {
@@ -76,14 +77,23 @@ namespace iChat.Api.Controllers
             return userIds.ToList();
         }
 
+        // GET api/conversations/1/users
+        [HttpGet("{id}/users")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllConversationUsersAsync(int id)
+        {
+            var users = await _conversationQueryService.GetAllConversationUsersAsync(id);
+
+            return users.ToList();
+        }
+
         // Post api/conversations/1/inviteOtherMembers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToConversationAsync(int id, List<int> userIds)
         {
-            await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId());
+            await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allConversationUserIds = await _conversationQueryService.GetAllConversationUserIdsAsync(id);
-            _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
+            await _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
 
             return Ok();
         }

@@ -12,18 +12,21 @@ namespace iChat.Api.Services
         private readonly iChatContext _context;
         private readonly IUserQueryService _userQueryService;
         private readonly IConversationQueryService _conversationQueryService;
+        private readonly IMessageCommandService _messageCommandService;
         private readonly ICacheService _cacheService;
         private readonly INotificationService _notificationService;
 
         public ConversationCommandService(iChatContext context, IUserQueryService userQueryService,
             IConversationQueryService conversationQueryService,
-            ICacheService cacheService, INotificationService notificationService)
+            ICacheService cacheService, INotificationService notificationService,
+            IMessageCommandService messageCommandService)
         {
             _context = context;
             _userQueryService = userQueryService;
             _conversationQueryService = conversationQueryService;
             _cacheService = cacheService;
             _notificationService = notificationService;
+            _messageCommandService = messageCommandService;
         }
 
         public async Task<int> StartConversationWithOthersAsync(List<int> withUserIds, int userId, int workspaceId)
@@ -43,20 +46,22 @@ namespace iChat.Api.Services
             return conversationId;
         }
 
-        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int userId)
+        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds,
+            int invitedByUserId, int workspaceId)
         {
             if (userIds == null || userIds.Count < 1)
             {
                 throw new ArgumentException("Invalid users");
             }
 
-            if (!_conversationQueryService.IsUserInConversation(conversationId, userId))
+            if (!_conversationQueryService.IsUserInConversation(conversationId, invitedByUserId))
             {
                 throw new ArgumentException($"User is not in conversation.");
             }
 
-            AddUsersToConversation(userIds, conversationId);
-            await _context.SaveChangesAsync();
+            await AddUsersToConversation(userIds, conversationId);
+
+            await _messageCommandService.PostJoinConversationSystemMessageAsync(conversationId, userIds, invitedByUserId, workspaceId);
         }
 
         // Self conversation will always be on the top, and not cached 
@@ -94,22 +99,23 @@ namespace iChat.Api.Services
                 var newConversation = new Conversation(userId, workspaceId);
                 _context.Conversations.Add(newConversation);
                 await _context.SaveChangesAsync();
-
-                AddUsersToConversation(userIds, newConversation.Id);
-                await _context.SaveChangesAsync();
                 conversationId = newConversation.Id;
+
+                await AddUsersToConversation(userIds, conversationId);
             }
 
             return conversationId;
         }
 
-        private void AddUsersToConversation(List<int> userIds, int conversationId)
+        private async Task AddUsersToConversation(List<int> userIds, int conversationId)
         {
             userIds.ForEach(id =>
             {
                 var conversationUser = new ConversationUser(conversationId, id);
                 _context.ConversationUsers.Add(conversationUser);
             });
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId)

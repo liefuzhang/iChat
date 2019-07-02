@@ -104,6 +104,15 @@ namespace iChat.Api.Controllers
             return userIds.ToList();
         }
 
+        // GET api/channels/1/users
+        [HttpGet("{id}/users")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllChannelUsersAsync(int id)
+        {
+            var users = await _channelQueryService.GetAllChannelUsersAsync(id);
+
+            return users.ToList();
+        }
+
         // Post api/channels/1/inviteOtherMembers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToChannelAsync(int id, List<int> userIds)
@@ -111,7 +120,7 @@ namespace iChat.Api.Controllers
             await _channelCommandService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allChannelUserIds = await _channelQueryService.GetAllChannelUserIdsAsync(id);
-            _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);
+            await _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);
 
             return Ok();
         }

@@ -74,7 +74,7 @@ namespace iChat.Api.Services {
             });
             await _context.SaveChangesAsync();
 
-            await _messageCommandService.PostJoinChannelMessageAsync(channelId, userIds, workspaceId);
+            await _messageCommandService.PostJoinChannelSystemMessageAsync(channelId, userIds, workspaceId);
         }
 
         public async Task AddDefaultChannelsToNewWorkplaceAsync(int userId, int workspaceId) {
