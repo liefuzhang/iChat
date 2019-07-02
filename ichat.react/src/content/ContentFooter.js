@@ -9,9 +9,14 @@ class ContentFooter extends React.Component {
 
     this.authService = new AuthService(props);
     this.onOtherUserTyping = this.onOtherUserTyping.bind(this);
+    this.onOtherUserFinishedTyping = this.onOtherUserFinishedTyping.bind(this);
 
     if (props.hubConnection) {
       props.hubConnection.on("UserTyping", this.onOtherUserTyping);
+      props.hubConnection.on(
+        "UserFinishedTyping",
+        this.onOtherUserFinishedTyping
+      );
     }
 
     this.otherTypingNames = [];
@@ -46,14 +51,33 @@ class ContentFooter extends React.Component {
 
   onOtherUserTyping(name, isChannel, id) {
     if (isChannel === this.props.isChannel && id === this.props.id) {
-      this.otherTypingNames.push(name);
-      this.toggleOtherTypingInfo(true);
+      this.addTypingName(name);
 
       setTimeout(() => {
-        let index = this.otherTypingNames.indexOf(name);
-        this.otherTypingNames.splice(index, 1);
-        this.toggleOtherTypingInfo(this.otherTypingNames.length > 0);
+        this.removeTypingName(name);
       }, 10000);
+    }
+  }
+
+  onOtherUserFinishedTyping(name, isChannel, id) {
+    if (isChannel === this.props.isChannel && id === this.props.id) {
+      this.removeTypingName(name);
+    }
+  }
+
+  addTypingName(name) {
+    let index = this.otherTypingNames.indexOf(name);
+    if (index < 0) {
+      this.otherTypingNames.push(name);
+      this.toggleOtherTypingInfo(true);
+    }
+  }
+
+  removeTypingName(name) {
+    let index = this.otherTypingNames.indexOf(name);
+    if (index > -1) {
+      this.otherTypingNames.splice(index, 1);
+      this.toggleOtherTypingInfo(this.otherTypingNames.length > 0);
     }
   }
 

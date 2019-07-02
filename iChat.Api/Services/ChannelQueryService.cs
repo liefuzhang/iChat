@@ -124,19 +124,5 @@ namespace iChat.Api.Services
             var defaultChannelGeneral = await GetChannelByNameAsync(iChatConstants.DefaultChannelGeneral, workspaceId);
             return defaultChannelGeneral.Id;
         }
-
-        public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId)
-        {
-            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId, workspaceId);
-            if (currentUser == null)
-            {
-                return;
-            }
-
-            var userIds = (await GetAllChannelUserIdsAsync(channelId)).ToList();
-            userIds.Remove(currentUserId);
-
-            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, true, channelId);
-        }
     }
 }

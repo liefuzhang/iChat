@@ -11,6 +11,6 @@ namespace iChat.Api.Services
         Task<int> InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds, int invitedByUserId,
             int workspaceId);
         Task<int> StartSelfConversationAsync(int userId, int workspaceId);
-        Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId);
+        Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId, bool isFinished);
     }
 }

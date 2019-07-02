@@ -56,6 +56,15 @@ namespace iChat.Api.Services
             }
         }
 
+        public async Task SendUserFinishedTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName,
+            bool isChannel, int conversationId)
+        {
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UserFinishedTyping", currentUserName, isChannel, conversationId);
+            }
+        }
+
         public async Task SendUpdateChannelDetailsNotificationAsync(IEnumerable<int> userIds, int channelId)
         {
             foreach (var userId in userIds)

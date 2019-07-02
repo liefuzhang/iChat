@@ -8,6 +8,7 @@ import Modal from "modals/Modal";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
 import EmojiPicker from "components/EmojiPicker";
+import { tsImportEqualsDeclaration } from "@babel/types";
 
 class ContentEditor extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class ContentEditor extends React.Component {
     this.onEmojiHtmlAdded = this.onEmojiHtmlAdded.bind(this);
     this.onEditorPaste = this.onEditorPaste.bind(this);
     this.userList = [];
-    
+
     this.quillService = new QuillService({
       editorContainerSelector: `#${this.props.containerId} #messageEditor`,
       onSubmitMessage: this.onSubmitMessage,
@@ -128,6 +129,8 @@ class ContentEditor extends React.Component {
       mentionUserIds.push(+groups[1]);
     }
 
+    this.isSendingTypingMessage = false;
+
     let url = this.props.isEditing
       ? `/api/messages/${this.props.section}/${this.props.id}/update/${
           this.props.message.id
@@ -205,7 +208,11 @@ class ContentEditor extends React.Component {
       }
     }
 
-    if (this.isSendingTypingMessage === false) {
+    if (
+      this.isSendingTypingMessage === false &&
+      !this.props.isEditing &&
+      this.quillService.getText()
+    ) {
       this.isSendingTypingMessage = true;
       this.sendTypingMessage();
       setTimeout(() => {
@@ -474,7 +481,10 @@ class ContentEditor extends React.Component {
                 )}
               </div>
               <div className="message-box-button">
-                <EmojiPicker onEmojiHtmlAdded={this.onEmojiHtmlAdded} tooltipText="Add emoji"/>
+                <EmojiPicker
+                  onEmojiHtmlAdded={this.onEmojiHtmlAdded}
+                  tooltipText="Add emoji"
+                />
               </div>
             </div>
           </div>

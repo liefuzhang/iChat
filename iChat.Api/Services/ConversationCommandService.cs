@@ -126,7 +126,7 @@ namespace iChat.Api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId)
+        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId, bool isFinished)
         {
             var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId, workspaceId);
             if (currentUser == null)
@@ -137,7 +137,14 @@ namespace iChat.Api.Services
             var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
             userIds.Remove(currentUserId);
 
-            await _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
+            if (isFinished)
+            {
+                await _notificationService.SendUserFinishedTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
+            }
+            else
+            {
+                await _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
+            }
         }
     }
 }
