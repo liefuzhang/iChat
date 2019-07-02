@@ -34,8 +34,6 @@ class ContentHeader extends React.Component {
       isSettingDropdownModalOpen: false,
       isInviteOtherMembersModalOpen: false
     };
-
-    this.fetchData(this.props);
   }
 
   fetchData(props) {
@@ -50,6 +48,10 @@ class ContentHeader extends React.Component {
           this.setState({ selectedConversation: conversation })
         );
     }
+  }
+
+  componentDidMount() {
+    this.fetchData(this.props);
   }
 
   componentDidUpdate(prevProps) {
@@ -133,13 +135,18 @@ class ContentHeader extends React.Component {
                 <div className="setting-dropdown dropdown-container panel">
                   <section className="dropdown-section">
                     <ul>
-                      <li onClick={this.onInviteOtherMembers}>
-                        {this.props.isChannel
-                          ? `Invite people to ${
-                              this.state.selectedChannel.name
-                            }`
-                          : `Invite another member`}
-                      </li>
+                      {(this.props.isChannel ||
+                        (!this.state.selectedConversation.isPrivate &&
+                          !this.state.selectedConversation
+                            .isSelfConversation)) && (
+                        <li onClick={this.onInviteOtherMembers}>
+                          {this.props.isChannel
+                            ? `Invite people to ${
+                                this.state.selectedChannel.name
+                              }`
+                            : `Invite another member`}
+                        </li>
+                      )}
                       {this.props.isChannel &&
                         this.props.id !==
                           this.props.userProfile.defaultChannelId && (

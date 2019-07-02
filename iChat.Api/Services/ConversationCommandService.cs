@@ -77,7 +77,7 @@ namespace iChat.Api.Services
         public async Task<int> StartSelfConversationAsync(int userId, int workspaceId)
         {
             var userIds = new List<int> { userId };
-            var conversationId = await StartConversationForUsersAsync(userIds, userId, workspaceId);
+            var conversationId = await StartConversationForUsersAsync(userIds, userId, workspaceId, true);
 
             return conversationId;
         }
@@ -94,7 +94,8 @@ namespace iChat.Api.Services
             return !group.Any() ? null : (int?)group.Single().Key;
         }
 
-        private async Task<int> StartConversationForUsersAsync(List<int> userIds, int userId, int workspaceId)
+        private async Task<int> StartConversationForUsersAsync(List<int> userIds, int userId, int workspaceId,
+            bool isSelfConversation = false)
         {
             int conversationId;
             var existingConversationId = GetConversationIdIfExists(userIds, workspaceId);
@@ -104,7 +105,8 @@ namespace iChat.Api.Services
             }
             else
             {
-                var newConversation = new Conversation(userId, workspaceId);
+                var isPrivate = userIds.Count == 2;
+                var newConversation = new Conversation(userId, workspaceId, isPrivate, isSelfConversation);
                 _context.Conversations.Add(newConversation);
                 await _context.SaveChangesAsync();
                 conversationId = newConversation.Id;

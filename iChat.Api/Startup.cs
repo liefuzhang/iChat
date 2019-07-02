@@ -124,6 +124,13 @@ namespace iChat.Api
                                 var appIdentity = new ClaimsIdentity(claims);
 
                                 context.Principal.AddIdentity(appIdentity);
+
+                                var cacheService = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();
+                                var online = await cacheService.GetUserOnlineAsync(userId, user.WorkspaceId);
+                                if (!online)
+                                {
+                                    await cacheService.SetUserOnlineAsync(userId, user.WorkspaceId);
+                                }
                             }
                         },
                         // We have to hook the OnMessageReceived event in order to

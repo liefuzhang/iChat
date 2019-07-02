@@ -16,5 +16,7 @@ namespace iChat.Api.Services
             List<int> mentionUserIds = null);
         Task RemoveUnreadChannelForUserAsync(int channelId, int userId, int workspaceId);
         Task<List<ChannelUnreadItem>> GetUnreadChannelForUserAsync(int userId, int workspaceId);
+        Task SetUserOnlineAsync(int userId, int workspaceId);
+        Task<bool> GetUserOnlineAsync(int userId, int workspaceId);
     }
 }

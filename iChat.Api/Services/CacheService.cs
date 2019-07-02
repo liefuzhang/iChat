@@ -2,6 +2,7 @@
 using iChat.Api.Contract;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -173,6 +174,29 @@ namespace iChat.Api.Services
         private string GetRedisKeyForUnreadChannel(int userId, int workspaceId)
         {
             return $"{iChatConstants.RedisKeyRecentUnreadChannelPrefix}-{workspaceId}/{userId}";
+        }
+
+        public async Task SetUserOnlineAsync(int userId, int workspaceId)
+        {
+            const int expirySeconds = 10;
+            var key = GetUserOnlineItem(userId, workspaceId);
+            var options = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(expirySeconds));
+
+            await _cache.SetAsync(key, new byte[1], options);
+        }
+
+        public async Task<bool> GetUserOnlineAsync(int userId, int workspaceId)
+        {
+            var key = GetUserOnlineItem(userId, workspaceId);
+            var value = await _cache.GetAsync(key);
+
+            return value != null;
+        }
+
+        private string GetUserOnlineItem(int userId, int workspaceId)
+        {
+            return $"{iChatConstants.RedisKeyUserOnlinePrefix}-{workspaceId}/{userId}";
         }
     }
 }

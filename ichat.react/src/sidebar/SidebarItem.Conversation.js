@@ -4,39 +4,58 @@ import { Link } from "react-router-dom";
 import { Popup } from "semantic-ui-react";
 
 function SidebarItemConversation(props) {
-  let truncateNameThreshold = 18;
+  let truncateNameThreshold = 16;
+  let conversation = props.conversation;
   return (
-    <Link to={`/conversation/${props.conversation.id}`}>
+    <Link to={`/conversation/${conversation.id}`}>
       <Popup
         trigger={
           <div
             className={
               "sidebar-item list-item" +
               (props.active ? " sidebar-active-item" : "") +
-              (props.conversation.unreadMessageCount && !props.active
+              (conversation.unreadMessageCount && !props.active
                 ? " unread-item"
                 : "")
             }
           >
-            <span className="sidebar-item-name">{props.conversation.name}</span>
+            {conversation.userCount <= 2 && (
+              <span
+                className={
+                  "sidebar-item-user-online" +
+                  (conversation.isTheOtherUserOnline ||
+                  conversation.userCount === 1
+                    ? ""
+                    : " user-offline")
+                }
+              >
+                <span className="sidebar-item-user-online-circle" />
+              </span>
+            )}
+            {conversation.userCount > 2 && (
+              <span className="sidebar-item-other-user-count">
+                {conversation.userCount - 1}
+              </span>
+            )}
+            <span className="sidebar-item-name">{conversation.name}</span>
             <span
               className={
                 "unread-badge" +
-                (!props.conversation.unreadMessageCount || props.active
+                (!conversation.unreadMessageCount || props.active
                   ? " invisible"
                   : "")
               }
             >
-              {props.conversation.unreadMessageCount}
+              {conversation.unreadMessageCount}
             </span>
           </div>
         }
-        content={props.conversation.name}
+        content={conversation.name}
         inverted
         position="top center"
         size="tiny"
         disabled={
-          props.conversation.name.length > truncateNameThreshold ? false : true
+          conversation.name.length > truncateNameThreshold ? false : true
         }
       />
     </Link>

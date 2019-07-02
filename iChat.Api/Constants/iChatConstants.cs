@@ -12,6 +12,7 @@
         public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
         public static readonly string RedisKeyRecentConversationPrefix = "RecentConversation";
         public static readonly string RedisKeyRecentUnreadChannelPrefix = "UnreadChannel";
+        public static readonly string RedisKeyUserOnlinePrefix = "UserOnline";
 
         public static readonly string AwsBucketWorkspaceFileFolderPrefix = "Workspace-";
 
