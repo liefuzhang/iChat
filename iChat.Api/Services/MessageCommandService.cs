@@ -106,7 +106,7 @@ namespace iChat.Api.Services
         {
             var userNames = await _userQueryService.GetUserNamesAsync(userIds.Skip(1).ToList(), workspaceId);
             var invitedByUserName = await _userQueryService.GetUserNamesAsync(new List<int> { invitedByUserId }, workspaceId);
-            var content = $"joined conversation" + (string.IsNullOrEmpty(userNames) ? "" : $" along with {userNames}") +
+            var content = $"joined conversation" + (string.IsNullOrEmpty(userNames) ? "." : $" along with {userNames}.") +
                     $" on the invitation of {invitedByUserName}";
             var message = new ConversationMessage(conversationId, content, userIds.First(), workspaceId, false, true);
 
@@ -117,7 +117,7 @@ namespace iChat.Api.Services
         {
             var userNames = await _userQueryService.GetUserNamesAsync(userIds.Skip(1).ToList(), workspaceId);
             var channel = await _channelQueryService.GetChannelByIdAsync(channelId, workspaceId);
-            var content = $"joined {channel.Name}" + (string.IsNullOrEmpty(userNames) ? "." : $" along with {userNames}");
+            var content = $"joined {channel.Name}" + (string.IsNullOrEmpty(userNames) ? "." : $" along with {userNames}.");
             var message = new ChannelMessage(channelId, content, userIds.First(), workspaceId, false, true);
 
             await PostMessageToChannelCommonAsync(message);

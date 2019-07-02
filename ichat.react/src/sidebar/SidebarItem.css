@@ -24,7 +24,7 @@
   color: #6c98af;
 }
 
-.sidebar-item .sidebar-item-user-online {
+.sidebar-item .sidebar-item-user-realtime-status {
   flex: 0 0 11px;
   height: 11px;
   margin-right: 4px;
@@ -34,7 +34,7 @@
   box-sizing: border-box;
 }
 
-.sidebar-item-user-online .sidebar-item-user-online-circle {
+.sidebar-item-user-realtime-status .sidebar-item-user-realtime-status-circle {
   background: #3cb371;
   box-sizing: border-box;
   width: 9px;
@@ -42,12 +42,12 @@
   border-radius: 9px;
 }
 
-.sidebar-item-user-online.user-offline .sidebar-item-user-online-circle{
+.sidebar-item-user-realtime-status.user-offline .sidebar-item-user-realtime-status-circle{
   background: none;
   border: 2px solid #bbb;
 }
 
-.sidebar-active-item .sidebar-item-user-online.user-offline .sidebar-item-user-online-circle {
+.sidebar-active-item .sidebar-item-user-realtime-status.user-offline .sidebar-item-user-realtime-status-circle {
   border: 2px solid #ddd;
 }
 

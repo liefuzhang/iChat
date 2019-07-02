@@ -178,23 +178,23 @@ namespace iChat.Api.Services
 
         public async Task SetUserOnlineAsync(int userId, int workspaceId)
         {
-            const int expirySeconds = 10;
-            var key = GetUserOnlineItem(userId, workspaceId);
+            const int expirySeconds = 20;
+            var key = GetRedisKeyForUserOnlineItem(userId, workspaceId);
             var options = new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(expirySeconds));
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(expirySeconds));
 
             await _cache.SetAsync(key, new byte[1], options);
         }
 
         public async Task<bool> GetUserOnlineAsync(int userId, int workspaceId)
         {
-            var key = GetUserOnlineItem(userId, workspaceId);
+            var key = GetRedisKeyForUserOnlineItem(userId, workspaceId);
             var value = await _cache.GetAsync(key);
 
             return value != null;
         }
 
-        private string GetUserOnlineItem(int userId, int workspaceId)
+        private string GetRedisKeyForUserOnlineItem(int userId, int workspaceId)
         {
             return $"{iChatConstants.RedisKeyUserOnlinePrefix}-{workspaceId}/{userId}";
         }

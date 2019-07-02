@@ -19,19 +19,26 @@ function SidebarItemConversation(props) {
                 : "")
             }
           >
-            {conversation.userCount <= 2 && (
-              <span
-                className={
-                  "sidebar-item-user-online" +
-                  (conversation.isTheOtherUserOnline ||
-                  conversation.userCount === 1
-                    ? ""
-                    : " user-offline")
-                }
-              >
-                <span className="sidebar-item-user-online-circle" />
-              </span>
-            )}
+            {conversation.userCount <= 2 &&
+              (conversation.isTheOtherUserOnline ||
+                conversation.userCount === 1) && (
+                <span className="sidebar-item-user-realtime-status">
+                  <span
+                    className="sidebar-item-user-realtime-status-circle"
+                    title="active"
+                  />
+                </span>
+              )}
+              {conversation.userCount <= 2 &&
+              !(conversation.isTheOtherUserOnline ||
+                conversation.userCount === 1) && (
+                <span className="sidebar-item-user-realtime-status user-offline">
+                  <span
+                    className="sidebar-item-user-realtime-status-circle"
+                    title="inactive"
+                  />
+                </span>
+              )}
             {conversation.userCount > 2 && (
               <span className="sidebar-item-other-user-count">
                 {conversation.userCount - 1}
