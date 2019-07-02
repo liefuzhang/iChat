@@ -46,7 +46,7 @@ namespace iChat.Api.Services
             return conversationId;
         }
 
-        public async Task InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds,
+        public async Task<int> InviteOtherMembersToConversationAsync(int conversationId, List<int> userIds,
             int invitedByUserId, int workspaceId)
         {
             if (userIds == null || userIds.Count < 1)
@@ -59,16 +59,24 @@ namespace iChat.Api.Services
                 throw new ArgumentException($"User is not in conversation.");
             }
 
-            await AddUsersToConversation(userIds, conversationId);
+            var memberIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            memberIds.AddRange(userIds);
+            var existingConversationId = GetConversationIdIfExists(memberIds, workspaceId);
+            if (existingConversationId != null)
+            {
+                return existingConversationId.Value;
+            }
 
+            await AddUsersToConversation(userIds, conversationId);
             await _messageCommandService.PostJoinConversationSystemMessageAsync(conversationId, userIds, invitedByUserId, workspaceId);
+
+            return conversationId;
         }
 
         // Self conversation will always be on the top, and not cached 
         public async Task<int> StartSelfConversationAsync(int userId, int workspaceId)
         {
-            var userIds = new List<int>();
-            userIds.Add(userId);
+            var userIds = new List<int> { userId };
             var conversationId = await StartConversationForUsersAsync(userIds, userId, workspaceId);
 
             return conversationId;
@@ -129,7 +137,7 @@ namespace iChat.Api.Services
             var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
             userIds.Remove(currentUserId);
 
-            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
+            await _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, false, conversationId);
         }
     }
 }

@@ -51,9 +51,9 @@ namespace iChat.Api.Services
 
         private async Task NotifyForNewConversationMessageAsync(int conversationId, int messageId, int userId, int workspaceId)
         {
-            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
             if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, userId))
             {
+                var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
                 await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, workspaceId);
             }
 

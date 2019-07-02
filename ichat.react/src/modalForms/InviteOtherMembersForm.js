@@ -39,6 +39,10 @@ class InviteOtherMembersForm extends React.Component {
       })
       .then(id => {
         this.props.onClose();
+        if (!this.props.isChannel && id !== this.props.id) {
+          // when conversation already exists, redirect to it
+          this.props.history.push(`/conversation/${id}`);
+        }
       })
       .catch(error => {
         toast.error(`Invite other members failed: ${error}`);

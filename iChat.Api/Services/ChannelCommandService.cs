@@ -107,7 +107,7 @@ namespace iChat.Api.Services {
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
             userIds.Remove(currentUserId);
 
-            _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, true, channelId);
+            await _notificationService.SendUserTypingNotificationAsync(userIds, currentUser.DisplayName, true, channelId);
         }
     }
 }

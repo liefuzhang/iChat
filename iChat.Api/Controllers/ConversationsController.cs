@@ -1,4 +1,5 @@
-﻿using iChat.Api.Extensions;
+﻿using iChat.Api.Dtos;
+using iChat.Api.Extensions;
 using iChat.Api.Models;
 using iChat.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using iChat.Api.Dtos;
 
 namespace iChat.Api.Controllers
 {
@@ -90,12 +90,12 @@ namespace iChat.Api.Controllers
         [HttpPost("{id}/inviteOtherMembers")]
         public async Task<IActionResult> InviteOtherMembersToConversationAsync(int id, List<int> userIds)
         {
-            await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
+            int conversationId = await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allConversationUserIds = await _conversationQueryService.GetAllConversationUserIdsAsync(id);
             await _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
 
-            return Ok();
+            return Ok(conversationId);
         }
     }
 }
