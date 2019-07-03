@@ -36,7 +36,7 @@ class Sidebar extends React.Component {
         "ConversationMessageItemChanged",
         this.onUpdateConversationList
       );
-      props.hubConnection.on("UnreadChannelRemoved", this.onUpdateChannelList);
+      props.hubConnection.on("UnreadChannelMessageCleared", this.onUpdateChannelList);
       props.hubConnection.on(
         "UnreadConversationMessageCleared",
         this.onUpdateConversationList

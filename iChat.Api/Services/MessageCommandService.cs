@@ -63,7 +63,7 @@ namespace iChat.Api.Services
         private async Task NotifyForNewChannelMessageAsync(int channelId, int messageId, int workspaceId, List<int> mentionUserIds = null)
         {
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
-            await _cacheService.AddUnreadChannelForUsersAsync(channelId, userIds, workspaceId, mentionUserIds);
+            await _cacheService.AddUnreadChannelMessageForUsersAsync(channelId, messageId, userIds, workspaceId, mentionUserIds);
             await SendChannelMessageItemChangedNotificationAsync(channelId, messageId, MessageChangeType.Added);
         }
 
@@ -274,10 +274,21 @@ namespace iChat.Api.Services
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
         }
 
-        public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId)
+        private async Task ClearUnreadChannelMessageForUserAsync(int channelId, int messageId, int workspaceId) {
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            foreach (var id in userIds) {
+                await _cacheService.ClearUnreadChannelMessageForUserAsync(channelId, messageId, id, workspaceId);
+            }
+
+            await _notificationService.SendUnreadChannelMessageClearedNotificationAsync(userIds, channelId);
+        }
+
+        public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId,
+            int workspaceId)
         {
             await DeleteMessageCommonAsync(messageId, userId);
 
+            await ClearUnreadChannelMessageForUserAsync(channelId, messageId, workspaceId);
             await SendChannelMessageItemChangedNotificationAsync(channelId, messageId, MessageChangeType.Deleted);
         }
 

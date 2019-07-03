@@ -4,21 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace iChat.Api.Contract {
-    public class ChannelUnreadItem
-    {
+    public class ChannelUnreadItem {
         public ChannelUnreadItem(int channelId) {
             ChannelId = channelId;
+            UnreadMessages = new List<(int messageId, bool userMentioned)>();
         }
 
         public int ChannelId { get; set; }
-        public int UnreadMentionCount { get; set; }
+        public List<(int messageId, bool userMentioned)> UnreadMessages { get; set; }
+        public int UnreadMentionCount => UnreadMessages.Count(um => um.userMentioned);
+        public int UnreadMessageCount => UnreadMessages.Count();
 
-        public void IncrementUnreadMention() {
-            UnreadMentionCount++;
+        public void AddUnreadMessage((int, bool) messageItem) {
+            UnreadMessages.Add(messageItem);
         }
 
-        internal void ClearUnreadMention() {
-            UnreadMentionCount = 0;
+        public void ClearUnreadMessageId(int messageId) {
+            var message = UnreadMessages.SingleOrDefault(um => um.messageId == messageId);
+            if (message.messageId > 0) {
+                UnreadMessages.Remove(message);
+            }
         }
     }
 }

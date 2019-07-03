@@ -187,7 +187,7 @@ namespace iChat.Api.Services {
             };
         }
 
-        public async Task<MessageGroupDto> GetSingleMessagesForChannelAsync(int channelId, int messageId, int userId) {
+        public async Task<MessageGroupDto> GetSingleMessageForChannelAsync(int channelId, int messageId, int userId) {
             if (!_channelQueryService.IsUserSubscribedToChannel(channelId, userId)) {
                 throw new ArgumentException($"User is not subsribed to channel.");
             }

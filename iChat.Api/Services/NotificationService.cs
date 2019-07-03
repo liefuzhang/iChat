@@ -31,11 +31,11 @@ namespace iChat.Api.Services
             }
         }
 
-        public async Task SendUnreadChannelRemovedNotificationAsync(IEnumerable<int> userIds, int channelId)
+        public async Task SendUnreadChannelMessageClearedNotificationAsync(IEnumerable<int> userIds, int channelId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UnreadChannelRemoved", channelId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UnreadChannelMessageCleared", channelId);
             }
         }
 

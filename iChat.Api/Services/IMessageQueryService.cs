@@ -7,7 +7,7 @@ namespace iChat.Api.Services
     {
         Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int currentPage);
         Task<MessageLoadDto> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId, int currentPage);
-        Task<MessageGroupDto> GetSingleMessagesForChannelAsync(int channelId, int messageId, int userId);
+        Task<MessageGroupDto> GetSingleMessageForChannelAsync(int channelId, int messageId, int userId);
         Task<MessageGroupDto> GetSingleMessagesForConversationAsync(int conversationId, int messageId, int userId);
     }
 }
