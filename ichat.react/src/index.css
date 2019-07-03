@@ -396,3 +396,7 @@ i.icon {
 .page-overlay-content {
   z-index: 10001;
 }
+
+.status-icon {
+  color: rgb(207, 35, 81);
+}

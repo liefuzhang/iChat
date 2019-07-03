@@ -38,11 +38,11 @@ class ContentMessages extends React.Component {
 
     if (props.hubConnection) {
       props.hubConnection.on(
-        "ChannelMessageItemChange",
+        "ChannelMessageItemChanged",
         this.onChannelMessageItemChange
       );
       props.hubConnection.on(
-        "ConversationMessageItemChange",
+        "ConversationMessageItemChanged",
         this.onConversationMessageItemChange
       );
     }

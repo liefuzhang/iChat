@@ -28,20 +28,24 @@ class Sidebar extends React.Component {
     this.onUpdateConversationList = this.onUpdateConversationList.bind(this);
 
     if (props.hubConnection) {
-      props.hubConnection.on("ChannelMessageItemChange", this.onUpdateChannelList);
       props.hubConnection.on(
-        "ConversationMessageItemChange",
-        this.onUpdateConversationList
-      );
-      props.hubConnection.on("UpdateChannelList", this.onUpdateChannelList);
-      props.hubConnection.on(
-        "UpdateConversationList",
-        this.onUpdateConversationList
+        "ChannelMessageItemChanged",
+        this.onUpdateChannelList
       );
       props.hubConnection.on(
-        "UpdateConversationDetails",
+        "ConversationMessageItemChanged",
         this.onUpdateConversationList
       );
+      props.hubConnection.on("UnreadChannelRemoved", this.onUpdateChannelList);
+      props.hubConnection.on(
+        "UnreadConversationCleared",
+        this.onUpdateConversationList
+      );
+      props.hubConnection.on(
+        "ConversationUserListChanged",
+        this.onUpdateConversationList
+      );
+      props.hubConnection.on("UserWentOnline", this.onUpdateConversationList);
     }
 
     this.state = {

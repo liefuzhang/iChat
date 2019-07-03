@@ -92,6 +92,9 @@ namespace iChat.Api.Controllers
         {
             await _channelCommandService.RemoveUserFromChannelAsync(channelId, User.GetUserId());
 
+            var allChannelUserIds = await _channelQueryService.GetAllChannelUserIdsAsync(channelId);
+            await _notificationService.SendChannelUserListChangedNotificationAsync(allChannelUserIds, channelId);
+
             return Ok();
         }
 
@@ -120,7 +123,7 @@ namespace iChat.Api.Controllers
             await _channelCommandService.InviteOtherMembersToChannelAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allChannelUserIds = await _channelQueryService.GetAllChannelUserIdsAsync(id);
-            await _notificationService.SendUpdateChannelDetailsNotificationAsync(allChannelUserIds, id);
+            await _notificationService.SendChannelUserListChangedNotificationAsync(allChannelUserIds, id);
 
             return Ok();
         }

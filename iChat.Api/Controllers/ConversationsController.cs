@@ -93,7 +93,7 @@ namespace iChat.Api.Controllers
             int conversationId = await _conversationCommandService.InviteOtherMembersToConversationAsync(id, userIds, User.GetUserId(), User.GetWorkspaceId());
 
             var allConversationUserIds = await _conversationQueryService.GetAllConversationUserIdsAsync(id);
-            await _notificationService.SendUpdateConversationDetailsNotificationAsync(allConversationUserIds, id);
+            await _notificationService.SendConversationUserListChangedNotificationAsync(allConversationUserIds, id);
 
             return Ok(conversationId);
         }

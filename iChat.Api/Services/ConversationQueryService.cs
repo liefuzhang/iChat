@@ -114,6 +114,7 @@ namespace iChat.Api.Services
                 {
                     var otherUserId = allUserIds.Single(id => id != userId);
                     dto.IsTheOtherUserOnline = await _cacheService.GetUserOnlineAsync(otherUserId, workspaceId);
+                    dto.OtherUserStatus = await _userQueryService.GetUserStatus(otherUserId, workspaceId);
                 }
 
                 return dto;
@@ -136,6 +137,21 @@ namespace iChat.Api.Services
             }
 
             conversations.Insert(0, conversation);
+        }
+
+        public async Task<IEnumerable<int>> GetOtherUserIdsInPrivateConversationAsync(int userId, int workspaceId)
+        {
+            var privateConversationIds = await _context.Conversations
+                .Where(c => c.IsPrivate && _context.ConversationUsers.Any(cu => cu.UserId == userId))
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            var otherUserIds = await _context.ConversationUsers
+                .Where(cu => privateConversationIds.Contains(cu.ConversationId) && cu.UserId != userId)
+                .Select(cu => cu.UserId)
+                .ToListAsync();
+
+            return otherUserIds;
         }
     }
 }

@@ -14,7 +14,7 @@ class Content extends React.Component {
     this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
-      props.hubConnection.on("UpdateConversationDetails", () =>
+      props.hubConnection.on("ConversationUserListChanged", () =>
         this.fetchUsers()
       );
     }

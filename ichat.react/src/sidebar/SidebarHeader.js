@@ -27,7 +27,7 @@ class SidebarHeader extends React.Component {
     this.onLogout = this.onLogout.bind(this);
     this.authService = new AuthService(props);
     this.apiService = new ApiService(props);
-    this.UserStatusService = new UserStatusService();
+    this.userStatusService = new UserStatusService();
 
     this.state = {
       isInvitePeopleModalOpen: false,
@@ -122,8 +122,8 @@ class SidebarHeader extends React.Component {
             <div className="sidebar-header-user-name">
               {this.props.userProfile.displayName}
               {(() => {
-                if (this.UserStatusService.isNotActive(this.props.userStatus)) {
-                  let statusName = this.UserStatusService.getStatusName(
+                if (this.userStatusService.isNotActive(this.props.userStatus)) {
+                  let statusName = this.userStatusService.getStatusName(
                     this.props.userStatus
                   );
                   return (
@@ -151,7 +151,7 @@ class SidebarHeader extends React.Component {
                     {this.props.userProfile.displayName}
                   </div>
                   <ul>
-                    {this.UserStatusService.isNotActive(
+                    {this.userStatusService.isNotActive(
                       this.props.userStatus
                     ) ? (
                       <li onClick={this.onClearStatus}>Clear status</li>

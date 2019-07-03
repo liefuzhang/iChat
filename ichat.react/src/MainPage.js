@@ -10,6 +10,7 @@ class MainPage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.isPulseSignalJustSent = false;
     this.profileService = new ProfileService();
     this.apiService = new ApiService(props);
 
@@ -25,6 +26,7 @@ class MainPage extends React.Component {
 
     this.onUserSessionDataChange = this.onUserSessionDataChange.bind(this);
     this.onProfileUpdated = this.onProfileUpdated.bind(this);
+    this.sendPulseSignal = this.sendPulseSignal.bind(this);
 
     this.state = {
       savedActiveSidebarItem: undefined,
@@ -32,6 +34,8 @@ class MainPage extends React.Component {
       userProfile: this.profileService.getProfile(),
       userSessionDataLoaded: false
     };
+
+    this.sendPulseSignal();
   }
 
   onUserSessionDataChange() {
@@ -55,6 +59,18 @@ class MainPage extends React.Component {
     });
   }
 
+  sendPulseSignal() {
+    if (!this.isPulseSignalJustSent) {
+      this.isPulseSignalJustSent = true;
+      this.apiService.fetch("/api/app/userPulseSignal", {
+        method: "POST"
+      });
+      setTimeout(() => {
+        this.isPulseSignalJustSent = false;
+      }, 30000); // throttle it to once in 30 secs
+    }
+  }
+
   componentDidMount() {
     this.onUserSessionDataChange();
   }
@@ -76,7 +92,7 @@ class MainPage extends React.Component {
         : this.state.userProfile.defaultChannelId);
 
     return (
-      <div className="main-page-container">
+      <div className="main-page-container" onClick={this.sendPulseSignal}>
         {this.state.userSessionDataLoaded && (
           <div id="mainPage">
             <Sidebar

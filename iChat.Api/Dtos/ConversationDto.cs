@@ -12,5 +12,6 @@
         public int UnreadMessageCount { get; set; }
         public int UserCount { get; set; }
         public bool IsTheOtherUserOnline { get; set; }
+        public string OtherUserStatus { get; set; }
     }
 }

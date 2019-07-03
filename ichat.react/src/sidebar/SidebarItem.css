@@ -42,12 +42,15 @@
   border-radius: 9px;
 }
 
-.sidebar-item-user-realtime-status.user-offline .sidebar-item-user-realtime-status-circle{
+.sidebar-item-user-realtime-status.user-offline
+  .sidebar-item-user-realtime-status-circle {
   background: none;
   border: 2px solid #bbb;
 }
 
-.sidebar-active-item .sidebar-item-user-realtime-status.user-offline .sidebar-item-user-realtime-status-circle {
+.sidebar-active-item
+  .sidebar-item-user-realtime-status.user-offline
+  .sidebar-item-user-realtime-status-circle {
   border: 2px solid #ddd;
 }
 
@@ -76,4 +79,9 @@
 .sidebar-active-item:hover {
   background-color: #aaabb8;
   color: white;
+}
+
+.status-icon.sidebar-item-other-user-status {
+  font-size: 0.72em;
+  margin: 0 6px 0 3px;
 }

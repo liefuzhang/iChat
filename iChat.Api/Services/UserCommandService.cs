@@ -18,14 +18,22 @@ namespace iChat.Api.Services
         private readonly IEmailHelper _emailService;
         private readonly IUserIdenticonHelper _userIdenticonHelper;
         private readonly IUserQueryService _userQueryService;
+        private readonly IConversationQueryService _conversationQueryService;
+        private readonly ICacheService _cacheService;
+        private readonly INotificationService _notificationService;
 
         public UserCommandService(iChatContext context, IEmailHelper emailService,
-            IUserIdenticonHelper userIdenticonHelper, IUserQueryService userQueryService)
+            IUserIdenticonHelper userIdenticonHelper, IUserQueryService userQueryService,
+            ICacheService cacheService, INotificationService notificationService,
+            IConversationQueryService conversationQueryService)
         {
             _context = context;
             _emailService = emailService;
             _userIdenticonHelper = userIdenticonHelper;
             _userQueryService = userQueryService;
+            _cacheService = cacheService;
+            _notificationService = notificationService;
+            _conversationQueryService = conversationQueryService;
         }
 
         public async Task<int> RegisterAsync(string email, string password, string displayName, int workspaceId)
@@ -244,6 +252,18 @@ namespace iChat.Api.Services
 
             user.UpdateDetails(userDto.DisplayName, userDto.PhoneNumber);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task SetUserOnlineAsync(int userId, int workspaceId)
+        {
+            var online = await _cacheService.GetUserOnlineAsync(userId, workspaceId);
+            await _cacheService.SetUserOnlineAsync(userId, workspaceId);
+
+            if (!online)
+            {
+                var userIds =await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId);
+                await _notificationService.SendUserOnlineNotificationAsync(userIds);
+            }
         }
     }
 }

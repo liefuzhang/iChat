@@ -48,7 +48,7 @@ namespace iChat.Api.Controllers
             await _cacheService.RemoveUnreadChannelForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             await _cacheService.SetActiveSidebarItemAsync(true, id, User.GetUserId(), User.GetWorkspaceId());
 
-            await _notificationService.SendUpdateChannelListNotificationAsync(new[] { User.GetUserId() }, id);
+            await _notificationService.SendUnreadChannelRemovedNotificationAsync(new[] { User.GetUserId() }, id);
 
             return messageLoadDto;
         }
@@ -65,7 +65,7 @@ namespace iChat.Api.Controllers
             }
             await _cacheService.SetActiveSidebarItemAsync(false, id, User.GetUserId(), User.GetWorkspaceId());
 
-            await _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, id);
+            await _notificationService.SendUnreadConversationClearedNotificationAsync(new[] { User.GetUserId() }, id);
 
             return messageLoadDto;
         }
@@ -77,7 +77,7 @@ namespace iChat.Api.Controllers
             var messageGroupDto = await _messageQueryService.GetSingleMessagesForChannelAsync(channelId, messageId, User.GetUserId());
 
             await _cacheService.RemoveUnreadChannelForUserAsync(channelId, User.GetUserId(), User.GetWorkspaceId());
-            await _notificationService.SendUpdateChannelListNotificationAsync(new[] { User.GetUserId() }, channelId);
+            await _notificationService.SendUnreadChannelRemovedNotificationAsync(new[] { User.GetUserId() }, channelId);
 
             return messageGroupDto;
         }
@@ -92,7 +92,7 @@ namespace iChat.Api.Controllers
             {
                 await _cacheService.ClearUnreadConversationMessageForUserAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
             }
-            await _notificationService.SendUpdateConversationListNotificationAsync(new[] { User.GetUserId() }, conversationId);
+            await _notificationService.SendUnreadConversationClearedNotificationAsync(new[] { User.GetUserId() }, conversationId);
 
             return messageGroupDto;
         }

@@ -14,11 +14,13 @@ namespace iChat.Api.Controllers
     {
         private readonly ICacheService _cacheService;
         private readonly IUserQueryService _userQueryService;
+        private readonly IUserCommandService _userCommandService;
 
-        public AppController(ICacheService cacheService, IUserQueryService userQueryService)
+        public AppController(ICacheService cacheService, IUserQueryService userQueryService, IUserCommandService userCommandService)
         {
             _cacheService = cacheService;
             _userQueryService = userQueryService;
+            _userCommandService = userCommandService;
         }
 
         // GET api/app/userSesstionData
@@ -32,6 +34,15 @@ namespace iChat.Api.Controllers
             };
 
             return Ok(sessionData);
+        }
+
+        // POST api/app/userPulseSignal
+        [HttpPost("userPulseSignal")]
+        public async Task<IActionResult> SendUserPulseSignalAsync()
+        {
+            await _userCommandService.SetUserOnlineAsync(User.GetUserId(), User.GetWorkspaceId());
+
+            return Ok();
         }
     }
 }

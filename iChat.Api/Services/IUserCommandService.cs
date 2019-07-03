@@ -16,5 +16,6 @@ namespace iChat.Api.Services
         Task ClearUserStatusAsync(int userId, int workspaceId);
         Task EditProfile(UserEditDto userDto, int userId, int workspaceId);
         Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
+        Task SetUserOnlineAsync(int userId, int workspaceId);
     }
 }

@@ -15,35 +15,35 @@ namespace iChat.Api.Services
             _hubContext = hubContext;
         }
 
-        public async Task SendChannelMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int channelId, MessageChangeType type, int messageId)
+        public async Task SendChannelMessageItemChangedNotificationAsync(IEnumerable<int> userIds, int channelId, MessageChangeType type, int messageId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("ChannelMessageItemChange", channelId, type, messageId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ChannelMessageItemChanged", channelId, type, messageId);
             }
         }
 
-        public async Task SendConversationMessageItemChangeNotificationAsync(IEnumerable<int> userIds, int conversationId, MessageChangeType type, int messageId)
+        public async Task SendConversationMessageItemChangedNotificationAsync(IEnumerable<int> userIds, int conversationId, MessageChangeType type, int messageId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("ConversationMessageItemChange", conversationId, type, messageId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ConversationMessageItemChanged", conversationId, type, messageId);
             }
         }
 
-        public async Task SendUpdateChannelListNotificationAsync(IEnumerable<int> userIds, int channelId)
+        public async Task SendUnreadChannelRemovedNotificationAsync(IEnumerable<int> userIds, int channelId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannelList", channelId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UnreadChannelRemoved", channelId);
             }
         }
 
-        public async Task SendUpdateConversationListNotificationAsync(IEnumerable<int> userIds, int conversationId)
+        public async Task SendUnreadConversationClearedNotificationAsync(IEnumerable<int> userIds, int conversationId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversationList", conversationId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UnreadConversationCleared", conversationId);
             }
         }
 
@@ -65,19 +65,27 @@ namespace iChat.Api.Services
             }
         }
 
-        public async Task SendUpdateChannelDetailsNotificationAsync(IEnumerable<int> userIds, int channelId)
+        public async Task SendChannelUserListChangedNotificationAsync(IEnumerable<int> userIds, int channelId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateChannelDetails", channelId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ChannelUserListChanged", channelId);
             }
         }
 
-        public async Task SendUpdateConversationDetailsNotificationAsync(IEnumerable<int> userIds, int conversationId)
+        public async Task SendConversationUserListChangedNotificationAsync(IEnumerable<int> userIds, int conversationId)
         {
             foreach (var userId in userIds)
             {
-                await _hubContext.Clients.User(userId.ToString()).SendAsync("UpdateConversationDetails", conversationId);
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ConversationUserListChanged", conversationId);
+            }
+        }
+
+        public async Task SendUserOnlineNotificationAsync(IEnumerable<int> userIds)
+        {
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UserWentOnline");
             }
         }
     }

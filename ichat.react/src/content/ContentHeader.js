@@ -20,10 +20,7 @@ class ContentHeader extends React.Component {
     this.onCloseInviteOtherMembers = this.onCloseInviteOtherMembers.bind(this);
 
     if (props.hubConnection) {
-      props.hubConnection.on("UpdateChannelDetails", () =>
-        this.fetchData(this.props)
-      );
-      props.hubConnection.on("UpdateConversationDetails", () =>
+      props.hubConnection.on("ConversationUserListChanged", () =>
         this.fetchData(this.props)
       );
     }

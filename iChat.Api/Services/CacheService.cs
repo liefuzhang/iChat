@@ -178,7 +178,7 @@ namespace iChat.Api.Services
 
         public async Task SetUserOnlineAsync(int userId, int workspaceId)
         {
-            const int expirySeconds = 20;
+            const int expirySeconds = 30 * 60;
             var key = GetRedisKeyForUserOnlineItem(userId, workspaceId);
             var options = new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromSeconds(expirySeconds));
