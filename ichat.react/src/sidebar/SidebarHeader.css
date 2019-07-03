@@ -8,6 +8,11 @@
   padding: 15px 15px 8px 15px;
 }
 
+.sidebar-header-user-name{
+  display: flex;
+  align-items: center;
+}
+
 .sidebar-header-user-name .status-icon{
   margin-left: 5px;
 }

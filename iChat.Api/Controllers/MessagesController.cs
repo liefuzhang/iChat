@@ -61,11 +61,11 @@ namespace iChat.Api.Controllers
 
             if (!await _conversationQueryService.IsSelfConversationAsync(id, User.GetUserId()))
             {
-                await _cacheService.ClearUnreadConversationMessageForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
+                await _cacheService.ClearAllUnreadConversationMessageIdsForUserAsync(id, User.GetUserId(), User.GetWorkspaceId());
             }
             await _cacheService.SetActiveSidebarItemAsync(false, id, User.GetUserId(), User.GetWorkspaceId());
 
-            await _notificationService.SendUnreadConversationClearedNotificationAsync(new[] { User.GetUserId() }, id);
+            await _notificationService.SendUnreadConversationMessageClearedNotificationAsync(new[] { User.GetUserId() }, id);
 
             return messageLoadDto;
         }
@@ -90,9 +90,9 @@ namespace iChat.Api.Controllers
 
             if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, User.GetUserId()))
             {
-                await _cacheService.ClearUnreadConversationMessageForUserAsync(conversationId, User.GetUserId(), User.GetWorkspaceId());
+                await _cacheService.ClearUnreadConversationMessageIdForUserAsync(conversationId, messageId, User.GetUserId(), User.GetWorkspaceId());
+                await _notificationService.SendUnreadConversationMessageClearedNotificationAsync(new[] { User.GetUserId() }, conversationId);
             }
-            await _notificationService.SendUnreadConversationClearedNotificationAsync(new[] { User.GetUserId() }, conversationId);
 
             return messageGroupDto;
         }
@@ -178,7 +178,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{conversationId}/deleteMessage")]
         public async Task<IActionResult> DeleteMessageFromConversationAsync(int conversationId, [FromBody]int messageId)
         {
-            await _messageCommandService.DeleteMessageInConversationAsync(conversationId, messageId, User.GetUserId());
+            await _messageCommandService.DeleteMessageInConversationAsync(conversationId, messageId, User.GetUserId(), User.GetWorkspaceId());
 
             return Ok();
         }

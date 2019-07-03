@@ -397,6 +397,7 @@ i.icon {
   z-index: 10001;
 }
 
-.status-icon {
+i.icon.status-icon {
   color: rgb(207, 35, 81);
+  font-size: 0.8em;
 }

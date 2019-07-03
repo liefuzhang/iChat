@@ -48,16 +48,18 @@ namespace iChat.Api.Services
             return $"{iChatConstants.RedisKeyActiveSidebarItemPrefix}-{workspaceId}/{userId}";
         }
 
-        public async Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId)
+        public async Task AddUnreadConversationMessageForUsersAsync(int conversationId, int messageId,
+            IEnumerable<int> userIds,
+            int workspaceId)
         {
             foreach (var userId in userIds.Distinct())
             {
-                await AddRecentConversationForUserAsync(conversationId, userId, workspaceId, incrementUnreadMessage: true);
+                await AddRecentConversationForUserAsync(conversationId, userId, workspaceId, addUnreadMessage: true, messageId: messageId);
             }
         }
 
         public async Task AddRecentConversationForUserAsync(int conversationId, int userId,
-            int workspaceId, bool incrementUnreadMessage = false)
+            int workspaceId, bool addUnreadMessage = false, int messageId = 0)
         {
             ConversationUnreadItem item = null;
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
@@ -78,9 +80,9 @@ namespace iChat.Api.Services
             {
                 item = new ConversationUnreadItem(conversationId);
             }
-            if (incrementUnreadMessage)
+            if (addUnreadMessage)
             {
-                item.IncrementUnreadMessage();
+                item.AddUnreadMessageId(messageId);
             }
             items.Add(item);
 
@@ -88,7 +90,7 @@ namespace iChat.Api.Services
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task ClearUnreadConversationMessageForUserAsync(int conversationId, int userId, int workspaceId)
+        public async Task ClearAllUnreadConversationMessageIdsForUserAsync(int conversationId, int userId, int workspaceId)
         {
             var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
             var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
@@ -97,7 +99,22 @@ namespace iChat.Api.Services
                 return;
             }
 
-            item.ClearUnreadMessage();
+            item.ClearAllUnreadMessageIds();
+
+            var key = GetRedisKeyForRecentConversation(userId, workspaceId);
+            await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
+        }
+
+        public async Task ClearUnreadConversationMessageIdForUserAsync(int conversationId, int messageId, int userId, int workspaceId)
+        {
+            var items = await GetRecentConversationItemsForUserAsync(userId, workspaceId);
+            var item = items.SingleOrDefault(i => i.ConversationId == conversationId);
+            if (item == null)
+            {
+                return;
+            }
+
+            item.ClearUnreadMessageId(messageId);
 
             var key = GetRedisKeyForRecentConversation(userId, workspaceId);
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));

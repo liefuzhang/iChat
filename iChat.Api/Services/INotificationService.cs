@@ -11,7 +11,7 @@ namespace iChat.Api.Services
         Task SendConversationMessageItemChangedNotificationAsync(IEnumerable<int> userIds, int conversationId,
             MessageChangeType type, int messageId);
         Task SendUnreadChannelRemovedNotificationAsync(IEnumerable<int> userIds, int channelId);
-        Task SendUnreadConversationClearedNotificationAsync(IEnumerable<int> userIds, int conversationId);
+        Task SendUnreadConversationMessageClearedNotificationAsync(IEnumerable<int> userIds, int conversationId);
         Task SendUserTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName, bool inChannel,
             int id);
         Task SendUserFinishedTypingNotificationAsync(IEnumerable<int> userIds, string currentUserName,

@@ -8,15 +8,18 @@ namespace iChat.Api.Services
     {
         Task SetActiveSidebarItemAsync(bool isChannel, int itemId, int userId, int workspaceId);
         Task<ActiveSidebarItem> GetActiveSidebarItemAsync(int userId, int workspaceId);
-        Task AddRecentConversationForUserAsync(int conversationId, int userId, int workspaceId, bool incrementUnreadMessage = false);
-        Task AddNewUnreadMessageForUsersAsync(int conversationId, IEnumerable<int> userIds, int workspaceId);
+        Task AddRecentConversationForUserAsync(int conversationId, int userId, int workspaceId,
+            bool addUnreadMessage = false, int messageId = 0);
+        Task AddUnreadConversationMessageForUsersAsync(int conversationId,
+            int messageId, IEnumerable<int> userIds, int workspaceId);
         Task<List<ConversationUnreadItem>> GetRecentConversationItemsForUserAsync(int userId, int workspaceId);
-        Task ClearUnreadConversationMessageForUserAsync(int conversationId, int userId, int workspaceId);
+        Task ClearAllUnreadConversationMessageIdsForUserAsync(int conversationId, int userId, int workspaceId);
         Task AddUnreadChannelForUsersAsync(int channelId, IEnumerable<int> userIds, int workspaceId,
             List<int> mentionUserIds = null);
         Task RemoveUnreadChannelForUserAsync(int channelId, int userId, int workspaceId);
         Task<List<ChannelUnreadItem>> GetUnreadChannelForUserAsync(int userId, int workspaceId);
         Task SetUserOnlineAsync(int userId, int workspaceId);
         Task<bool> GetUserOnlineAsync(int userId, int workspaceId);
+        Task ClearUnreadConversationMessageIdForUserAsync(int conversationId, int messageId, int userId, int workspaceId);
     }
 }

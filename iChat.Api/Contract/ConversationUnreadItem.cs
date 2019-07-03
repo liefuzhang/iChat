@@ -1,23 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace iChat.Api.Contract {
-    public class ConversationUnreadItem {
-        public ConversationUnreadItem(int conversationId) {
+namespace iChat.Api.Contract
+{
+    public class ConversationUnreadItem
+    {
+        public ConversationUnreadItem(int conversationId)
+        {
             ConversationId = conversationId;
+            UnreadMessageIds = new List<int>();
         }
 
         public int ConversationId { get; set; }
-        public int UnreadMessageCount { get; set; }
+        public List<int> UnreadMessageIds { get; set; }
+        public int UnreadMessageCount => UnreadMessageIds.Count;
 
-        public void IncrementUnreadMessage() {
-            UnreadMessageCount++;
+        public void AddUnreadMessageId(int messageId)
+        {
+            UnreadMessageIds.Add(messageId);
         }
 
-        internal void ClearUnreadMessage() {
-            UnreadMessageCount = 0;
+        public void ClearAllUnreadMessageIds()
+        {
+            UnreadMessageIds.Clear();
+        }
+
+        public void ClearUnreadMessageId(int messageId)
+        {
+            UnreadMessageIds.Remove(messageId);
         }
     }
 }

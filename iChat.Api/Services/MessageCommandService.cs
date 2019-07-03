@@ -54,7 +54,7 @@ namespace iChat.Api.Services
             if (!await _conversationQueryService.IsSelfConversationAsync(conversationId, userId))
             {
                 var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
-                await _cacheService.AddNewUnreadMessageForUsersAsync(conversationId, userIds, workspaceId);
+                await _cacheService.AddUnreadConversationMessageForUsersAsync(conversationId, messageId, userIds, workspaceId);
             }
 
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Added);
@@ -253,11 +253,24 @@ namespace iChat.Api.Services
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
         }
+        
+        private async Task ClearUnreadConversationMessageIdForUsersAsync(int conversationId, int messageId, int workspaceId)
+        {
+            var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
+            foreach (var id in userIds)
+            {
+                await _cacheService.ClearUnreadConversationMessageIdForUserAsync(conversationId, messageId, id, workspaceId);
+            }
 
-        public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId)
+            await _notificationService.SendUnreadConversationMessageClearedNotificationAsync(userIds, conversationId);
+        }
+
+        public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId,
+            int workspaceId)
         {
             await DeleteMessageCommonAsync(messageId, userId);
 
+            await ClearUnreadConversationMessageIdForUsersAsync(conversationId, messageId, workspaceId);
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
         }
 
