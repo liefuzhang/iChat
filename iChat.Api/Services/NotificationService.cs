@@ -88,5 +88,13 @@ namespace iChat.Api.Services
                 await _hubContext.Clients.User(userId.ToString()).SendAsync("UserWentOnline");
             }
         }
+
+        public async Task SendUserStatusChangedNotificationAsync(IEnumerable<int> userIds)
+        {
+            foreach (var userId in userIds)
+            {
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("UserStatusChanged");
+            }
+        }
     }
 }

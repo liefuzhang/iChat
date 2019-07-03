@@ -18,5 +18,6 @@ namespace iChat.Api.Services
             bool isChannel, int conversationId); Task SendChannelUserListChangedNotificationAsync(IEnumerable<int> userIds, int channelId);
         Task SendConversationUserListChangedNotificationAsync(IEnumerable<int> userIds, int conversationId);
         Task SendUserOnlineNotificationAsync(IEnumerable<int> userIds);
+        Task SendUserStatusChangedNotificationAsync(IEnumerable<int> userIds);
     }
 }

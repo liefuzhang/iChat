@@ -46,6 +46,7 @@ class Sidebar extends React.Component {
         this.onUpdateConversationList
       );
       props.hubConnection.on("UserWentOnline", this.onUpdateConversationList);
+      props.hubConnection.on("UserStatusChanged", this.onUpdateConversationList);
     }
 
     this.state = {

@@ -218,6 +218,14 @@ namespace iChat.Api.Services
             await _context.SaveChangesAsync();
         }
 
+        private async Task SendUserStatusChangedNotificationAsync(int userId, int workspaceId)
+        {
+            var userIds = (await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId))
+                .ToList();
+            userIds.Add(userId);
+            await _notificationService.SendUserStatusChangedNotificationAsync(userIds);
+        }
+
         public async Task SetUserStatusAsync(int userId, int workspaceId, UserStatus status)
         {
             var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
@@ -228,8 +236,10 @@ namespace iChat.Api.Services
 
             user.SetStatus(status);
             await _context.SaveChangesAsync();
-        }
 
+            await SendUserStatusChangedNotificationAsync(userId, workspaceId);
+        }
+        
         public async Task ClearUserStatusAsync(int userId, int workspaceId)
         {
             var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
@@ -240,6 +250,8 @@ namespace iChat.Api.Services
 
             user.SetStatus(UserStatus.Active);
             await _context.SaveChangesAsync();
+
+            await SendUserStatusChangedNotificationAsync(userId, workspaceId);
         }
 
         public async Task EditProfile(UserEditDto userDto, int userId, int workspaceId)
@@ -261,7 +273,7 @@ namespace iChat.Api.Services
 
             if (!online)
             {
-                var userIds =await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId);
+                var userIds = await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId);
                 await _notificationService.SendUserOnlineNotificationAsync(userIds);
             }
         }
