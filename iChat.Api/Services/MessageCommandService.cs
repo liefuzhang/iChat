@@ -250,11 +250,41 @@ namespace iChat.Api.Services
             await SendChannelMessageItemChangedNotificationAsync(channelId, messageId, MessageChangeType.Edited);
         }
 
-        private async Task DeleteMessageCommonAsync(int messageId, int userId)
+        private async Task DeleteMessageCommonAsync(int messageId, int userId, int workspaceId)
         {
-            var message = await _context.Messages.SingleAsync(m => m.Id == messageId && m.SenderId == userId);
+            var message = await _context.Messages
+                .Include(m => m.MessageFileAttachments)
+                .SingleAsync(m => m.Id == messageId && m.SenderId == userId);
+
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
+
+
+            if (message.HasFileAttachments)
+            {
+                var fileIds = message.MessageFileAttachments.Select(mfa => mfa.FileId);
+                await RemoveFilesForMessageAsync(fileIds, workspaceId);
+            }
+        }
+
+        private async Task RemoveFilesForMessageAsync(IEnumerable<int> fileIds, int workspaceId)
+        {
+            var files = await _context.Files
+                .Include(f => f.MessageFileAttachments)
+                .Where(f => fileIds.Contains(f.Id)).ToListAsync();
+
+            foreach (var file in files)
+            {
+                if (file.MessageFileAttachments.Any())
+                {
+                    continue;
+                }
+
+                _context.Files.Remove(file);
+                await _context.SaveChangesAsync();
+
+                await _fileHelper.DeleteFileAsync(file.SavedName, workspaceId);
+            }
         }
 
         private async Task ClearUnreadConversationMessageIdForUsersAsync(int conversationId, int messageId, int workspaceId)
@@ -271,7 +301,7 @@ namespace iChat.Api.Services
         public async Task DeleteMessageInConversationAsync(int conversationId, int messageId, int userId,
             int workspaceId)
         {
-            await DeleteMessageCommonAsync(messageId, userId);
+            await DeleteMessageCommonAsync(messageId, userId, workspaceId);
 
             await ClearUnreadConversationMessageIdForUsersAsync(conversationId, messageId, workspaceId);
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
@@ -291,7 +321,7 @@ namespace iChat.Api.Services
         public async Task DeleteMessageInChannelAsync(int channelId, int messageId, int userId,
             int workspaceId)
         {
-            await DeleteMessageCommonAsync(messageId, userId);
+            await DeleteMessageCommonAsync(messageId, userId, workspaceId);
 
             await ClearUnreadChannelMessageForUserAsync(channelId, messageId, workspaceId);
             await SendChannelMessageItemChangedNotificationAsync(channelId, messageId, MessageChangeType.Deleted);

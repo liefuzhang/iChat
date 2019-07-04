@@ -75,7 +75,7 @@ class ShareFileForm extends React.Component {
       })
       .then(() => {
         this.props.onClose();
-        this.props.history.push(`/${targetName}/${shareWith.value}`);
+        this.props.history.push(`/${targetName}/${value}`);
       })
       .catch(error => {
         toast.error(`Share file failed: ${error}`);

@@ -1,5 +1,6 @@
 ﻿using Amazon;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using iChat.Api.Constants;
 using iChat.Api.Data;
@@ -71,6 +72,22 @@ namespace iChat.Api.Helpers
                 FileOptions.DeleteOnClose);
 
             return stream;
+        }
+
+        public async Task DeleteFileAsync(string savedName, int workspaceId)
+        {
+            var deleteFromSubFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
+
+            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
+            {
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    Key = savedName,
+                    BucketName = $"{_appSettings.AwsFileBucketName}/{deleteFromSubFolder}"
+                };
+
+                await client.DeleteObjectAsync(deleteObjectRequest);
+            }
         }
     }
 }
