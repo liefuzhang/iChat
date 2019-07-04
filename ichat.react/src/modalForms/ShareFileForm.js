@@ -31,18 +31,22 @@ class ShareFileForm extends React.Component {
       ([channels, conversations]) => {
         let shareWithList = [];
         channels.forEach(c => {
-          shareWithList.push({
-            key: `${this.channelPrefix}${c.id}`,
-            text: c.name,
-            value: `${this.channelPrefix}${c.id}`
-          });
+          if (!this.props.isChannel || this.props.id !== c.id) {
+            shareWithList.push({
+              key: `${this.channelPrefix}${c.id}`,
+              text: c.name,
+              value: `${this.channelPrefix}${c.id}`
+            });
+          }
         });
         conversations.forEach(c => {
-          shareWithList.push({
-            key: `${this.conversationPrefix}${c.id}`,
-            text: c.name,
-            value: `${this.conversationPrefix}${c.id}`
-          });
+          if (this.props.isChannel || this.props.id !== c.id) {
+            shareWithList.push({
+              key: `${this.conversationPrefix}${c.id}`,
+              text: c.name,
+              value: `${this.conversationPrefix}${c.id}`
+            });
+          }
         });
         this.setState({ shareWithList: shareWithList });
       }
