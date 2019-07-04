@@ -117,7 +117,8 @@ namespace iChat.Api.Controllers {
         // POST api/messages/channel/1/update/1
         [HttpPost("channel/{channelId}/update/{messageId}")]
         public async Task<IActionResult> UpdateMessageInChannelAsync(int channelId, int messageId, MessagePostDto messagePostDto) {
-            await _messageCommandService.UpdateMessageInChannelAsync(messagePostDto.MessageContent, channelId, messageId, User.GetUserId());
+            await _messageCommandService.UpdateMessageInChannelAsync(messagePostDto.MessageContent, channelId, messageId, User.GetUserId(), 
+                User.GetWorkspaceId(), messagePostDto.MentionUserIds);
 
             return Ok();
         }

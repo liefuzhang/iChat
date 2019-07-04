@@ -238,12 +238,15 @@ namespace iChat.Api.Services
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Edited);
         }
 
-        public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId)
+        public async Task UpdateMessageInChannelAsync(string messageContent, int channelId, int messageId, int currentUserId,
+            int workspaceId, List<int> mentionUserIds)
         {
             var messageInDb = _context.ChannelMessages.Single(cm => cm.SenderId == currentUserId && cm.ChannelId == channelId &&
                                                                     cm.Id == messageId);
             await UpdateMessageContent(messageInDb, messageContent);
 
+            var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
+            await _cacheService.UpdateUnreadChannelMessageMentionForUsersAsync(channelId, messageId, userIds, workspaceId, mentionUserIds);
             await SendChannelMessageItemChangedNotificationAsync(channelId, messageId, MessageChangeType.Edited);
         }
 
@@ -253,7 +256,7 @@ namespace iChat.Api.Services
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
         }
-        
+
         private async Task ClearUnreadConversationMessageIdForUsersAsync(int conversationId, int messageId, int workspaceId)
         {
             var userIds = (await _conversationQueryService.GetAllConversationUserIdsAsync(conversationId)).ToList();
@@ -274,9 +277,11 @@ namespace iChat.Api.Services
             await SendConversationMessageItemChangedNotificationAsync(conversationId, messageId, MessageChangeType.Deleted);
         }
 
-        private async Task ClearUnreadChannelMessageForUserAsync(int channelId, int messageId, int workspaceId) {
+        private async Task ClearUnreadChannelMessageForUserAsync(int channelId, int messageId, int workspaceId)
+        {
             var userIds = (await _channelQueryService.GetAllChannelUserIdsAsync(channelId)).ToList();
-            foreach (var id in userIds) {
+            foreach (var id in userIds)
+            {
                 await _cacheService.ClearUnreadChannelMessageForUserAsync(channelId, messageId, id, workspaceId);
             }
 

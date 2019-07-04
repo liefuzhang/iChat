@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services {
-    public interface IMessageCommandService {
+namespace iChat.Api.Services
+{
+    public interface IMessageCommandService
+    {
         Task PostMessageToConversationAsync(string newMessage, int conversationId, int currentUserId, int workspaceId);
         Task PostMessageToChannelAsync(string newMessage, int channelId, int currentUserId, int workspaceId, List<int> mentionUserIds);
         Task UpdateMessageInConversationAsync(string message, int conversationId, int messageId, int currentUserId);
-        Task UpdateMessageInChannelAsync(string message, int channelId, int messageId, int currentUserId);
+        Task UpdateMessageInChannelAsync(string message, int channelId, int messageId, int currentUserId, int workspaceId, List<int> mentionUserIds);
         Task PostJoinConversationSystemMessageAsync(int conversationId, List<int> userIds, int workspaceId, int invitedByUserId);
         Task PostJoinChannelSystemMessageAsync(int channelId, List<int> userIds, int workspaceId);
         Task PostFileMessageToConversationAsync(IList<IFormFile> files, int conversationId, int userId, int workspaceId);
