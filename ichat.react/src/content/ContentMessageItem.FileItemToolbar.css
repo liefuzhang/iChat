@@ -1,0 +1,25 @@
+.file-item-toolbar {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+}
+
+.file-item-toolbar .file-item-toolbar-item {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 1.05em;
+  opacity: 0.9;
+  margin-left: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-item-toolbar .file-item-toolbar-item:hover {
+  color: #6bcdf7;
+  cursor: pointer;
+}
