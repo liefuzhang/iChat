@@ -46,7 +46,7 @@ namespace iChat.UnitTests.Helpers
             var result = _messageParsingService.Parse(input);
 
             // assert
-           Assert.AreEqual(expectedHtml, result);
+            Assert.AreEqual(expectedHtml, result);
         }
 
         public void Parse_WhenInputIsNull_ReturnEmptyString()
@@ -58,6 +58,38 @@ namespace iChat.UnitTests.Helpers
 
             // assert
             Assert.AreEqual(string.Empty, result);
+        }
+
+        [DataTestMethod]
+        [DataRow("<b>hello</b>", "*hello*")]
+        [DataRow("<i>hello</i>", "_hello_")]
+        [DataRow("<strike>hello</strike>", "~hello~")]
+        [DataRow("<code>hello</code>", "`hello`")]
+        [DataRow("<i><b>hello</b></i>", "_*hello*_")]
+        [DataRow("<b><i>hello</i></b>", "*_hello_*")]
+        [DataRow("~<b><i>hello</i></b>~", "~*_hello_*~")]
+        [DataRow("<i>*hello</i>*", "_*hello_*")]
+        [DataRow("<i>**</i>", "_**_")]
+        [DataRow("_str1<b>hello</b>_", "_str1*hello*_")]
+        [DataRow("<p>line 1</p><p>line2<b>hello</b>_</p>", "<p>line 1</p><p>line2*hello*_</p>")]
+        [DataRow("<p>line *1</p><p>line2*</p>", "<p>line *1</p><p>line2*</p>")]
+        [DataRow("<pre>hello</pre>", "<p>```hello```</p>")]
+        [DataRow("<pre>*hello*</pre>", "<p>```*hello*```</p>")]
+        [DataRow("<pre>test```test</pre>", "<p>```test```test```</p>")]
+        [DataRow("<pre><p>hello</p>text</pre>", "<p>```<p>hello</p>text```</p>")]
+        [DataRow("<blockquote>hello</blockquote>", "<p>&gt;hello</p>")]
+        [DataRow("<blockquote>hello</blockquote><blockquote>hello</blockquote>", "<p>&gt;hello</p><p>&gt;hello</p>")]
+        [DataRow("<blockquote><b>hello</b></blockquote>", "<p>&gt;*hello*</p>")]
+        [DataRow("<p>test&gt;hello</p>", "<p>test&gt;hello</p>")]
+        public void Stringify_WhenCalled_ReturnStringifiedHtml(string html, string expectedString)
+        {
+            // arrange
+
+            // act
+            var result = _messageParsingService.Stringify(html);
+
+            // assert
+            Assert.AreEqual(expectedString, result);
         }
     }
 }

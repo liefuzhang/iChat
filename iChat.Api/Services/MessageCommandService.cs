@@ -217,6 +217,11 @@ namespace iChat.Api.Services
             return (await _fileHelper.DownloadFileAsync(file.SavedName, workspaceId), file.ContentType);
         }
 
+        public string GetStringifiedMessageHtml(string messageHtml)
+        {
+            return _messageParsingHelper.Stringify(messageHtml);
+        }
+
         private async Task UpdateMessageContent(Message messageInDb, string message)
         {
             var content = _messageParsingHelper.Parse(message);

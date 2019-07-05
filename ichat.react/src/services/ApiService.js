@@ -17,10 +17,14 @@ class ApiService {
         if (!response.ok) {
           return response.text().then(r => Promise.reject(r));
         }
-        return response.text();
+        if (
+          response.headers.get("content-type") &&
+          response.headers.get("content-type").includes("application/json")
+        ) {
+          return response.json();
+        } else return response.text();
       })
-      .then(text => (text.length ? JSON.parse(text) : null))
-      .then(json => Promise.resolve(json))
+      .then(result => Promise.resolve(result))
       .catch(this.fetchErrorHandler);
   }
 

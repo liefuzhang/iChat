@@ -71,7 +71,19 @@ class ContentEditor extends React.Component {
   }
 
   populateCurrentContent() {
-    this.quillService.setContent(this.props.message.content);
+    let formatTagRegex = /<b>|<i>|<strike>|<code>|<pre>|<blockquote>/;
+    let content = this.props.message.content;
+    
+    if (formatTagRegex.test(content)) {
+      this.apiService
+        .fetch("/api/messages/stringifyHtml", {
+          method: "POST",
+          body: JSON.stringify(content)
+        })
+        .then(stringifiedHtml => {
+          this.quillService.setContent(stringifiedHtml);
+        });
+    } else this.quillService.setContent(content);
   }
 
   fecthUsers() {

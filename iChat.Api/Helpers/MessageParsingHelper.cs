@@ -3,8 +3,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace iChat.Api.Helpers {
-    public class MessageParsingHelper: IMessageParsingHelper
+namespace iChat.Api.Helpers
+{
+    public class MessageParsingHelper : IMessageParsingHelper
     {
         private class Token
         {
@@ -35,8 +36,10 @@ namespace iChat.Api.Helpers {
             for (var i = 0; i < input.Length; i++)
             {
                 // skip all chars between <pre> and </pre>
-                if (preFormattedRanges.Any(r=>r.start < i && r.end > i))
+                if (preFormattedRanges.Any(r => r.start < i && r.end > i))
+                {
                     continue;
+                }
 
                 var ch = input[i];
                 switch (ch)
@@ -136,6 +139,48 @@ namespace iChat.Api.Helpers {
                 markedChanges.Add(new Token(openTag, matchedToken.Index));
                 markedChanges.Add(new Token(closeTag, i));
             }
+        }
+
+        public string Stringify(string html)
+        {
+            if (string.IsNullOrEmpty(html))
+            {
+                return string.Empty;
+            }
+
+            html = StringifyTag(html, "<b>", "</b>", '*');
+            html = StringifyTag(html, "<i>", "</i>", '_');
+            html = StringifyTag(html, "<strike>", "</strike>", '~');
+            html = StringifyTag(html, "<code>", "</code>", '`');
+
+            html = StringifyQuoteTag(html);
+            html = StringifyPreformmatedTag(html);
+
+            return html;
+        }
+
+        private string StringifyTag(string html, string openTag, string closeTag, char replacingChar)
+        {
+            var pattern = $@"({openTag})((?:\S)+?)({closeTag})";
+            html = Regex.Replace(html, pattern, $"{replacingChar}$2{replacingChar}");
+
+            return html;
+        }
+
+        private string StringifyQuoteTag(string html)
+        {
+            var pattern = @"(<blockquote>)((?:.)+?)(</blockquote>)";
+            html = Regex.Replace(html, pattern, $"<p>&gt;$2</p>");
+
+            return html;
+        }
+
+        private string StringifyPreformmatedTag(string html)
+        {
+            var pattern = @"(<pre>)((?:.)+?)(</pre>)";
+            html = Regex.Replace(html, pattern, $"<p>```$2```</p>");
+
+            return html;
         }
     }
 }
