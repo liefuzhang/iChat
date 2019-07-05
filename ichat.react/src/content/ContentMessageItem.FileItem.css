@@ -5,10 +5,6 @@
   position: relative;
 }
 
-.file-item-container .file-item:hover {
-  cursor: pointer;
-}
-
 .file-item-container .file-item-toolbar {
   position: absolute;
   right: 10px;
@@ -36,4 +32,20 @@
 
 .file-item-container .file-item-toolbar-item:hover {
   color: #6bcdf7;
+  cursor: pointer;
+}
+
+.file-item-image-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 5px 0;
+}
+
+.file-item-image-file {
+  max-width: 400px;
+  max-height: 400px;
+  display: block;
+  margin: -1px;
+  opacity: 0.8;
 }

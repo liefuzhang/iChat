@@ -28,7 +28,7 @@ class ApiService {
       .catch(this.fetchErrorHandler);
   }
 
-  fetchFile(url, fileName) {
+  fetchFile(url) {
     return this.fetchCommon(url)
       .then(response => {
         if (!response.ok) {
@@ -37,15 +37,6 @@ class ApiService {
         return response.blob();
       })
       .then(blob => URL.createObjectURL(blob))
-      .then(url => {
-        var link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", fileName);
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
       .catch(this.fetchErrorHandler);
   }
 

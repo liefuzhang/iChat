@@ -261,6 +261,9 @@ class ContentMessages extends React.Component {
                     <ContentMessageItem
                       message={m}
                       onEditMessageClicked={this.onEditMessageClicked}
+                      onContentHeightChanged={() =>
+                        this.messageScrollService.reset()
+                      }
                       {...this.props}
                     />
                   )}

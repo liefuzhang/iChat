@@ -8,5 +8,6 @@ namespace iChat.Api.Models
         public string Name { get; private set; }
         public int UploadedByUserId { get; private set; }
         public DateTime UploadedDate { get; private set; }
+        public string ContentType { get; private set; }
     }
 }
