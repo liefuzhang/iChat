@@ -25,7 +25,7 @@ class ContentMessages extends React.Component {
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
     this.onScrollToTop = this.onScrollToTop.bind(this);
-    this.onImageLoadFinished = this.onImageLoadFinished.bind(this);
+    this.onImageLoadingFinished = this.onImageLoadingFinished.bind(this);
 
     this.apiService = new ApiService(props);
     this.mesageChangeService = new MessageChangeService();
@@ -98,7 +98,10 @@ class ContentMessages extends React.Component {
               messageLoad.messageChannelDescriptionDto;
           this.setMessageGroups(updatedMessageGroups, () => {
             if (isLoadingMore) this.messageScrollService.resumeScrollPosition();
-            else this.messageScrollService.scrollToBottom();
+            else {
+              this.messageScrollService.scrollToBottom();
+              this.props.onFinishLoading();
+            }
           });
         }
       })
@@ -213,16 +216,16 @@ class ContentMessages extends React.Component {
         });
       });
       if (callback) this.loadImage.imagesLoadedCallback = callback;
-      this.CheckIfAllImagesLoaded();
+      this.finishLoadingIfAllImagesLoaded();
     });
   }
 
-  onImageLoadFinished() {
+  onImageLoadingFinished() {
     this.loadImage.loadedImageCount++;
-    this.CheckIfAllImagesLoaded();
+    this.finishLoadingIfAllImagesLoaded();
   }
 
-  CheckIfAllImagesLoaded() {
+  finishLoadingIfAllImagesLoaded() {
     if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
       if (this.state.messageGroups.length > 0)
         this.messageScrollService.reset();
@@ -241,9 +244,7 @@ class ContentMessages extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchHistory(false).then(() => {
-      this.props.onFinishLoading();
-    });
+    this.fetchHistory(false);
   }
 
   componentDidUpdate(prevProps) {
@@ -298,7 +299,7 @@ class ContentMessages extends React.Component {
                     <ContentMessageItem
                       message={m}
                       onEditMessageClicked={this.onEditMessageClicked}
-                      onImageLoadFinished={this.onImageLoadFinished}
+                      onImageLoadingFinished={this.onImageLoadingFinished}
                       {...this.props}
                     />
                   )}

@@ -86,8 +86,8 @@ class ContentMessageItemFileItem extends React.Component {
               <img
                 className="file-item-image-file"
                 src={this.state.imageUrl}
-                onLoad={this.props.onImageLoadFinished}
-                onError={this.props.onImageLoadFinished}
+                onLoad={this.props.onImageLoadingFinished}
+                onError={this.props.onImageLoadingFinished}
                 alt={file.name}
                 onClick={this.onImageFileClick}
               />
