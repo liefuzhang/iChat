@@ -25,7 +25,7 @@ class ContentMessages extends React.Component {
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
     this.onScrollToTop = this.onScrollToTop.bind(this);
-    this.onImageLoaded = this.onImageLoaded.bind(this);
+    this.onImageLoadFinished = this.onImageLoadFinished.bind(this);
 
     this.apiService = new ApiService(props);
     this.mesageChangeService = new MessageChangeService();
@@ -67,11 +67,7 @@ class ContentMessages extends React.Component {
     this.areAllPagesLoaded = false;
     this.isFetchingHistory = false;
     this.isFetchingSingleMessage = false;
-    this.loadImage = {
-      imageFileCount: 0,
-      loadedImageCount: 0,
-      imagesLoadedCallback: undefined
-    };
+    this.resetLoadImage();
   }
 
   loadMoreHistory() {
@@ -100,7 +96,7 @@ class ContentMessages extends React.Component {
           if (!isLoadingMore)
             this.messageChannelDescriptionDto =
               messageLoad.messageChannelDescriptionDto;
-          this.setState({ messageGroups: updatedMessageGroups }, () => {
+          this.setMessageGroups(updatedMessageGroups, () => {
             if (isLoadingMore) this.messageScrollService.resumeScrollPosition();
             else this.messageScrollService.scrollToBottom();
           });
@@ -146,7 +142,7 @@ class ContentMessages extends React.Component {
             this.state.messageGroups,
             [messageGroupDto]
           );
-          this.setState({ messageGroups: updatedMessageGroups }, () => {
+          this.setMessageGroups(updatedMessageGroups, () => {
             if (newMessage.senderId === this.props.userProfile.id)
               this.messageScrollService.scrollToBottom();
           });
@@ -166,8 +162,7 @@ class ContentMessages extends React.Component {
             messageGroupDto,
             this.state.messageGroups
           );
-          if (updatedMessageGroups)
-            this.setState({ messageGroups: updatedMessageGroups });
+          if (updatedMessageGroups) this.setMessageGroups(updatedMessageGroups);
         }
       })
       .finally(() => {
@@ -180,8 +175,7 @@ class ContentMessages extends React.Component {
       messageId,
       this.state.messageGroups
     );
-    if (updatedMessageGroups)
-      this.setState({ messageGroups: updatedMessageGroups });
+    if (updatedMessageGroups) this.setMessageGroups(updatedMessageGroups);
   }
 
   onChannelMessageItemChange(channelId, changeType, messageId) {
@@ -207,36 +201,49 @@ class ContentMessages extends React.Component {
     this.setState({ editingMessageId: undefined });
   }
 
-  componentDidMount() {
-    this.fetchHistory(false).then(() => {
-      this.props.onFinishLoading();
-    });
-  }
-
   setMessageGroups(messageGroups, callback) {
     this.setState({ messageGroups: messageGroups }, () => {
       messageGroups.forEach(group => {
         let fileMessages = group.messages.filter(m => m.hasFileAttachments);
-        fileMessages.forEach(file => {
-          if (file.contentType.startsWith("image")) this.imageFileCount++;
+        fileMessages.forEach(fileMessage => {
+          fileMessage.fileAttachments.forEach(file => {
+            if (file.contentType.startsWith("image"))
+              this.loadImage.imageFileCount++;
+          });
         });
       });
       if (callback) this.loadImage.imagesLoadedCallback = callback;
+      this.CheckIfAllImagesLoaded();
     });
   }
 
   onImageLoadFinished() {
     this.loadImage.loadedImageCount++;
+    this.CheckIfAllImagesLoaded();
+  }
+
+  CheckIfAllImagesLoaded() {
     if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
-      this.messageScrollService.reset();
+      if (this.state.messageGroups.length > 0)
+        this.messageScrollService.reset();
       if (this.loadImage.imagesLoadedCallback)
         this.loadImage.imagesLoadedCallback();
+      this.resetLoadImage();
     }
+  }
+
+  resetLoadImage() {
     this.loadImage = {
       imageFileCount: 0,
       loadedImageCount: 0,
       imagesLoadedCallback: undefined
     };
+  }
+
+  componentDidMount() {
+    this.fetchHistory(false).then(() => {
+      this.props.onFinishLoading();
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -245,10 +252,8 @@ class ContentMessages extends React.Component {
       this.props.id !== prevProps.id
     ) {
       this.resetMessage();
-      this.setState({ messageGroups: [] }, () => this.fetchHistory(false));
+      this.setMessageGroups([], () => this.fetchHistory(false));
     }
-
-    if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
   }
 
   render() {

@@ -49,6 +49,7 @@ class MessageScrollService {
   }
 
   calculateCurrentGroup() {
+    if (this.messageGroupAnchors.length === 0) return;
     var adjustHeight = this.messageGroupAnchors[0].offsetHeight / 2;
     var currentGroupIndex = -1;
     var startIndex = this.lastGroupIndex - 1;
