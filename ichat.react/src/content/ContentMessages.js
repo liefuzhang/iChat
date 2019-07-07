@@ -25,6 +25,7 @@ class ContentMessages extends React.Component {
     this.onEditMessageClicked = this.onEditMessageClicked.bind(this);
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
     this.onScrollToTop = this.onScrollToTop.bind(this);
+    this.onImageLoaded = this.onImageLoaded.bind(this);
 
     this.apiService = new ApiService(props);
     this.mesageChangeService = new MessageChangeService();
@@ -66,6 +67,11 @@ class ContentMessages extends React.Component {
     this.areAllPagesLoaded = false;
     this.isFetchingHistory = false;
     this.isFetchingSingleMessage = false;
+    this.loadImage = {
+      imageFileCount: 0,
+      loadedImageCount: 0,
+      imagesLoadedCallback: undefined
+    };
   }
 
   loadMoreHistory() {
@@ -207,6 +213,32 @@ class ContentMessages extends React.Component {
     });
   }
 
+  setMessageGroups(messageGroups, callback) {
+    this.setState({ messageGroups: messageGroups }, () => {
+      messageGroups.forEach(group => {
+        let fileMessages = group.messages.filter(m => m.hasFileAttachments);
+        fileMessages.forEach(file => {
+          if (file.contentType.startsWith("image")) this.imageFileCount++;
+        });
+      });
+      if (callback) this.loadImage.imagesLoadedCallback = callback;
+    });
+  }
+
+  onImageLoadFinished() {
+    this.loadImage.loadedImageCount++;
+    if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
+      this.messageScrollService.reset();
+      if (this.loadImage.imagesLoadedCallback)
+        this.loadImage.imagesLoadedCallback();
+    }
+    this.loadImage = {
+      imageFileCount: 0,
+      loadedImageCount: 0,
+      imagesLoadedCallback: undefined
+    };
+  }
+
   componentDidUpdate(prevProps) {
     if (
       this.props.section !== prevProps.section ||
@@ -261,9 +293,7 @@ class ContentMessages extends React.Component {
                     <ContentMessageItem
                       message={m}
                       onEditMessageClicked={this.onEditMessageClicked}
-                      onContentHeightChanged={() =>
-                        this.messageScrollService.reset()
-                      }
+                      onImageLoadFinished={this.onImageLoadFinished}
                       {...this.props}
                     />
                   )}

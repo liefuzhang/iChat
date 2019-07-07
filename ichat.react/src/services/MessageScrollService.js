@@ -4,6 +4,7 @@ class MessageScrollService {
     this.lastGroupIndex = -1;
     this.offsetTops = [];
     this.messageGroupAnchors = [];
+    this.scrolled = false;
 
     this.onScrollHandler = this.onScrollHandler.bind(this);
     this.calculateMessageGroupOffsetTops = this.calculateMessageGroupOffsetTops.bind(

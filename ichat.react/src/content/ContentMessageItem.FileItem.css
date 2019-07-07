@@ -6,19 +6,26 @@
   display: block;
 }
 
+.content-message-file-item .file-image-item {
+  position: relative;
+  margin: 5px 0;
+}
+
 .file-item-container .file-item {
   width: 300px;
   margin-left: 0;
   margin-right: 12px;
-  position: relative;
 }
 
 .file-item-image-container {
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  margin: 5px 0;
   position: relative;
+}
+
+.file-item-image-container:hover {
+  cursor: zoom-in;
 }
 
 .file-item-image-file {
@@ -27,4 +34,22 @@
   display: block;
   margin: -1px;
   opacity: 0.8;
+}
+
+.full-screen-image-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 20000;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-screen-image-container .full-screen-image {
+  max-width: 90vw;
+  max-height: 90vh;
 }
