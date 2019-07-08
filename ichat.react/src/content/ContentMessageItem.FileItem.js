@@ -82,6 +82,9 @@ class ContentMessageItemFileItem extends React.Component {
       <div className="content-message-file-item">
         {this.isImage && (
           <div className="file-image-item">
+            <div className="file-image-item-name">
+              {file.name}
+            </div>
             <div className="file-item-image-container">
               <img
                 className="file-item-image-file"

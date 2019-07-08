@@ -8,13 +8,14 @@
 
 .content-message-file-item .file-image-item {
   position: relative;
-  margin: 5px 30px 5px 0;
+  margin: 5px 18px 5px 0;
 }
 
-.content-message-file-item .file-item {
-  width: 300px;
-  margin-left: 0;
-  margin-right: 12px;
+.file-image-item-name {
+  font-size: 0.8rem;
+  color: #666;
+  font-family: Lucida Console, Courier, monospace;
+  margin: 4px 0;
 }
 
 .file-item-image-container {
@@ -34,6 +35,13 @@
   display: block;
   margin: -1px;
   opacity: 0.8;
+}
+
+.content-message-file-item .file-item {
+  width: 300px;
+  margin-left: 0;
+  margin-right: 18px;
+  position: relative;
 }
 
 .full-screen-image-container {
