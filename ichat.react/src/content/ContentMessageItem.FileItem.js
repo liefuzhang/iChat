@@ -110,16 +110,11 @@ class ContentMessageItemFileItem extends React.Component {
           </div>
         )}
         {!this.isImage && (
-          <div className="file-item-container">
-            <div className="file-item">
-              <Icon name="file outline" size="large" />
-              <span title={file.name}>{file.name}</span>
-              <div className="file-item-toolbar-container">
-                <ContentMessageItemFileItemToolbar
-                  file={file}
-                  {...this.props}
-                />
-              </div>
+          <div className="file-item">
+            <Icon name="file outline" size="large" />
+            <span title={file.name}>{file.name}</span>
+            <div className="file-item-toolbar-container">
+              <ContentMessageItemFileItemToolbar file={file} {...this.props} />
             </div>
           </div>
         )}

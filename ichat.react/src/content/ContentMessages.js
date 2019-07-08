@@ -89,6 +89,7 @@ class ContentMessages extends React.Component {
           id === this.props.id
         ) {
           this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
+          this.setNewImageFileCount(messageLoad.messageGroupDtos);
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             messageLoad.messageGroupDtos,
             this.state.messageGroups
@@ -96,7 +97,7 @@ class ContentMessages extends React.Component {
           if (!isLoadingMore)
             this.messageChannelDescriptionDto =
               messageLoad.messageChannelDescriptionDto;
-          this.setMessageGroups(updatedMessageGroups, () => {
+          this.updateMessageGroups(updatedMessageGroups, () => {
             if (isLoadingMore) this.messageScrollService.resumeScrollPosition();
             else {
               this.messageScrollService.scrollToBottom();
@@ -140,12 +141,13 @@ class ContentMessages extends React.Component {
     this.fetchSingleMessage(messageId)
       .then(messageGroupDto => {
         if (this.isFetchingSingleMessage) {
+          this.setNewImageFileCount([messageGroupDto]);
           let newMessage = messageGroupDto.messages[0];
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             this.state.messageGroups,
             [messageGroupDto]
           );
-          this.setMessageGroups(updatedMessageGroups, () => {
+          this.updateMessageGroups(updatedMessageGroups, () => {
             if (newMessage.senderId === this.props.userProfile.id)
               this.messageScrollService.scrollToBottom();
           });
@@ -165,7 +167,8 @@ class ContentMessages extends React.Component {
             messageGroupDto,
             this.state.messageGroups
           );
-          if (updatedMessageGroups) this.setMessageGroups(updatedMessageGroups);
+          if (updatedMessageGroups)
+            this.updateMessageGroups(updatedMessageGroups);
         }
       })
       .finally(() => {
@@ -178,7 +181,7 @@ class ContentMessages extends React.Component {
       messageId,
       this.state.messageGroups
     );
-    if (updatedMessageGroups) this.setMessageGroups(updatedMessageGroups);
+    if (updatedMessageGroups) this.updateMessageGroups(updatedMessageGroups);
   }
 
   onChannelMessageItemChange(channelId, changeType, messageId) {
@@ -204,9 +207,16 @@ class ContentMessages extends React.Component {
     this.setState({ editingMessageId: undefined });
   }
 
-  setMessageGroups(messageGroups, callback) {
+  updateMessageGroups(messageGroups, callback) {
     this.setState({ messageGroups: messageGroups }, () => {
-      messageGroups.forEach(group => {
+      if (callback) this.loadImage.imagesLoadedCallback = callback;
+      this.finishLoadingIfAllImagesLoaded();
+    });
+  }
+
+  setNewImageFileCount(newMessageGroups) {
+    newMessageGroups &&
+      newMessageGroups.forEach(group => {
         let fileMessages = group.messages.filter(m => m.hasFileAttachments);
         fileMessages.forEach(fileMessage => {
           fileMessage.fileAttachments.forEach(file => {
@@ -215,9 +225,6 @@ class ContentMessages extends React.Component {
           });
         });
       });
-      if (callback) this.loadImage.imagesLoadedCallback = callback;
-      this.finishLoadingIfAllImagesLoaded();
-    });
   }
 
   onImageLoadingFinished() {
@@ -253,7 +260,7 @@ class ContentMessages extends React.Component {
       this.props.id !== prevProps.id
     ) {
       this.resetMessage();
-      this.setMessageGroups([], () => this.fetchHistory(false));
+      this.updateMessageGroups([], () => this.fetchHistory(false));
     }
   }
 

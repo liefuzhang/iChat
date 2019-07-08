@@ -8,10 +8,10 @@
 
 .content-message-file-item .file-image-item {
   position: relative;
-  margin: 5px 0;
+  margin: 5px 30px 5px 0;
 }
 
-.file-item-container .file-item {
+.content-message-file-item .file-item {
   width: 300px;
   margin-left: 0;
   margin-right: 12px;
