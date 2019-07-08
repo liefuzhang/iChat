@@ -8,7 +8,6 @@ import Modal from "modals/Modal";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
 import EmojiPicker from "components/EmojiPicker";
-import { tsImportEqualsDeclaration } from "@babel/types";
 
 class ContentEditor extends React.Component {
   constructor(props) {
@@ -126,9 +125,9 @@ class ContentEditor extends React.Component {
   }
 
   addATagForUrl(message) {
-    let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
-    message.replace(urlRegex, )
-  } 
+    let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+    return message.replace(urlRegex, '<a href="$&" target="_blank">$&</a>');
+  }
 
   onSubmitMessage(message, pureText) {
     let emojiRegex = /<span class="emoji-container">/;

@@ -5,6 +5,7 @@ import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 import EmojiPicker from "components/EmojiPicker";
 import ContentMessageItemUserReactions from "./ContentMessageItem.UserReactions";
+import ContentMessageItemUrlPreview from "./ContentMessageItem.UrlPreview";
 import ContentMessageItemFileItem from "./ContentMessageItem.FileItem";
 
 class ContentMessageItem extends React.Component {
@@ -88,6 +89,9 @@ class ContentMessageItem extends React.Component {
 
   render() {
     let message = this.props.message;
+    let aTagRegex = /<a href="(.*)" target="_blank">.*<\/a>/g;
+    let containsUrl = aTagRegex.test(message.content);
+
     return (
       <div
         className={
@@ -178,10 +182,18 @@ class ContentMessageItem extends React.Component {
             </div>
             <div className="message-content">
               {!message.hasFileAttachments && (
-                <RawMessage
-                  content={message.content}
-                  edited={message.contentEdited}
-                />
+                <div>
+                  <RawMessage
+                    content={message.content}
+                    edited={message.contentEdited}
+                  />
+                  {containsUrl && (
+                    <ContentMessageItemUrlPreview
+                      content={message.content}
+                      aTagRegex={aTagRegex}
+                    />
+                  )}
+                </div>
               )}
               {message.hasFileAttachments && (
                 <div className="file-container">
