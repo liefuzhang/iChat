@@ -12,21 +12,21 @@ namespace iChat.Api.Controllers
     [ApiController]
     public class WorkspacesController : ControllerBase
     {
-        private readonly IWorkspaceQueryService _workspaceQueryService;
         private readonly IWorkspaceCommandService _workspaceCommandService;
         private readonly IChannelCommandService _channelCommandService;
         private readonly IConversationCommandService _conversationCommandService;
         private readonly IUserQueryService _userQueryService;
         private readonly IUserCommandService _userCommandService;
 
-        public WorkspacesController(iChatContext context, IWorkspaceQueryService workspaceService, IUserQueryService userQueryService,
-            IUserCommandService userCommandService, IChannelCommandService channelCommandService, IConversationCommandService conversationCommandService)
+        public WorkspacesController(iChatContext context, IUserQueryService userQueryService,
+            IUserCommandService userCommandService, IChannelCommandService channelCommandService, 
+            IConversationCommandService conversationCommandService, IWorkspaceCommandService workspaceCommandService)
         {
-            _workspaceQueryService = workspaceService;
             _userQueryService = userQueryService;
             _userCommandService = userCommandService;
             _channelCommandService = channelCommandService;
             _conversationCommandService = conversationCommandService;
+            _workspaceCommandService = workspaceCommandService;
         }
 
         // POST api/workspaces
