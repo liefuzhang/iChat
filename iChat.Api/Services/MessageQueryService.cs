@@ -6,10 +6,12 @@ using iChat.Api.Helpers;
 using iChat.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OpenGraphNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MessageDto = iChat.Api.Dtos.MessageDto;
 
@@ -66,7 +68,6 @@ namespace iChat.Api.Services {
             foreach (var m in messages) {
                 m.MessageReactions = m.MessageReactions.OrderBy(mr => mr.CreatedDate).ToList();
             }
-
         }
 
         private async Task AddReactionUsersToMessagesAsync(IEnumerable<MessageDto> messages) {
@@ -82,12 +83,26 @@ namespace iChat.Api.Services {
                 messageReaction.Users = _mapper.Map<List<UserDto>>(users);
             }
         }
-        
-        private async Task AddOpenGraphDataToMessagesAsync(IEnumerable<MessageDto> messages)
-        {
-            return;
+
+        private async Task AddOpenGraphDataToMessagesAsync(IEnumerable<MessageDto> messages) {
+            var aTagRegex = new Regex("<a href=\"(.*)\" target=\"_blank\">.*<\\/a>");
+            foreach (var m in messages) {
+                if (string.IsNullOrEmpty(m.Content) || !aTagRegex.IsMatch(m.Content)) {
+                    continue;
+                }
+
+                var urls = new List<string>();
+                var openGraphTasks = new List<Task<OpenGraph>>();
+                var matches = aTagRegex.Matches(m.Content);
+                foreach (Match match in matches) {
+                    // first group is the entire matched string
+                    openGraphTasks.Add(OpenGraph.ParseUrlAsync(match.Groups[1].Value));
+                }
+
+                var openGraphs = (await Task.WhenAll(openGraphTasks.ToArray())).ToList();
+            }
         }
-        
+
         private async Task AddAssociatedDataToMessagesAsync(List<MessageDto> messageDtos) {
             await AddFilesToMessagesAsync(messageDtos);
             SortMessageReactionsByCreatedDate(messageDtos);
