@@ -124,11 +124,6 @@ class ContentEditor extends React.Component {
     });
   }
 
-  addATagForUrl(message) {
-    let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
-    return message.replace(urlRegex, '<a href="$&" target="_blank">$&</a>');
-  }
-
   onSubmitMessage(message, pureText) {
     let emojiRegex = /<span class="emoji-container">/;
     if (
@@ -144,8 +139,6 @@ class ContentEditor extends React.Component {
     while ((groups = this.mention.mentionRegex.exec(message)) !== null) {
       mentionUserIds.push(+groups[1]);
     }
-
-    message = this.addATagForUrl(message);
 
     this.isSendingTypingMessage = false;
 

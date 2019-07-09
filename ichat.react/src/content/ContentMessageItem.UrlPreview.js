@@ -20,12 +20,20 @@ class ContentMessageItemUrlPreview extends React.Component {
     while ((groups = regex.exec(props.content)) !== null) {
       urls.push(groups[1]);
     }
+    let urlCount = urls.length;
+    let loadedCount = 0;
+    let returnedObjects = [];
 
     urls.forEach(url => {
       var options = { url: url };
-      openGraphScraper(options, function(error, results) {
-        console.log("error:", error);
-        console.log("results:", results);
+      openGraphScraper(options, (error, results) => {
+        console.log(results);
+        if (results.success) {
+          returnedObjects.push(results.data);
+        }
+        if (++loadedCount === urlCount) {
+          this.setState({ openGraphObjects: returnedObjects });
+        }
       });
     });
   }
@@ -40,7 +48,17 @@ class ContentMessageItemUrlPreview extends React.Component {
   }
 
   render() {
-    return <div className="message-item-url-preview-container" />;
+    return (
+      <div className="message-item-url-preview-container">
+        {/* {this.state.openGraphObjects.map(object => {
+          <div className="url-preview-item">
+            <div className="url-preview-item-site-name">object.ogSiteName</div>
+            <div className="url-preview-item-title">object.ogTitle</div>
+            <div className="url-preview-item-title">object.ogTitle</div>
+          </div>;
+        })} */}
+      </div>
+    );
   }
 }
 

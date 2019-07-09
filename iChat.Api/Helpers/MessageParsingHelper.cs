@@ -64,6 +64,8 @@ namespace iChat.Api.Helpers
                 }
             }
 
+            input = HandleUrlLink(input);
+
             var result = new StringBuilder();
             for (var i = 0; i < input.Length; i++)
             {
@@ -139,6 +141,12 @@ namespace iChat.Api.Helpers
                 markedChanges.Add(new Token(openTag, matchedToken.Index));
                 markedChanges.Add(new Token(closeTag, i));
             }
+        }
+
+        private string HandleUrlLink(string input)
+        {
+            var urlPattern = @"(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)";
+            return Regex.Replace(input, urlPattern, "<a href=\"$&\" target=\"_blank\">$&</a>");
         }
 
         public string Stringify(string html)

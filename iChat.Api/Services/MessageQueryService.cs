@@ -82,13 +82,18 @@ namespace iChat.Api.Services {
                 messageReaction.Users = _mapper.Map<List<UserDto>>(users);
             }
         }
-
+        
+        private async Task AddOpenGraphDataToMessagesAsync(IEnumerable<MessageDto> messages)
+        {
+            return;
+        }
+        
         private async Task AddAssociatedDataToMessagesAsync(List<MessageDto> messageDtos) {
             await AddFilesToMessagesAsync(messageDtos);
             SortMessageReactionsByCreatedDate(messageDtos);
             await AddReactionUsersToMessagesAsync(messageDtos);
+            await AddOpenGraphDataToMessagesAsync(messageDtos);
         }
-
 
         private async Task<List<MessageGroupDto>> GetMessageGroupsAsync(IQueryable<Message> baseQuery, int currentPage) {
             var messages = await baseQuery
