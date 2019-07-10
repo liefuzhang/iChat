@@ -210,7 +210,14 @@ class ContentMessages extends React.Component {
   updateMessageGroups(messageGroups, callback) {
     this.setState({ messageGroups: messageGroups }, () => {
       if (callback) this.loadImage.imagesLoadedCallback = callback;
-      this.finishLoadingIfAllImagesLoaded();
+      if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
+        this.finishLoading();
+      } else {
+        let timeoutInSeconds = 5;
+        this.imageLoadTimeout = setTimeout(() => {
+          this.finishLoading();
+        }, timeoutInSeconds * 1000);
+      }
     });
   }
 
@@ -236,17 +243,17 @@ class ContentMessages extends React.Component {
 
   onImageLoadingFinished() {
     this.loadImage.loadedImageCount++;
-    this.finishLoadingIfAllImagesLoaded();
+    if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
+      this.imageLoadTimeout && clearTimeout(this.imageLoadTimeout);
+      this.finishLoading();
+    }
   }
 
-  finishLoadingIfAllImagesLoaded() {
-    if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
-      if (this.state.messageGroups.length > 0)
-        this.messageScrollService.reset();
-      if (this.loadImage.imagesLoadedCallback)
-        this.loadImage.imagesLoadedCallback();
-      this.resetLoadImage();
-    }
+  finishLoading() {
+    if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
+    if (this.loadImage.imagesLoadedCallback)
+      this.loadImage.imagesLoadedCallback();
+    this.resetLoadImage();
   }
 
   resetLoadImage() {
