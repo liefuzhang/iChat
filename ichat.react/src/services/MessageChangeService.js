@@ -84,6 +84,11 @@ class MessageChangeService {
           group.messages[currentMessageIndex + 1],
           group.messages[currentMessageIndex - 1]
         );
+      } else if (
+        currentMessageIndex === 0 &&
+        currentMessageIndex < group.messages.length - 1
+      ) {
+        group.messages[currentMessageIndex + 1].isConsecutiveMessage = false;
       }
       group.messages.splice(currentMessageIndex, 1);
       if (group.messages.length === 0) {

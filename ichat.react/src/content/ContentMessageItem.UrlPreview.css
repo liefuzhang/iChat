@@ -1,8 +1,15 @@
 .message-item-url-preview-container {
+  max-width: 600px;
+}
+
+.url-preview-item {
   padding-left: 0.9rem;
   border-left: 4px solid #ddd;
   margin: 5px 0;
-  max-width: 600px;
+}
+
+.url-preview-item + .url-preview-item {
+  margin-top: 10px;
 }
 
 .url-preview-item-site-name {
@@ -15,5 +22,5 @@
 }
 
 .url-preview-item-image {
-    margin-top: 5px;
+  margin-top: 5px;
 }

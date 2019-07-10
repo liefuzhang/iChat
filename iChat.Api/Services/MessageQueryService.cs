@@ -102,7 +102,7 @@ namespace iChat.Api.Services
 
         private async Task AddOpenGraphDataToMessagesAsync(IEnumerable<MessageDto> messages)
         {
-            var aTagRegex = new Regex("<a href=\"(.*)\" target=\"_blank\">.*<\\/a>");
+            var aTagRegex = new Regex("<a href=\"(.*?)\" target=\"_blank\">.*?<\\/a>");
             foreach (var m in messages)
             {
                 if (string.IsNullOrEmpty(m.Content) || !aTagRegex.IsMatch(m.Content))
@@ -118,38 +118,50 @@ namespace iChat.Api.Services
                     openGraphTasks.Add(OpenGraph.ParseUrlAsync(match.Groups[1].Value));
                 }
 
-                try
-                {
-                    var openGraphs = (await Task.WhenAll(openGraphTasks.ToArray())).ToList();
-                    m.ContainsOpenGraphObjects = true;
-                    m.OpenGraphDtos = new List<OpenGraphDto>();
+                var openGraphs = (await Task.WhenAll(openGraphTasks.ToArray())).ToList();
+                await AddOpenGraphDataToMessageAsync(openGraphs, m);
+            }
+        }
 
-                    foreach (var openGraph in openGraphs)
+        private static async Task AddOpenGraphDataToMessageAsync(List<OpenGraph> openGraphs, MessageDto message)
+        {
+            try
+            {
+                message.ContainsOpenGraphObjects = true;
+                message.OpenGraphDtos = new List<OpenGraphDto>();
+
+                foreach (var openGraph in openGraphs)
+                {
+                    if (openGraph?.Metadata == null)
                     {
-                        if (openGraph?.Metadata == null)
-                        {
-                            continue;
-                        }
-
-                        var imageUrl = openGraph.Metadata["og:image"].Value();
-                        if (!string.IsNullOrEmpty(imageUrl))
-                        {
-                            m.OpenGraphImageCount++;
-                        }
-                        m.OpenGraphDtos.Add(new OpenGraphDto
-                        {
-                            Url = HttpUtility.HtmlDecode(openGraph.Metadata["og:url"].Value()),
-                            SiteName = HttpUtility.HtmlDecode(openGraph.Metadata["og:site_name"].Value()),
-                            Title = HttpUtility.HtmlDecode(openGraph.Metadata["og:title"].Value()),
-                            ImageUrl = HttpUtility.HtmlDecode(imageUrl),
-                            Description = HttpUtility.HtmlDecode(openGraph.Metadata["og:description"].Value())
-                        });
+                        continue;
                     }
+
+                    var imageUrl = openGraph.Metadata["og:image"].Value();
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        message.OpenGraphImageCount++;
+                    }
+
+                    var siteName = openGraph.Metadata["og:site_name"].Value();
+                    if (string.IsNullOrEmpty(siteName))
+                    {
+                        siteName = openGraph.Url.Host;
+                    }
+
+                    message.OpenGraphDtos.Add(new OpenGraphDto
+                    {
+                        Url = HttpUtility.HtmlDecode(openGraph.Metadata["og:url"].Value()),
+                        SiteName = HttpUtility.HtmlDecode(siteName),
+                        Title = HttpUtility.HtmlDecode(openGraph.Metadata["og:title"].Value()),
+                        ImageUrl = HttpUtility.HtmlDecode(imageUrl),
+                        Description = HttpUtility.HtmlDecode(openGraph.Metadata["og:description"].Value())
+                    });
                 }
-                catch (Exception)
-                {
-                    // ignore errors for invalid open graph objects
-                }
+            }
+            catch (Exception)
+            {
+                // ignore errors for invalid open graph objects
             }
         }
 
