@@ -31,11 +31,20 @@ class ContentMessageItemEditor extends React.Component {
             />
           </div>
           <div className="message-item-editor-buttons">
-            <button className="btn white-btn" onClick={this.props.onClose}>
+            <button
+              className={
+                "btn white-btn " +
+                (this.state.saveChangesClicked ? "disabled-button" : "")
+              }
+              onClick={this.props.onClose}
+            >
               Cancel
             </button>
             <button
-              className="btn"
+              className={
+                "btn " +
+                (this.state.saveChangesClicked ? "disabled-button" : "")
+              }
               onClick={() => this.setState({ saveChangesClicked: true })}
             >
               Save Changes

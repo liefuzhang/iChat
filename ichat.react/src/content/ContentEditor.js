@@ -70,7 +70,7 @@ class ContentEditor extends React.Component {
   }
 
   populateCurrentContent() {
-    let formatTagRegex = /<b>|<i>|<strike>|<code>|<pre>|<blockquote>/;
+    let formatTagRegex = /<b>|<i>|<strike>|<code>|<pre>|<blockquote>|<\/a>/;
     let content = this.props.message.content;
 
     if (formatTagRegex.test(content)) {

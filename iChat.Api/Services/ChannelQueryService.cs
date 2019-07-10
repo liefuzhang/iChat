@@ -31,7 +31,7 @@ namespace iChat.Api.Services
 
         public async Task<IEnumerable<ChannelDto>> GetChannelsForUserAsync(int userId, int workspaceId)
         {
-            var unreadChannels = await _cacheService.GetUnreadChannelForUserAsync(userId, workspaceId);
+            var unreadChannels = await _cacheService.GetUnreadChannelsForUserAsync(userId, workspaceId);
             var channels = await _context.Channels.AsNoTracking()
                 .Where(c => c.WorkspaceId == workspaceId &&
                     c.ChannelSubscriptions.Any(cs => cs.UserId == userId &&

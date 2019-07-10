@@ -156,6 +156,8 @@ namespace iChat.Api.Helpers
                 return string.Empty;
             }
 
+            html = StringifyUrlLink(html);
+
             html = StringifyTag(html, "<b>", "</b>", '*');
             html = StringifyTag(html, "<i>", "</i>", '_');
             html = StringifyTag(html, "<strike>", "</strike>", '~');
@@ -163,6 +165,13 @@ namespace iChat.Api.Helpers
 
             html = StringifyQuoteTag(html);
             html = StringifyPreformmatedTag(html);
+
+            return html;
+        }
+
+        private string StringifyUrlLink(string html) {
+            var pattern = "<a href=\"(.*?)\" target=\"_blank\">.*?<\\/a>";
+            html = Regex.Replace(html, pattern, "$1");
 
             return html;
         }

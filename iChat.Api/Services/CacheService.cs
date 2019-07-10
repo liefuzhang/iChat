@@ -143,7 +143,7 @@ namespace iChat.Api.Services
         {
             foreach (var userId in userIds.Distinct())
             {
-                var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+                var items = await GetUnreadChannelsForUserAsync(userId, workspaceId);
                 var item = items.SingleOrDefault(i => i.ChannelId == channelId);
                 if (item == null)
                 {
@@ -170,7 +170,7 @@ namespace iChat.Api.Services
         {
             foreach (var userId in userIds.Distinct())
             {
-                var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+                var items = await GetUnreadChannelsForUserAsync(userId, workspaceId);
                 var item = items.SingleOrDefault(i => i.ChannelId == channelId);
                 if (item == null)
                 {
@@ -193,7 +193,7 @@ namespace iChat.Api.Services
 
         public async Task ClearUnreadChannelForUserAsync(int channelId, int userId, int workspaceId)
         {
-            var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+            var items = await GetUnreadChannelsForUserAsync(userId, workspaceId);
             var item = items.SingleOrDefault(i => i.ChannelId == channelId);
             if (item == null)
             {
@@ -207,7 +207,7 @@ namespace iChat.Api.Services
 
         public async Task ClearUnreadChannelMessageForUserAsync(int channelId, int messageId, int userId, int workspaceId)
         {
-            var items = await GetUnreadChannelForUserAsync(userId, workspaceId);
+            var items = await GetUnreadChannelsForUserAsync(userId, workspaceId);
             var item = items.SingleOrDefault(i => i.ChannelId == channelId);
             if (item == null)
             {
@@ -224,7 +224,7 @@ namespace iChat.Api.Services
             await _cache.SetStringAsync(key, JsonConvert.SerializeObject(items));
         }
 
-        public async Task<List<ChannelUnreadItem>> GetUnreadChannelForUserAsync(int userId, int workspaceId)
+        public async Task<List<ChannelUnreadItem>> GetUnreadChannelsForUserAsync(int userId, int workspaceId)
         {
             var key = GetRedisKeyForUnreadChannel(userId, workspaceId);
             var value = await _cache.GetStringAsync(key);
