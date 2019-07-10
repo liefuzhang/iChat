@@ -24,7 +24,24 @@ namespace iChat.Api.Models
         public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
         public ICollection<MessageReaction> MessageReactions { get; protected set; }
 
-        public string DateString => CreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
+        public string DateString
+        {
+            get
+            {
+                if (CreatedDate.Date == DateTime.Now.Date)
+                {
+                    return "Today";
+                }
+
+                if (CreatedDate.AddDays(1).Date == DateTime.Now.Date)
+                {
+                    return "Yesterday";
+                }
+
+                return CreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
+            }
+        }
+
         public string TimeString => CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
 
         public void UpdateContent(string content)

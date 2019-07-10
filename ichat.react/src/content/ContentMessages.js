@@ -251,9 +251,10 @@ class ContentMessages extends React.Component {
 
   finishLoading() {
     if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
-    if (this.loadImage.imagesLoadedCallback)
-      this.loadImage.imagesLoadedCallback();
+    let callback = this.loadImage.imagesLoadedCallback;
     this.resetLoadImage();
+
+    if (callback) callback();
   }
 
   resetLoadImage() {
