@@ -32,6 +32,10 @@ class ContentMessageItem extends React.Component {
   }
 
   onDeleteMessageConfirmed(messageId) {
+    this.setState({
+      isDeleteMessageConfirmOpen: false
+    });
+
     this.apiService
       .fetch(
         `/api/messages/${this.props.section}/${this.props.id}/deleteMessage`,
@@ -42,11 +46,6 @@ class ContentMessageItem extends React.Component {
       )
       .catch(error => {
         toast.error(`Delete message failed: ${error}`);
-      })
-      .finally(() => {
-        this.setState({
-          isDeleteMessageConfirmOpen: false
-        });
       });
   }
 
