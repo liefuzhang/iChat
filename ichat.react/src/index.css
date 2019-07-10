@@ -88,7 +88,7 @@ pre {
 blockquote {
   padding-left: 0.9rem;
   border-left: 4px solid #ddd;
-  margin-left: 0;
+  margin: 10px 0;
 }
 
 button {

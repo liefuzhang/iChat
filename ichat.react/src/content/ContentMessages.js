@@ -224,6 +224,13 @@ class ContentMessages extends React.Component {
               this.loadImage.imageFileCount++;
           });
         });
+
+        let messagesContainingUrlLinks = group.messages.filter(
+          m => m.containsOpenGraphObjects
+        );
+        messagesContainingUrlLinks.forEach(message => {
+          this.loadImage.imageFileCount += message.openGraphImageCount;
+        });
       });
   }
 

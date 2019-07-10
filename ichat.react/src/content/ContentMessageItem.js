@@ -89,8 +89,6 @@ class ContentMessageItem extends React.Component {
 
   render() {
     let message = this.props.message;
-    let aTagRegex = /<a href="(.*)" target="_blank">.*<\/a>/g;
-    let containsUrl = aTagRegex.test(message.content);
 
     return (
       <div
@@ -187,10 +185,10 @@ class ContentMessageItem extends React.Component {
                     content={message.content}
                     edited={message.contentEdited}
                   />
-                  {containsUrl && (
+                  {message.containsOpenGraphObjects && (
                     <ContentMessageItemUrlPreview
-                      content={message.content}
-                      aTagRegex={aTagRegex}
+                      openGraphObjects={message.openGraphDtos}
+                      {...this.props}
                     />
                   )}
                 </div>

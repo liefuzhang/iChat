@@ -6,6 +6,7 @@ import ApiService from "services/ApiService";
 import { toast } from "react-toastify";
 import BlankModal from "modals/BlankModal";
 import CloseButton from "components/CloseButton";
+import ContentMessageItemFileItemImage from "./ContentMessageItem.FileItemImage";
 
 class ContentMessageItemFileItem extends React.Component {
   constructor(props) {
@@ -80,33 +81,14 @@ class ContentMessageItemFileItem extends React.Component {
     let file = this.props.file;
     return (
       <div className="content-message-file-item">
-        {this.isImage && (
+        {this.isImage && this.state.imageUrl && (
           <div className="file-image-item">
-            <div className="file-image-item-name">
-              {file.name}
-            </div>
-            <div className="file-item-image-container">
-              <img
-                className="file-item-image-file"
-                src={this.state.imageUrl}
-                onLoad={this.props.onImageLoadingFinished}
-                onError={this.props.onImageLoadingFinished}
-                alt={file.name}
-                onClick={this.onImageFileClick}
-              />
-              {this.state.isFullScreenModalOpen && (
-                <BlankModal onClose={this.onImageFileFullScreenClose}>
-                  <div className="full-screen-image-container">
-                    <img
-                      className="full-screen-image"
-                      src={this.state.imageUrl}
-                      alt={file.name}
-                    />
-                    <CloseButton onClose={this.onImageFileFullScreenClose} />
-                  </div>
-                </BlankModal>
-              )}
-            </div>
+            <div className="file-image-item-name">{file.name}</div>
+            <ContentMessageItemFileItemImage
+              imageUrl={this.state.imageUrl}
+              imageName={file.name}
+              {...this.props}
+            />
             <div className="file-item-toolbar-container">
               <ContentMessageItemFileItemToolbar file={file} {...this.props} />
             </div>

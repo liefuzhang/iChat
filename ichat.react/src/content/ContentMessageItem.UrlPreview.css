@@ -1,0 +1,19 @@
+.message-item-url-preview-container {
+  padding-left: 0.9rem;
+  border-left: 4px solid #ddd;
+  margin: 5px 0;
+  max-width: 600px;
+}
+
+.url-preview-item-site-name {
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.url-preview-item-title {
+  font-weight: 600;
+}
+
+.url-preview-item-image {
+    margin-top: 5px;
+}
