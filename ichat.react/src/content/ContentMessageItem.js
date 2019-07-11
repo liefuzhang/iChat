@@ -17,7 +17,8 @@ class ContentMessageItem extends React.Component {
     this.onDeleteMessageConfirmed = this.onDeleteMessageConfirmed.bind(this);
     this.onEmojiColonsAdded = this.onEmojiColonsAdded.bind(this);
     this.onEmojiColonsRemoved = this.onEmojiColonsRemoved.bind(this);
-    this.onEmojiClose = this.onEmojiClose.bind(this);
+    this.onHoverMessageItem = this.onHoverMessageItem.bind(this);
+    this.removeCurrentMessageHover = this.removeCurrentMessageHover.bind(this);
     this.onUserPopupClose = this.onUserPopupClose.bind(this);
 
     this.state = {
@@ -27,11 +28,13 @@ class ContentMessageItem extends React.Component {
   }
 
   onHoverMessageItem(event) {
+    this.removeCurrentMessageHover();
     event.currentTarget.classList.add("message-hover");
   }
 
-  onLeaveMessageItem(event) {
-    event.currentTarget.classList.remove("message-hover");
+  removeCurrentMessageHover() {
+    let currentMessage = document.querySelector(".message-hover");
+    currentMessage && currentMessage.classList.remove("message-hover");
   }
 
   onDeleteMessageConfirmed(messageId) {
@@ -84,19 +87,14 @@ class ContentMessageItem extends React.Component {
       });
   }
 
-  onEmojiClose() {
-    let currentMessage = document.querySelector(".message-hover");
-    currentMessage && currentMessage.classList.remove("message-hover");
-  }
-
   openUserPopup(event, user) {
-    this.popupClickEvent = event;
+    this.popupClickedTarget = event.currentTarget;
     this.popupUser = user;
     this.setState({ isUserPopupOpen: true });
   }
 
   onUserPopupClose() {
-    this.popupClickEvent = undefined;
+    this.popupClickedTarget = undefined;
     this.popupUser = undefined;
     this.setState({ isUserPopupOpen: false });
   }
@@ -113,7 +111,6 @@ class ContentMessageItem extends React.Component {
         }
         key={message.id}
         onMouseOver={this.onHoverMessageItem}
-        onMouseLeave={this.onLeaveMessageItem}
       >
         <img
           className="user-identicon"
@@ -134,7 +131,7 @@ class ContentMessageItem extends React.Component {
                 <div className="message-toolbar-item-content">
                   <EmojiPicker
                     onEmojiColonsAdded={this.onEmojiColonsAdded}
-                    onClose={this.onEmojiClose}
+                    onClose={this.removeCurrentMessageHover}
                     tooltipText="Add reaction"
                   />
                 </div>
@@ -239,7 +236,7 @@ class ContentMessageItem extends React.Component {
           <div className="message-item-user-popup">
             <UserPopup
               user={this.popupUser}
-              clickEvent={this.popupClickEvent}
+              clickedTarget={this.popupClickedTarget}
               onClose={this.onUserPopupClose}
             />
           </div>
