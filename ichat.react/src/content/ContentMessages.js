@@ -90,6 +90,12 @@ class ContentMessages extends React.Component {
         ) {
           this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
           this.setNewImageFileCount(messageLoad.messageGroupDtos);
+          console.log(
+            "fetchHistory setImageCount: " +
+              this.loadImage.imageFileCount +
+              " currentLoadedImage: " +
+              this.loadImage.loadedImageCount
+          );
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             messageLoad.messageGroupDtos,
             this.state.messageGroups
@@ -137,11 +143,19 @@ class ContentMessages extends React.Component {
   }
 
   handleAddedMessageItem(messageId) {
+    console.log("handleAddedMessageItem start");
     this.isFetchingSingleMessage = true;
     this.fetchSingleMessage(messageId)
       .then(messageGroupDto => {
         if (this.isFetchingSingleMessage) {
+          console.log("handleAddedMessageItem fetched");
           this.setNewImageFileCount([messageGroupDto]);
+          console.log(
+            "fetchHistory setImageCount: " +
+              this.loadImage.imageFileCount +
+              " currentLoadedImage: " +
+              this.loadImage.loadedImageCount
+          );
           let newMessage = messageGroupDto.messages[0];
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             this.state.messageGroups,
@@ -209,7 +223,7 @@ class ContentMessages extends React.Component {
 
   updateMessageGroups(messageGroups, callback) {
     this.setState({ messageGroups: messageGroups }, () => {
-      if (callback) this.loadImage.imagesLoadedCallback = callback;
+      if (callback) this.loadImage.imagesLoadedCallbacks.push(callback);
       if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
         this.finishLoading();
       } else {
@@ -243,6 +257,12 @@ class ContentMessages extends React.Component {
 
   onImageLoadingFinished() {
     this.loadImage.loadedImageCount++;
+    console.log(
+      "onImageLoadingFinished, loadedImageCount:" +
+        this.loadImage.loadedImageCount +
+        " imageFileCount:" +
+        this.loadImage.imageFileCount
+    );
     if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
       this.imageLoadTimeout && clearTimeout(this.imageLoadTimeout);
       this.finishLoading();
@@ -251,17 +271,23 @@ class ContentMessages extends React.Component {
 
   finishLoading() {
     if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
-    let callback = this.loadImage.imagesLoadedCallback;
+    let callbacks = this.loadImage.imagesLoadedCallbacks;
+    console.log(
+      "finishLoading,imagesLoadedCallback: " +
+        this.loadImage.imagesLoadedCallbacks
+    );
     this.resetLoadImage();
 
-    if (callback) callback();
+    if (callbacks) {
+      for (let callback of callbacks) callback();
+    }
   }
 
   resetLoadImage() {
     this.loadImage = {
       imageFileCount: 0,
       loadedImageCount: 0,
-      imagesLoadedCallback: undefined
+      imagesLoadedCallbacks: []
     };
   }
 
