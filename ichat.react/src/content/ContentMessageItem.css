@@ -13,6 +13,10 @@
   margin-left: 5px;
 }
 
+.message-container .user-identicon:hover {
+  cursor: pointer;
+}
+
 .message-container
   .message-item-container.system-message
   .message-content-container {

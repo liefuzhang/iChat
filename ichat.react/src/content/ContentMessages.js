@@ -90,12 +90,6 @@ class ContentMessages extends React.Component {
         ) {
           this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
           this.setNewImageFileCount(messageLoad.messageGroupDtos);
-          console.log(
-            "fetchHistory setImageCount: " +
-              this.loadImage.imageFileCount +
-              " currentLoadedImage: " +
-              this.loadImage.loadedImageCount
-          );
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             messageLoad.messageGroupDtos,
             this.state.messageGroups
@@ -143,19 +137,11 @@ class ContentMessages extends React.Component {
   }
 
   handleAddedMessageItem(messageId) {
-    console.log("handleAddedMessageItem start");
     this.isFetchingSingleMessage = true;
     this.fetchSingleMessage(messageId)
       .then(messageGroupDto => {
         if (this.isFetchingSingleMessage) {
-          console.log("handleAddedMessageItem fetched");
           this.setNewImageFileCount([messageGroupDto]);
-          console.log(
-            "fetchHistory setImageCount: " +
-              this.loadImage.imageFileCount +
-              " currentLoadedImage: " +
-              this.loadImage.loadedImageCount
-          );
           let newMessage = messageGroupDto.messages[0];
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             this.state.messageGroups,
@@ -257,12 +243,6 @@ class ContentMessages extends React.Component {
 
   onImageLoadingFinished() {
     this.loadImage.loadedImageCount++;
-    console.log(
-      "onImageLoadingFinished, loadedImageCount:" +
-        this.loadImage.loadedImageCount +
-        " imageFileCount:" +
-        this.loadImage.imageFileCount
-    );
     if (this.loadImage.loadedImageCount === this.loadImage.imageFileCount) {
       this.imageLoadTimeout && clearTimeout(this.imageLoadTimeout);
       this.finishLoading();
@@ -272,10 +252,6 @@ class ContentMessages extends React.Component {
   finishLoading() {
     if (this.state.messageGroups.length > 0) this.messageScrollService.reset();
     let callbacks = this.loadImage.imagesLoadedCallbacks;
-    console.log(
-      "finishLoading,imagesLoadedCallback: " +
-        this.loadImage.imagesLoadedCallbacks
-    );
     this.resetLoadImage();
 
     if (callbacks) {
