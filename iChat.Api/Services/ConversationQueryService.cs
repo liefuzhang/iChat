@@ -47,10 +47,7 @@ namespace iChat.Api.Services {
         public async Task<IEnumerable<UserDto>> GetAllConversationUsersAsync(int conversationId) {
             var userIds = await GetAllConversationUserIdsAsync(conversationId);
             var users = await _context.Users.Where(u => userIds.Contains(u.Id))
-                .Select(u => {
-                    var dto = _mapper.Map<UserDto>(u);
-                    dto.
-                }).ToListAsync();
+                .Select(u => _mapper.Map<UserDto>(u)).ToListAsync();
             return users;
         }
 

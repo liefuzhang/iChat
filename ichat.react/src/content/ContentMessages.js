@@ -301,6 +301,9 @@ class ContentMessages extends React.Component {
                   <ContentMessagesConversationDescription
                     userList={this.props.messageChannelUserList}
                     userProfile={this.props.userProfile}
+                    isSelfConversation={
+                      this.messageChannelDescriptionDto.isSelfConversation
+                    }
                   />
                 )
               )}

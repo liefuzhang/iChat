@@ -1,22 +1,35 @@
 import React from "react";
 import "./UserPopup.css";
 import BlankModal from "../modals/BlankModal";
+import { toast } from "react-toastify";
+import ApiService from "services/ApiService";
 
 class UserPopup extends React.Component {
   constructor(props) {
     super(props);
 
     this.closeUserPopup = this.closeUserPopup.bind(this);
-
-    this.state = {};
+    this.startConversation = this.startConversation.bind(this);
+    this.apiService = new ApiService(props);
   }
 
   closeUserPopup() {
     this.props.onClose();
   }
 
-  componentDidMount() {
-    this.calculatePostion();
+  startConversation() {
+    this.apiService
+      .fetch(`/api/conversations/start`, {
+        method: "POST",
+        body: JSON.stringify([this.props.user.id])
+      })
+      .then(id => {
+        this.closeUserPopup();
+        this.props.history.push(`/conversation/${id}`);
+      })
+      .catch(error => {
+        toast.error(`Start conversation failed: ${error}`);
+      });
   }
 
   calculatePostion() {
@@ -40,6 +53,10 @@ class UserPopup extends React.Component {
     );
   }
 
+  componentDidMount() {
+    this.calculatePostion();
+  }
+
   render() {
     let user = this.props.user;
     return (
@@ -61,7 +78,7 @@ class UserPopup extends React.Component {
               <div className="user-popup-list-section">
                 <div className="dropdown-section">
                   <ul>
-                    <li>Direct message</li>
+                    <li onClick={this.startConversation}>Direct message</li>
                   </ul>
                 </div>
               </div>

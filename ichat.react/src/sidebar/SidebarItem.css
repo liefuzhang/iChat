@@ -49,9 +49,16 @@
 }
 
 .sidebar-active-item
+  .sidebar-item-user-realtime-status
+  .sidebar-item-user-realtime-status-circle {
+  background: white;
+}
+
+.sidebar-active-item
   .sidebar-item-user-realtime-status.user-offline
   .sidebar-item-user-realtime-status-circle {
-  border: 2px solid #ddd;
+  background: none;
+  border: 2px solid white;
 }
 
 .sidebar-item .sidebar-item-name {

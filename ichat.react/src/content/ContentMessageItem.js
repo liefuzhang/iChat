@@ -18,6 +18,7 @@ class ContentMessageItem extends React.Component {
     this.onEmojiColonsAdded = this.onEmojiColonsAdded.bind(this);
     this.onEmojiColonsRemoved = this.onEmojiColonsRemoved.bind(this);
     this.onHoverMessageItem = this.onHoverMessageItem.bind(this);
+    this.onLeaveMessageItem = this.onLeaveMessageItem.bind(this);
     this.removeCurrentMessageHover = this.removeCurrentMessageHover.bind(this);
     this.onUserPopupClose = this.onUserPopupClose.bind(this);
 
@@ -30,6 +31,10 @@ class ContentMessageItem extends React.Component {
   onHoverMessageItem(event) {
     this.removeCurrentMessageHover();
     event.currentTarget.classList.add("message-hover");
+  }
+
+  onLeaveMessageItem(event) {
+    event.currentTarget.classList.remove("message-hover");
   }
 
   removeCurrentMessageHover() {
@@ -111,6 +116,7 @@ class ContentMessageItem extends React.Component {
         }
         key={message.id}
         onMouseOver={this.onHoverMessageItem}
+        onMouseLeave={this.onLeaveMessageItem}
       >
         <img
           className="user-identicon"
@@ -238,6 +244,7 @@ class ContentMessageItem extends React.Component {
               user={this.popupUser}
               clickedTarget={this.popupClickedTarget}
               onClose={this.onUserPopupClose}
+              {...this.props}
             />
           </div>
         )}

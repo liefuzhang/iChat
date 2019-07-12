@@ -95,13 +95,14 @@ namespace iChat.Api.Services {
 
                 var openGraphTasks = new List<Task<OpenGraph>>();
                 var matches = aTagRegex.Matches(m.Content);
-                foreach (Match match in matches) {
-                    // first group is the entire matched string
-                    var url = HttpUtility.HtmlDecode(match.Groups[1].Value);
-                    openGraphTasks.Add(OpenGraph.ParseUrlAsync(url));
-                }
 
                 try {
+                    foreach (Match match in matches) {
+                        // first group is the entire matched string
+                        var url = HttpUtility.HtmlDecode(match.Groups[1].Value);
+                        openGraphTasks.Add(OpenGraph.ParseUrlAsync(url));
+                    }
+
                     var openGraphs = (await Task.WhenAll(openGraphTasks.ToArray())).ToList();
                     AddOpenGraphDataToMessage(openGraphs, m);
                 } catch (Exception) {
@@ -222,7 +223,8 @@ namespace iChat.Api.Services {
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
                 CreatedByUser = _mapper.Map<UserDto>(createdByUser),
                 CreatedDateString = conversation.CreatedDateString,
-                MessageChannelName = conversation.Name
+                MessageChannelName = conversation.Name,
+                IsSelfConversation = conversation.IsSelfConversation
             };
         }
 
