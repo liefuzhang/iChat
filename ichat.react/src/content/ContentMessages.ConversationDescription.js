@@ -40,7 +40,7 @@ class ContentMessagesConversationDescription extends React.Component {
                 .map((user, index) => (
                   <span key={user.id}>
                     {index !== 0 ? ", " : ""}
-                    <span data-user-id={user.id} class="mentioned-user">
+                    <span data-user-id={user.id} className="mentioned-user">
                       @{user.displayName}
                     </span>
                   </span>
