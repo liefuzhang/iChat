@@ -6,10 +6,23 @@ class BlankModalWithPageOverlay extends React.Component {
     super(props);
 
     this.closePopup = this.closePopup.bind(this);
+    this.onKeyup = this.onKeyup.bind(this);
   }
 
   closePopup() {
     this.props.onClose();
+  }
+
+  onKeyup(event) {
+    if (
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey &&
+      event.keyCode === 27
+    ) {
+      // esc pressed
+      this.props.onClose();
+    }
   }
 
   calculatePostion() {
@@ -35,7 +48,12 @@ class BlankModalWithPageOverlay extends React.Component {
   }
 
   componentDidMount() {
+    document.addEventListener("keyup", this.onKeyup);
     this.calculatePostion();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keyup", this.onKeyup);
   }
 
   render() {

@@ -6,14 +6,14 @@ import "lib/emoji-mart.css";
 import data from "emoji-mart/data/google.json";
 import { Icon, Popup } from "semantic-ui-react";
 import "./EmojiPicker.css";
+import BlankModalWithPageOverlay from "modals/BlankModalWithPageOverlay";
 
 class EmojiPicker extends React.Component {
   constructor(props) {
     super(props);
 
     this.emojiService = new EmojiService();
-    this.onEmojiButtonClicked = this.onEmojiButtonClicked.bind(this);
-    this.onEmojiKeyup = this.onEmojiKeyup.bind(this);
+    this.onEmojiIconClick = this.onEmojiIconClick.bind(this);
     this.closeEmoji = this.closeEmoji.bind(this);
     this.addEmoji = this.addEmoji.bind(this);
 
@@ -22,49 +22,20 @@ class EmojiPicker extends React.Component {
     };
   }
 
-  onEmojiButtonClicked() {
-    this.setState({ isEmojiOpen: true }, () => {
-      document.addEventListener("keyup", this.onEmojiKeyup);
-
-      let emojiPicker = document.querySelector(".emoji-picker");
-      let contentHeaderHeight = document.querySelector(".content-header")
-        .offsetHeight;
-      if (
-        emojiPicker.getBoundingClientRect().top <
-        contentHeaderHeight /* content header height */
-      ) {
-        let diff =
-          contentHeaderHeight - emojiPicker.getBoundingClientRect().top;
-        emojiPicker.style.transform = `translateY(${diff}px)`;
-      }
-      emojiPicker.style.visibility = "visible";
-    });
+  onEmojiIconClick(event) {
+    this.clickedTarget = event.currentTarget;
+    this.setState({ isEmojiOpen: true });
   }
 
-  onEmojiKeyup(event) {
-    if (
-      !event.ctrlKey &&
-      !event.shiftKey &&
-      !event.altKey &&
-      event.keyCode === 27
-    ) {
-      // esc pressed
-      this.closeEmoji();
-    }
-  }
-
-  closeEmoji(event) {
-    let emojiPicker = document.querySelector(".emoji-picker");
-    if (event && emojiPicker.contains(event.target)) return;
+  closeEmoji() {
     this.setState({ isEmojiOpen: false }, () => {
-      document.removeEventListener("keyup", this.onEmojiKeyup);
-
+      this.clickedTarget = undefined;
       if (this.props.onClose) this.props.onClose();
     });
   }
 
   addEmoji(event) {
-    this.closeEmoji();
+    this.setState({ isEmojiOpen: false });
 
     if (this.props.onEmojiHtmlAdded) {
       var imgHtml = this.emojiService.convertColonsToHtml(event.colons);
@@ -82,7 +53,7 @@ class EmojiPicker extends React.Component {
             <Icon
               name="smile outline"
               className="icon-emoji"
-              onClick={this.onEmojiButtonClicked}
+              onClick={this.onEmojiIconClick}
             />
           }
           content={this.props.tooltipText}
@@ -93,13 +64,12 @@ class EmojiPicker extends React.Component {
 
         {this.state.isEmojiOpen && (
           <div className="emoji-picker-container">
-            <div
-              className="emoji-picker-overlay page-overlay"
-              onClick={this.closeEmoji}
-            />
-            <div className="emoji-picker page-overlay-content">
+            <BlankModalWithPageOverlay
+              clickedTarget={this.clickedTarget}
+              onClose={this.closeEmoji}
+            >
               <NimblePicker set="google" data={data} onSelect={this.addEmoji} />
-            </div>
+            </BlankModalWithPageOverlay>
           </div>
         )}
       </div>

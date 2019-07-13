@@ -30,7 +30,10 @@ class UserPopup extends React.Component {
   render() {
     let user = this.props.user;
     return (
-      <BlankModalWithPageOverlay {...this.props}>
+      <BlankModalWithPageOverlay
+        clickedTarget={this.props.clickedTarget}
+        onClose={this.props.onClose}
+      >
         <div className="user-popup panel">
           <div className="user-popup-header">
             <img className="user-identicon" src={user.identiconPath} />
