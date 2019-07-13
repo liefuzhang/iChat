@@ -56,10 +56,6 @@
   color: #259;
 }
 
-.message-content-container .message-content .mentioned-user {
-  padding: 1px 3px;
-}
-
 .message-item-container .message-content-time {
   flex: 0 0 42px;
   position: relative;

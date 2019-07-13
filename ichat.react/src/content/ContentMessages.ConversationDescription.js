@@ -16,7 +16,12 @@ class ContentMessagesConversationDescription extends React.Component {
       <div className="content-message-description">
         <div className="user-identicons">
           {userList.map(u => (
-            <img key={u.id} className="user-identicon" src={u.identiconPath} />
+            <img
+              key={u.id}
+              data-user-id={u.id}
+              className="user-identicon mentioned-user"
+              src={u.identiconPath}
+            />
           ))}
         </div>
         <p>
@@ -32,8 +37,14 @@ class ContentMessagesConversationDescription extends React.Component {
               you and{" "}
               {this.props.userList
                 .filter(user => user.id !== this.props.userProfile.id)
-                .map(user => user.displayName)
-                .join(", ")}
+                .map((user, index) => (
+                  <span key={user.id}>
+                    {index !== 0 ? ", " : ""}
+                    <span data-user-id={user.id} class="mentioned-user">
+                      @{user.displayName}
+                    </span>
+                  </span>
+                ))}
               . Let's chat!
             </span>
           )}

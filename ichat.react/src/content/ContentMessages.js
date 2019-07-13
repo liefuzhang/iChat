@@ -29,6 +29,7 @@ class ContentMessages extends React.Component {
     this.onImageLoadingFinished = this.onImageLoadingFinished.bind(this);
     this.onOpenUserPopup = this.onOpenUserPopup.bind(this);
     this.onUserPopupClose = this.onUserPopupClose.bind(this);
+    this.onMentionedUserClick = this.onMentionedUserClick.bind(this);
 
     this.apiService = new ApiService(props);
     this.mesageChangeService = new MessageChangeService();
@@ -295,8 +296,17 @@ class ContentMessages extends React.Component {
     this.setState({ isUserPopupOpen: false });
   }
 
+  onMentionedUserClick(event) {
+    if (event.target && event.target.classList.contains("mentioned-user")) {
+      let userId = event.target.getAttribute("data-user-id");
+      this.onOpenUserPopup(event.target, userId);
+    }
+  }
+
   componentDidMount() {
     this.fetchHistory(false);
+    let messageContainer = document.querySelector(".message-container");
+    messageContainer.addEventListener("click", this.onMentionedUserClick);
   }
 
   componentDidUpdate(prevProps) {
@@ -307,6 +317,11 @@ class ContentMessages extends React.Component {
       this.resetMessage();
       this.updateMessageGroups([], () => this.fetchHistory(false));
     }
+  }
+
+  componentWillUnmount() {
+    let messageContainer = document.querySelector(".message-container");
+    messageContainer.removeEventListener("click", this.onMentionedUserClick);
   }
 
   render() {
