@@ -19,28 +19,21 @@ namespace iChat.Api.Services {
         }
 
         // when workspace is not available (e.g. onTokenValidated)
-        public async Task<User> GetUserByIdAsync(int id) {
+        public async Task<UserDto> GetUserByIdAsync(int id) {
             var user = await _context.Users
                 .SingleOrDefaultAsync(u => u.Id == id);
 
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<User> GetUserByIdAsync(int id, int workspaceId) {
+        public async Task<UserDto> GetUserByIdAsync(int id, int workspaceId) {
             var user = await _context.Users
                 .Where(u => u.WorkspaceId == workspaceId)
                 .SingleOrDefaultAsync(u => u.Id == id);
 
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
-
-        public async Task<User> GetUserByEmailAsync(string email) {
-            var user = await _context.Users
-                .SingleOrDefaultAsync(u => u.Email == email);
-
-            return user;
-        }
-
+        
         public async Task<string> GetUserNamesAsync(List<int> userIds, int workspaceId) {
             var userDisplayNames = await _context.Users.Where(u => userIds.Contains(u.Id) &&
                                                                 u.WorkspaceId == workspaceId)

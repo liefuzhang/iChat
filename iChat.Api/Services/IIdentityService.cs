@@ -6,6 +6,6 @@ namespace iChat.Api.Services
     public interface IIdentityService
     {
         Task<UserProfileDto> AuthenticateAsync(string email, string password);
-        Task<UserProfileDto> GetUserProfileAsync(int userId, int workspaceId);
+        Task<UserProfileDto> GetUserProfileAsync(int userId);
     }
 }

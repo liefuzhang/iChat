@@ -102,7 +102,7 @@ namespace iChat.Api.Controllers
         [HttpPost("conversation/{id}")]
         public async Task<IActionResult> PostMessageToConversationAsync(int id, MessagePostDto messagePostDto)
         {
-            await _conversationCommandService.NotifyTypingAsync(id, User.GetUserId(), User.GetWorkspaceId(), true);
+            await _conversationCommandService.NotifyTypingAsync(id, User.GetUserId(), true);
             await _messageCommandService.PostMessageToConversationAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId());
             return Ok();
         }
@@ -111,7 +111,7 @@ namespace iChat.Api.Controllers
         [HttpPost("channel/{id}")]
         public async Task<IActionResult> PostMessageToChannelAsync(int id, MessagePostDto messagePostDto)
         {
-            await _channelCommandService.NotifyTypingAsync(id, User.GetUserId(), User.GetWorkspaceId(), true);
+            await _channelCommandService.NotifyTypingAsync(id, User.GetUserId(), true);
             await _messageCommandService.PostMessageToChannelAsync(messagePostDto.MessageContent, id, User.GetUserId(), User.GetWorkspaceId(), messagePostDto.MentionUserIds);
 
             return Ok();

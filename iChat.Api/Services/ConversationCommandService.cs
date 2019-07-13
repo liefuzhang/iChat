@@ -115,8 +115,8 @@ namespace iChat.Api.Services {
             await _context.SaveChangesAsync();
         }
 
-        public async Task NotifyTypingAsync(int conversationId, int currentUserId, int workspaceId, bool isFinished) {
-            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId, workspaceId);
+        public async Task NotifyTypingAsync(int conversationId, int currentUserId, bool isFinished) {
+            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId);
             if (currentUser == null) {
                 return;
             }

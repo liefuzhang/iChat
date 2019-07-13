@@ -6,9 +6,8 @@ using iChat.Api.Constants;
 
 namespace iChat.Api.Services {
     public interface IUserQueryService {
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByIdAsync(int id, int workspaceId);
-        Task<User> GetUserByEmailAsync(string email);
+        Task<UserDto> GetUserByIdAsync(int id);
+        Task<UserDto> GetUserByIdAsync(int id, int workspaceId);
         Task<string> GetUserNamesAsync(List<int> userIds, int workspaceId);
         Task<IEnumerable<UserDto>> GetAllUsersAsync(int workspaceId);
         Task<bool> IsEmailRegisteredAsync(string email);

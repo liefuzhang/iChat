@@ -7,7 +7,6 @@ import EmojiPicker from "components/EmojiPicker";
 import ContentMessageItemUserReactions from "./ContentMessageItem.UserReactions";
 import ContentMessageItemUrlPreview from "./ContentMessageItem.UrlPreview";
 import ContentMessageItemFileItem from "./ContentMessageItem.FileItem";
-import UserPopup from "../components/UserPopup";
 
 class ContentMessageItem extends React.Component {
   constructor(props) {
@@ -20,11 +19,9 @@ class ContentMessageItem extends React.Component {
     this.onHoverMessageItem = this.onHoverMessageItem.bind(this);
     this.onLeaveMessageItem = this.onLeaveMessageItem.bind(this);
     this.removeCurrentMessageHover = this.removeCurrentMessageHover.bind(this);
-    this.onUserPopupClose = this.onUserPopupClose.bind(this);
 
     this.state = {
-      isDeleteMessageConfirmOpen: false,
-      isUserPopupOpen: false
+      isDeleteMessageConfirmOpen: false
     };
   }
 
@@ -92,18 +89,6 @@ class ContentMessageItem extends React.Component {
       });
   }
 
-  openUserPopup(event, user) {
-    this.popupClickedTarget = event.currentTarget;
-    this.popupUser = user;
-    this.setState({ isUserPopupOpen: true });
-  }
-
-  onUserPopupClose() {
-    this.popupClickedTarget = undefined;
-    this.popupUser = undefined;
-    this.setState({ isUserPopupOpen: false });
-  }
-
   render() {
     let message = this.props.message;
 
@@ -121,7 +106,9 @@ class ContentMessageItem extends React.Component {
         <img
           className="user-identicon"
           src={message.sender.identiconPath}
-          onClick={event => this.openUserPopup(event, message.sender)}
+          onClick={event =>
+            this.props.onOpenUserPopup(event.currentTarget, message.sender.id)
+          }
         />
         <div className="message-item">
           <div className="message-title">
@@ -238,16 +225,6 @@ class ContentMessageItem extends React.Component {
             </div>
           )}
         </div>
-        {this.state.isUserPopupOpen && (
-          <div className="message-item-user-popup">
-            <UserPopup
-              user={this.popupUser}
-              clickedTarget={this.popupClickedTarget}
-              onClose={this.onUserPopupClose}
-              {...this.props}
-            />
-          </div>
-        )}
       </div>
     );
   }

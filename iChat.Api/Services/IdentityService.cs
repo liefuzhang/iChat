@@ -34,6 +34,15 @@ namespace iChat.Api.Services
             _channelQueryService = channelQueryService;
         }
 
+        private async Task<UserProfileDto> GetProfileAsync(User user) {
+            var dto = _mapper.Map<UserProfileDto>(user);
+            dto.WorkspaceName = (await _workspaceQueryService.GetWorkspaceByIdAsync(user.WorkspaceId))?.Name;
+            dto.DefaultChannelId = await _channelQueryService.GetDefaultChannelGeneralIdAsync(user.WorkspaceId);
+            dto.Token = GenerateAccessToken(user.Id);
+
+            return dto;
+        }
+
         public async Task<UserProfileDto> AuthenticateAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
@@ -53,9 +62,10 @@ namespace iChat.Api.Services
             return await GetProfileAsync(user);
         }
 
-        public async Task<UserProfileDto> GetUserProfileAsync(int userId, int workspaceId)
+        public async Task<UserProfileDto> GetUserProfileAsync(int userId)
         {
-            var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {
@@ -80,16 +90,6 @@ namespace iChat.Api.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-        }
-
-        private async Task<UserProfileDto> GetProfileAsync(User user)
-        {
-            var dto = _mapper.Map<UserProfileDto>(user);
-            dto.WorkspaceName = (await _workspaceQueryService.GetWorkspaceByIdAsync(user.WorkspaceId))?.Name;
-            dto.DefaultChannelId = await _channelQueryService.GetDefaultChannelGeneralIdAsync(user.WorkspaceId);
-            dto.Token = GenerateAccessToken(user.Id);
-
-            return dto;
         }
     }
 }

@@ -9,12 +9,12 @@ namespace iChat.Api.Services
     public interface IUserCommandService
     {
         Task<int> RegisterAsync(string email, string password, string displayName, int workspaceId);
-        Task InviteUsersAsync(User user, Workspace workspace, List<string> emails);
+        Task InviteUsersAsync(UserDto user, Workspace workspace, List<string> emails);
         Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto);
         Task ForgotPasswordAsync(string email);
         Task SetUserStatusAsync(int userId, int workspaceId, UserStatus status);
         Task ClearUserStatusAsync(int userId, int workspaceId);
-        Task EditProfile(UserEditDto userDto, int userId, int workspaceId);
+        Task EditProfile(UserEditDto userDto, int userId);
         Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
         Task SetUserOnlineAsync(int userId, int workspaceId);
     }

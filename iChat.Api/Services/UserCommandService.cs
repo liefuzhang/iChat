@@ -10,10 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iChat.Api.Services
-{
-    public class UserCommandService : IUserCommandService
-    {
+namespace iChat.Api.Services {
+    public class UserCommandService : IUserCommandService {
         private readonly iChatContext _context;
         private readonly IEmailHelper _emailService;
         private readonly IUserIdenticonHelper _userIdenticonHelper;
@@ -25,8 +23,7 @@ namespace iChat.Api.Services
         public UserCommandService(iChatContext context, IEmailHelper emailService,
             IUserIdenticonHelper userIdenticonHelper, IUserQueryService userQueryService,
             ICacheService cacheService, INotificationService notificationService,
-            IConversationQueryService conversationQueryService)
-        {
+            IConversationQueryService conversationQueryService) {
             _context = context;
             _emailService = emailService;
             _userIdenticonHelper = userIdenticonHelper;
@@ -36,10 +33,8 @@ namespace iChat.Api.Services
             _conversationQueryService = conversationQueryService;
         }
 
-        public async Task<int> RegisterAsync(string email, string password, string displayName, int workspaceId)
-        {
-            if (await _userQueryService.IsEmailRegisteredAsync(email))
-            {
+        public async Task<int> RegisterAsync(string email, string password, string displayName, int workspaceId) {
+            if (await _userQueryService.IsEmailRegisteredAsync(email)) {
                 throw new Exception($"Email \"{email}\" is already taken");
             }
 
@@ -52,49 +47,39 @@ namespace iChat.Api.Services
             return user.Id;
         }
 
-        public async Task InviteUsersAsync(User user, Workspace workspace, List<string> emails)
-        {
-            if (user == null)
-            {
+        public async Task InviteUsersAsync(UserDto user, Workspace workspace, List<string> emails) {
+            if (user == null) {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (workspace == null)
-            {
+            if (workspace == null) {
                 throw new ArgumentNullException(nameof(workspace));
             }
 
-            if (emails == null || !emails.Any())
-            {
+            if (emails == null || !emails.Any()) {
                 throw new ArgumentNullException(nameof(emails));
             }
 
-            foreach (var email in emails)
-            {
-                if (_context.Users.Any(u => u.Email == email))
-                {
+            foreach (var email in emails) {
+                if (_context.Users.Any(u => u.Email == email)) {
                     throw new Exception($"User with email \"{email}\" already exists.");
                 }
             }
 
-            foreach (var email in emails.Distinct())
-            {
+            foreach (var email in emails.Distinct()) {
                 await InviteUserAsync(user, workspace, email);
             }
         }
 
-        private async Task InviteUserAsync(User user, Workspace workspace, string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
+        private async Task InviteUserAsync(UserDto user, Workspace workspace, string email) {
+            if (string.IsNullOrWhiteSpace(email)) {
                 return;
             }
 
             var existingInvitation = await _context.UserInvitations
                 .SingleOrDefaultAsync(ui => ui.Acceptted == false && ui.Cancelled == false &&
                     ui.UserEmail == email && ui.WorkspaceId == workspace.Id);
-            if (existingInvitation != null)
-            {
+            if (existingInvitation != null) {
                 existingInvitation.Cancel();
             }
 
@@ -102,8 +87,7 @@ namespace iChat.Api.Services
             _context.UserInvitations.Add(newUserInvitation);
             await _context.SaveChangesAsync();
 
-            await _emailService.SendUserInvitationEmailAsync(new UserInvitationData
-            {
+            await _emailService.SendUserInvitationEmailAsync(new UserInvitationData {
                 ReceiverAddress = email,
                 InviterName = user.DisplayName,
                 InviterEmail = user.Email,
@@ -112,20 +96,16 @@ namespace iChat.Api.Services
             });
         }
 
-        public async Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto)
-        {
-            if (userInvitationDto.Email == null)
-            {
+        public async Task<int> AcceptInvitationAsync(UserInvitationDto userInvitationDto) {
+            if (userInvitationDto.Email == null) {
                 throw new ArgumentNullException(nameof(userInvitationDto.Email));
             }
 
-            if (userInvitationDto.Password == null)
-            {
+            if (userInvitationDto.Password == null) {
                 throw new ArgumentNullException(nameof(userInvitationDto.Password));
             }
 
-            if (!Guid.TryParse(userInvitationDto.Code, out Guid code))
-            {
+            if (!Guid.TryParse(userInvitationDto.Code, out Guid code)) {
                 throw new ArgumentException("Invalid code.");
             }
 
@@ -135,8 +115,7 @@ namespace iChat.Api.Services
                 ui.Acceptted == false &&
                 ui.Cancelled == false);
 
-            if (invitation == null)
-            {
+            if (invitation == null) {
                 throw new Exception("Invalid invitation.");
             }
 
@@ -149,24 +128,21 @@ namespace iChat.Api.Services
             return userId;
         }
 
-        public async Task ForgotPasswordAsync(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
+        public async Task ForgotPasswordAsync(string email) {
+            if (string.IsNullOrWhiteSpace(email)) {
                 return;
             }
 
-            var user = await _userQueryService.GetUserByEmailAsync(email);
-            if (user == null)
-            {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Email == email);
+            if (user == null) {
                 return;
             }
 
             var existingRequest = await _context.ResetPasswordRequsets
                 .SingleOrDefaultAsync(rpr => rpr.Resetted == false && rpr.Cancelled == false &&
                     rpr.Email == email);
-            if (existingRequest != null)
-            {
+            if (existingRequest != null) {
                 existingRequest.Cancel();
             }
 
@@ -177,20 +153,16 @@ namespace iChat.Api.Services
             await _emailService.SendResetPasswordEmailAsync(email, resetPasswordRequset.ResetCode);
         }
 
-        public async Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
-        {
-            if (resetPasswordDto.Email == null)
-            {
+        public async Task ResetPasswordAsync(ResetPasswordDto resetPasswordDto) {
+            if (resetPasswordDto.Email == null) {
                 throw new ArgumentNullException(nameof(resetPasswordDto.Email));
             }
 
-            if (resetPasswordDto.Password == null)
-            {
+            if (resetPasswordDto.Password == null) {
                 throw new ArgumentNullException(nameof(resetPasswordDto.Password));
             }
 
-            if (!Guid.TryParse(resetPasswordDto.Code, out Guid code))
-            {
+            if (!Guid.TryParse(resetPasswordDto.Code, out Guid code)) {
                 throw new ArgumentException("Invalid code.");
             }
 
@@ -200,15 +172,13 @@ namespace iChat.Api.Services
                 rpr.Resetted == false &&
                 rpr.Cancelled == false);
 
-            if (request == null)
-            {
+            if (request == null) {
                 throw new Exception("Invalid Reset.");
             }
 
-            var user = await _userQueryService.GetUserByEmailAsync(resetPasswordDto.Email);
-
-            if (user == null)
-            {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Email == resetPasswordDto.Email);
+            if (user == null) {
                 throw new Exception("Cannot find user.");
             }
 
@@ -218,19 +188,17 @@ namespace iChat.Api.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task SendUserStatusChangedNotificationAsync(int userId, int workspaceId)
-        {
+        private async Task SendUserStatusChangedNotificationAsync(int userId, int workspaceId) {
             var userIds = (await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId))
                 .ToList();
             userIds.Add(userId);
             await _notificationService.SendUserStatusChangedNotificationAsync(userIds);
         }
 
-        public async Task SetUserStatusAsync(int userId, int workspaceId, UserStatus status)
-        {
-            var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
-            if (user == null)
-            {
+        public async Task SetUserStatusAsync(int userId, int workspaceId, UserStatus status) {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id == userId);
+            if (user == null) {
                 throw new Exception("User cannot be found.");
             }
 
@@ -239,12 +207,11 @@ namespace iChat.Api.Services
 
             await SendUserStatusChangedNotificationAsync(userId, workspaceId);
         }
-        
-        public async Task ClearUserStatusAsync(int userId, int workspaceId)
-        {
-            var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
-            if (user == null)
-            {
+
+        public async Task ClearUserStatusAsync(int userId, int workspaceId) {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id == userId);
+            if (user == null) {
                 throw new Exception("User cannot be found.");
             }
 
@@ -254,11 +221,10 @@ namespace iChat.Api.Services
             await SendUserStatusChangedNotificationAsync(userId, workspaceId);
         }
 
-        public async Task EditProfile(UserEditDto userDto, int userId, int workspaceId)
-        {
-            var user = await _userQueryService.GetUserByIdAsync(userId, workspaceId);
-            if (user == null)
-            {
+        public async Task EditProfile(UserEditDto userDto, int userId) {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id == userId);
+            if (user == null) {
                 throw new Exception("User cannot be found.");
             }
 
@@ -266,13 +232,11 @@ namespace iChat.Api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task SetUserOnlineAsync(int userId, int workspaceId)
-        {
+        public async Task SetUserOnlineAsync(int userId, int workspaceId) {
             var online = await _cacheService.GetUserOnlineAsync(userId, workspaceId);
             await _cacheService.SetUserOnlineAsync(userId, workspaceId);
 
-            if (!online)
-            {
+            if (!online) {
                 var userIds = await _conversationQueryService.GetOtherUserIdsInPrivateConversationAsync(userId, workspaceId);
                 await _notificationService.SendUserOnlineNotificationAsync(userIds);
             }

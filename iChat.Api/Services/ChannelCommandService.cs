@@ -115,9 +115,9 @@ namespace iChat.Api.Services
             await AddUserToChannelAsync(defaultChannelRandom.Id, userId, workspaceId);
         }
 
-        public async Task NotifyTypingAsync(int channelId, int currentUserId, int workspaceId, bool isFinished)
+        public async Task NotifyTypingAsync(int channelId, int currentUserId, bool isFinished)
         {
-            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId, workspaceId);
+            var currentUser = await _userQueryService.GetUserByIdAsync(currentUserId);
             if (currentUser == null)
             {
                 return;

@@ -47,7 +47,7 @@ namespace iChat.Api.Controllers
 
         // GET api/users/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetAsync(int id)
+        public async Task<ActionResult<UserDto>> GetAsync(int id)
         {
             var user = await _userQueryService.GetUserByIdAsync(id, User.GetWorkspaceId());
             if (user == null)
@@ -125,7 +125,7 @@ namespace iChat.Api.Controllers
         [HttpPost("editProfile")]
         public async Task<IActionResult> EditProfile(UserEditDto userDto)
         {
-            await _userCommandService.EditProfile(userDto, User.GetUserId(), User.GetWorkspaceId());
+            await _userCommandService.EditProfile(userDto, User.GetUserId());
 
             return Ok();
         }

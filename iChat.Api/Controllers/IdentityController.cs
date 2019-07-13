@@ -33,7 +33,7 @@ namespace iChat.Api.Controllers
         [Authorize]
         public async Task<ActionResult<UserProfileDto>> GetUserProfileAsync()
         {
-            var userProfileDto = await _identityService.GetUserProfileAsync(User.GetUserId(), User.GetWorkspaceId());
+            var userProfileDto = await _identityService.GetUserProfileAsync(User.GetUserId());
 
             return userProfileDto;
         }

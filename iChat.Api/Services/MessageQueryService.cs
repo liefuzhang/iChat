@@ -197,7 +197,7 @@ namespace iChat.Api.Services {
             var channel = await _channelQueryService.GetChannelByIdAsync(channelId, workspaceId);
             var createdByUser = await _userQueryService.GetUserByIdAsync(channel.CreatedByUserId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
-                CreatedByUser = _mapper.Map<UserDto>(createdByUser),
+                CreatedByUser = createdByUser,
                 CreatedDateString = channel.CreatedDateString,
                 MessageChannelName = channel.Name
             };
@@ -221,7 +221,7 @@ namespace iChat.Api.Services {
             var conversation = await _conversationQueryService.GetConversationByIdAsync(conversationId, userId, workspaceId);
             var createdByUser = await _userQueryService.GetUserByIdAsync(conversation.CreatedByUserId);
             messageLoad.MessageChannelDescriptionDto = new MessageChannelDescriptionDto {
-                CreatedByUser = _mapper.Map<UserDto>(createdByUser),
+                CreatedByUser = createdByUser,
                 CreatedDateString = conversation.CreatedDateString,
                 MessageChannelName = conversation.Name,
                 IsSelfConversation = conversation.IsSelfConversation

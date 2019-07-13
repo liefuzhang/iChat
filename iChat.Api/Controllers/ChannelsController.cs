@@ -81,7 +81,7 @@ namespace iChat.Api.Controllers
         [HttpPost("notifyTyping")]
         public async Task<IActionResult> NotifyTypingAsync([FromBody]int channelId)
         {
-            await _channelCommandService.NotifyTypingAsync(channelId, User.GetUserId(), User.GetWorkspaceId(), false);
+            await _channelCommandService.NotifyTypingAsync(channelId, User.GetUserId(), false);
 
             return Ok();
         }
