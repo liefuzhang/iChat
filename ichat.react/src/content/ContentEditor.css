@@ -116,13 +116,13 @@
 .ql-editor {
   padding: 8px 15px !important;
   max-height: 40vh;
-  line-height: 2;
 }
 
 .ql-editor.ql-blank::before {
   color: #aaa;
   font-style: normal;
   font-size: 1rem;
+  line-height: 24px;
 }
 
 .ql-editor p {

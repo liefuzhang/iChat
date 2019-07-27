@@ -145,8 +145,8 @@ namespace iChat.Api.Helpers
 
         private string HandleUrlLink(string input)
         {
-            var urlPattern = @"(https?:\/\/)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&;/=]*)";
-            return Regex.Replace(input, urlPattern, "<a href=\"$&\" target=\"_blank\">$&</a>");
+            var urlPattern = @"(>|\s|&nbsp;)((?:https?:\/\/)(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&;/=]*?))(<\/|\s|&nbsp;)";
+            return Regex.Replace(input, urlPattern, "$1<a href=\"$2\" target=\"_blank\">$2</a>$3");
         }
 
         public string Stringify(string html)
