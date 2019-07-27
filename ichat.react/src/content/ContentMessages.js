@@ -52,8 +52,7 @@ class ContentMessages extends React.Component {
     this.resetMessage();
     this.state = {
       messageGroups: [],
-      editingMessageId: undefined,
-      isUserPopupOpen: false
+      editingMessageId: undefined
     };
 
     this.scrollDetector = {};

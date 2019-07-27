@@ -6,6 +6,7 @@ import DropdownModal from "modals/DropdownModal";
 import Modal from "modals/Modal";
 import { toast } from "react-toastify";
 import InviteOtherMembersForm from "modalForms/InviteOtherMembersForm";
+import ShowMemberListForm from "modalForms/ShowMemberListForm";
 
 class ContentHeader extends React.Component {
   constructor(props) {
@@ -18,6 +19,8 @@ class ContentHeader extends React.Component {
     this.onLeaveChannelClicked = this.onLeaveChannelClicked.bind(this);
     this.onInviteOtherMembers = this.onInviteOtherMembers.bind(this);
     this.onCloseInviteOtherMembers = this.onCloseInviteOtherMembers.bind(this);
+    this.onShowMemberList = this.onShowMemberList.bind(this);
+    this.onCloseShowMemberList = this.onCloseShowMemberList.bind(this);
 
     if (props.hubConnection) {
       props.hubConnection.on("ConversationUserListChanged", () =>
@@ -29,37 +32,11 @@ class ContentHeader extends React.Component {
       selectedChannel: {},
       selectedConversation: {},
       isSettingDropdownModalOpen: false,
-      isInviteOtherMembersModalOpen: false
+      isInviteOtherMembersModalOpen: false,
+      isShowMemberListModalOpen: false
     };
   }
-
-  fetchData(props) {
-    if (props.isChannel) {
-      this.apiService
-        .fetch(`/api/channels/${props.id}`)
-        .then(channel => this.setState({ selectedChannel: channel }));
-    } else {
-      this.apiService
-        .fetch(`/api/conversations/${props.id}`)
-        .then(conversation =>
-          this.setState({ selectedConversation: conversation })
-        );
-    }
-  }
-
-  componentDidMount() {
-    this.fetchData(this.props);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.isChannel !== prevProps.isChannel ||
-      this.props.id !== prevProps.id
-    ) {
-      this.fetchData(this.props);
-    }
-  }
-
+  
   onSettingButtonClicked() {
     this.setState({
       isSettingDropdownModalOpen: true
@@ -101,6 +78,47 @@ class ContentHeader extends React.Component {
     });
   }
 
+  onShowMemberList() {
+    this.setState({
+      isShowMemberListModalOpen: true,
+      isSettingDropdownModalOpen: false
+    });
+  }
+
+  onCloseShowMemberList() {
+    this.setState({
+      isShowMemberListModalOpen: false
+    });
+  }
+
+  fetchData(props) {
+    if (props.isChannel) {
+      this.apiService
+        .fetch(`/api/channels/${props.id}`)
+        .then(channel => this.setState({ selectedChannel: channel }));
+    } else {
+      this.apiService
+        .fetch(`/api/conversations/${props.id}`)
+        .then(conversation =>
+          this.setState({ selectedConversation: conversation })
+        );
+    }
+  }
+
+  componentDidMount() {
+    this.fetchData(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.isChannel !== prevProps.isChannel ||
+      this.props.id !== prevProps.id
+    ) {
+      this.fetchData(this.props);
+      this.onCloseShowMemberList();
+    }
+  }
+
   render() {
     return (
       <div className="content-header">
@@ -132,6 +150,7 @@ class ContentHeader extends React.Component {
                 <div className="setting-dropdown dropdown-container panel">
                   <section className="dropdown-section">
                     <ul>
+                      <li onClick={this.onShowMemberList}>Show member list</li>
                       {(this.props.isChannel ||
                         (!this.state.selectedConversation.isPrivate &&
                           !this.state.selectedConversation
@@ -161,6 +180,18 @@ class ContentHeader extends React.Component {
                 <Modal onClose={this.onCloseInviteOtherMembers}>
                   <InviteOtherMembersForm
                     onClose={this.onCloseInviteOtherMembers}
+                    {...this.props}
+                  />
+                </Modal>
+              )}
+            </div>
+            <div>
+              {this.state.isShowMemberListModalOpen && (
+                <Modal onClose={this.onCloseShowMemberList}>
+                  <ShowMemberListForm
+                    memberList={this.props.messageChannelUserList}
+                    onOpenUserPopup={this.props.onOpenUserPopup}
+                    onClose={this.onCloseShowMemberList}
                     {...this.props}
                   />
                 </Modal>

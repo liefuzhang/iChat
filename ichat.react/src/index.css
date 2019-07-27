@@ -1,5 +1,6 @@
 body {
   min-height: 100vh;
+  min-width: 1200px;
   margin: 0;
   color: #333;
   line-height: 1.5;
@@ -271,6 +272,7 @@ form button[type="submit"] {
   height: 32px;
   width: 32px;
   margin-right: 10px;
+  border-radius: 2px;
 }
 
 .list-item {

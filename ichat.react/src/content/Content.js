@@ -24,7 +24,8 @@ class Content extends React.Component {
 
     this.state = {
       isPageLoading: true,
-      messageChannelUserList: []
+      messageChannelUserList: [],
+      isUserPopupOpen: false
     };
   }
 
@@ -37,7 +38,7 @@ class Content extends React.Component {
       .fetch(url)
       .then(users => this.setState({ messageChannelUserList: users }));
   }
-  
+
   onUserPopupClose() {
     this.popupClickedTarget = undefined;
     this.popupUser = undefined;
@@ -89,7 +90,11 @@ class Content extends React.Component {
             <Image src="https://react.semantic-ui.com/images/wireframe/short-paragraph.png" />
           </Segment>
         )}
-        <ContentHeader {...this.props} />
+        <ContentHeader
+          messageChannelUserList={this.state.messageChannelUserList}
+          onOpenUserPopup={this.onOpenUserPopup}
+          {...this.props}
+        />
         <ContentMessages
           messageChannelUserList={this.state.messageChannelUserList}
           onFinishLoading={this.onFinishLoading}

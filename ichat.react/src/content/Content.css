@@ -1,6 +1,6 @@
 #content {
   height: 100vh;
-  flex: 1 0 auto;
+  flex: 1 1 0;
   position: relative;
   display: flex;
   flex-direction: column;
