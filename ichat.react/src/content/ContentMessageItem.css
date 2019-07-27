@@ -7,6 +7,15 @@
   padding-bottom: 2px;
 }
 
+.message-container
+  .message-scrollable
+  .message-item-container
+  .message-title
+  .message-sender-name:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .message-container .message-scrollable .message-item-container .message-time {
   font-size: 0.75rem;
   color: #666;

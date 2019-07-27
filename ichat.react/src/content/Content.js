@@ -5,12 +5,15 @@ import ContentHeader from "content/ContentHeader";
 import ContentMessages from "content/ContentMessages";
 import ContentFooter from "content/ContentFooter";
 import { Loader, Image, Segment } from "semantic-ui-react";
+import UserPopup from "../components/UserPopup";
 
 class Content extends React.Component {
   constructor(props) {
     super(props);
 
     this.onFinishLoading = this.onFinishLoading.bind(this);
+    this.onOpenUserPopup = this.onOpenUserPopup.bind(this);
+    this.onUserPopupClose = this.onUserPopupClose.bind(this);
     this.apiService = new ApiService(props);
 
     if (props.hubConnection) {
@@ -33,6 +36,30 @@ class Content extends React.Component {
     this.apiService
       .fetch(url)
       .then(users => this.setState({ messageChannelUserList: users }));
+  }
+  
+  onUserPopupClose() {
+    this.popupClickedTarget = undefined;
+    this.popupUser = undefined;
+    this.setState({ isUserPopupOpen: false });
+  }
+
+  onOpenUserPopup(clickedTarget, userId) {
+    let user = this.state.messageChannelUserList.find(
+      user => user.id === userId
+    );
+    if (user) this.openUserPopup(clickedTarget, user);
+    else {
+      this.apiService.fetch(`/api/users/${userId}`).then(user => {
+        if (user) this.openUserPopup(clickedTarget, user);
+      });
+    }
+  }
+
+  openUserPopup(clickedTarget, user) {
+    this.popupClickedTarget = clickedTarget;
+    this.popupUser = user;
+    this.setState({ isUserPopupOpen: true });
   }
 
   componentDidMount() {
@@ -66,6 +93,7 @@ class Content extends React.Component {
         <ContentMessages
           messageChannelUserList={this.state.messageChannelUserList}
           onFinishLoading={this.onFinishLoading}
+          onOpenUserPopup={this.onOpenUserPopup}
           {...this.props}
         />
         <ContentFooter
@@ -75,6 +103,14 @@ class Content extends React.Component {
           hubConnection={this.props.hubConnection}
           userProfile={this.props.userProfile}
         />
+        {this.state.isUserPopupOpen && (
+          <UserPopup
+            user={this.popupUser}
+            clickedTarget={this.popupClickedTarget}
+            onClose={this.onUserPopupClose}
+            {...this.props}
+          />
+        )}
       </div>
     );
   }

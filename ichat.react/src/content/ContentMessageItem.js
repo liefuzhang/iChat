@@ -112,7 +112,17 @@ class ContentMessageItem extends React.Component {
         />
         <div className="message-item">
           <div className="message-title">
-            <b>{message.sender.displayName}</b>
+            <b
+              className="message-sender-name"
+              onClick={event =>
+                this.props.onOpenUserPopup(
+                  event.currentTarget,
+                  message.sender.id
+                )
+              }
+            >
+              {message.sender.displayName}
+            </b>
             <span className="message-time">{message.timeString}</span>
           </div>
           <div className="message-content-container">

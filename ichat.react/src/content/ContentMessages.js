@@ -9,7 +9,6 @@ import SimpleBar from "simplebar-react";
 import ApiService from "services/ApiService";
 import MessageChangeService from "services/MessageChangeService";
 import MessageScrollService from "../services/MessageScrollService";
-import UserPopup from "../components/UserPopup";
 
 class ContentMessages extends React.Component {
   constructor(props) {
@@ -27,8 +26,6 @@ class ContentMessages extends React.Component {
     this.onCloseEditingMessage = this.onCloseEditingMessage.bind(this);
     this.onScrollToTop = this.onScrollToTop.bind(this);
     this.onImageLoadingFinished = this.onImageLoadingFinished.bind(this);
-    this.onOpenUserPopup = this.onOpenUserPopup.bind(this);
-    this.onUserPopupClose = this.onUserPopupClose.bind(this);
     this.onMentionedUserClick = this.onMentionedUserClick.bind(this);
 
     this.apiService = new ApiService(props);
@@ -271,35 +268,11 @@ class ContentMessages extends React.Component {
       imagesLoadedCallbacks: []
     };
   }
-
-  onOpenUserPopup(clickedTarget, userId) {
-    let user = this.props.messageChannelUserList.find(
-      user => user.id === userId
-    );
-    if (user) this.openUserPopup(clickedTarget, user);
-    else {
-      this.apiService.fetch(`/api/users/${userId}`).then(user => {
-        if (user) this.openUserPopup(clickedTarget, user);
-      });
-    }
-  }
-
-  openUserPopup(clickedTarget, user) {
-    this.popupClickedTarget = clickedTarget;
-    this.popupUser = user;
-    this.setState({ isUserPopupOpen: true });
-  }
-
-  onUserPopupClose() {
-    this.popupClickedTarget = undefined;
-    this.popupUser = undefined;
-    this.setState({ isUserPopupOpen: false });
-  }
-
+  
   onMentionedUserClick(event) {
     if (event.target && event.target.classList.contains("mentioned-user")) {
       let userId = event.target.getAttribute("data-user-id");
-      this.onOpenUserPopup(event.target, userId);
+      this.props.onOpenUserPopup(event.target, userId);
     }
   }
 
@@ -370,7 +343,7 @@ class ContentMessages extends React.Component {
                       message={m}
                       onEditMessageClicked={this.onEditMessageClicked}
                       onImageLoadingFinished={this.onImageLoadingFinished}
-                      onOpenUserPopup={this.onOpenUserPopup}
+                      onOpenUserPopup={this.props.onOpenUserPopup}
                       {...this.props}
                     />
                   )}
@@ -386,14 +359,6 @@ class ContentMessages extends React.Component {
               ))}
             </div>
           ))}
-          {this.state.isUserPopupOpen && (
-            <UserPopup
-              user={this.popupUser}
-              clickedTarget={this.popupClickedTarget}
-              onClose={this.onUserPopupClose}
-              {...this.props}
-            />
-          )}
         </SimpleBar>
       </div>
     );
