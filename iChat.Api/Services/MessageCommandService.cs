@@ -90,11 +90,11 @@ namespace iChat.Api.Services {
             await PostMessageToChannelCommonAsync(message, mentionUserIds);
         }
 
-        public async Task PostJoinConversationSystemMessageAsync(int conversationId, List<int> userIds, int workspaceId, int invitedByUserId) {
+        public async Task PostJoinConversationSystemMessageAsync(int conversationId, List<int> userIds, int invitedByUserId, int workspaceId) {
             var userNames = await _userQueryService.GetUserNamesAsync(userIds.Skip(1).ToList(), workspaceId);
             var invitedByUserName = await _userQueryService.GetUserNamesAsync(new List<int> { invitedByUserId }, workspaceId);
-            var content = $"joined conversation" + (string.IsNullOrEmpty(userNames) ? "." : $" along with {userNames}.") +
-                    $" on the invitation of {invitedByUserName}";
+            var content = $"joined conversation" + (string.IsNullOrEmpty(userNames) ? "" : $" along with {userNames}") +
+                    $" on the invitation of {invitedByUserName}.";
             var message = new ConversationMessage(conversationId, content, userIds.First(), workspaceId, false, true);
 
             await PostMessageToConversationCommonAsync(message);
