@@ -17,6 +17,8 @@ class ContentMessageItemUserReactions extends React.Component {
   }
 
   onReactionClicked(reaction) {
+    if (this.reactionClicked === true) return;
+    this.reactionClicked = true;
     let reactedByUser = reaction.users.some(
       u => u.id === this.props.userProfile.id
     );
@@ -25,6 +27,8 @@ class ContentMessageItemUserReactions extends React.Component {
   }
 
   onEmojiColonsSelected(colons) {
+    if (this.reactionClicked === true) return;
+    this.reactionClicked = true;
     let reaction = this.props.reactions.find(r => r.emojiColons === colons);
     if (reaction) this.onReactionClicked(reaction);
     else this.props.onEmojiColonsAdded(colons);
@@ -44,6 +48,12 @@ class ContentMessageItemUserReactions extends React.Component {
     );
     currentMessageReactions &&
       currentMessageReactions.classList.remove("message-reactions-hover");
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.reactions !== prevProps.reactions) {
+      this.reactionClicked = false;
+    }
   }
 
   render() {
