@@ -18,6 +18,19 @@
 .user-popup-user-name {
   font-size: 1.1em;
   line-height: 1.6;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.user-popup-user-name .user-realtime-status{
+  margin-left: 4px;
+  position: relative;
+  top: 1px;  
+}
+
+.user-popup-user-name .user-realtime-status.user-offline .user-realtime-status-circle{
+  border-color: #999;
 }
 
 .user-popup-list-section {

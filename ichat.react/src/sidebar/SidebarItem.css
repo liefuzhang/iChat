@@ -24,39 +24,15 @@
   color: #6c98af;
 }
 
-.sidebar-item .sidebar-item-user-realtime-status {
-  flex: 0 0 11px;
-  height: 11px;
-  margin-right: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-.sidebar-item-user-realtime-status .sidebar-item-user-realtime-status-circle {
-  background: #3cb371;
-  box-sizing: border-box;
-  width: 9px;
-  height: 9px;
-  border-radius: 9px;
-}
-
-.sidebar-item-user-realtime-status.user-offline
-  .sidebar-item-user-realtime-status-circle {
-  background: none;
-  border: 2px solid #bbb;
-}
-
 .sidebar-active-item
-  .sidebar-item-user-realtime-status
-  .sidebar-item-user-realtime-status-circle {
+  .user-realtime-status
+  .user-realtime-status-circle {
   background: white;
 }
 
 .sidebar-active-item
-  .sidebar-item-user-realtime-status.user-offline
-  .sidebar-item-user-realtime-status-circle {
+  .user-realtime-status.user-offline
+  .user-realtime-status-circle {
   background: none;
   border: 2px solid white;
 }

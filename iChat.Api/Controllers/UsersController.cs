@@ -23,17 +23,20 @@ namespace iChat.Api.Controllers
         private readonly IChannelCommandService _channelCommandService;
         private readonly IConversationCommandService _conversationCommandService;
         private readonly IWorkspaceQueryService _workspaceQueryService;
+        private readonly ICacheService _cacheService;
 
         public UsersController(IUserQueryService userQueryService,
             IUserCommandService userCommandService,
             IWorkspaceQueryService workspaceService, IChannelCommandService channelCommandService,
-            IConversationCommandService conversationCommandService)
+            IConversationCommandService conversationCommandService,
+            ICacheService cacheService)
         {
             _userQueryService = userQueryService;
             _userCommandService = userCommandService;
             _workspaceQueryService = workspaceService;
             _channelCommandService = channelCommandService;
             _conversationCommandService = conversationCommandService;
+            _cacheService = cacheService;
         }
 
         // GET api/users
@@ -130,17 +133,12 @@ namespace iChat.Api.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
-        // TODO remove after development
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody]UserLoginDto loginDto)
-        {
-            var workspaceId = 1;
-            var userId = await _userCommandService.RegisterAsync(loginDto.Email, loginDto.Password, loginDto.Email, workspaceId);
-            await _channelCommandService.AddUserToDefaultChannelsAsync(userId, workspaceId);
-            await _conversationCommandService.StartSelfConversationAsync(userId, workspaceId);
+        // GET api/users/1/onlineStatus
+        [HttpGet("{userId}/onlineStatus")]
+        public async Task<IActionResult> GetUserOnlineStatusAsync(int userId) {
+            var isOnline = await _cacheService.GetUserOnlineAsync(userId, User.GetWorkspaceId());
 
-            return Ok();
+            return Ok(isOnline);
         }
     }
 }

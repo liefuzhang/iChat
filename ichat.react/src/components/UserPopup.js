@@ -10,6 +10,10 @@ class UserPopup extends React.Component {
 
     this.startConversation = this.startConversation.bind(this);
     this.apiService = new ApiService(props);
+
+    this.state = {
+      userRealtimeStatusLoaded: false
+    };
   }
 
   startConversation() {
@@ -24,6 +28,15 @@ class UserPopup extends React.Component {
       })
       .catch(error => {
         toast.error(`Start conversation failed: ${error}`);
+      });
+  }
+
+  componentDidMount() {
+    this.apiService
+      .fetch(`/api/users/${this.props.user.id}/onlineStatus`)
+      .then(isOnline => {
+        this.isUserOnline = isOnline;
+        this.setState({ userRealtimeStatusLoaded: true });
       });
   }
 
@@ -42,6 +55,19 @@ class UserPopup extends React.Component {
             <div className="user-popup-user-info">
               <div className="user-popup-user-name">
                 <b>{user.displayName}</b>
+                {this.state.userRealtimeStatusLoaded && this.isUserOnline && (
+                  <span className="user-realtime-status" title="active">
+                    <span className="user-realtime-status-circle" />
+                  </span>
+                )}
+                {this.state.userRealtimeStatusLoaded && !this.isUserOnline && (
+                  <span
+                    className="user-realtime-status user-offline"
+                    title="away"
+                  >
+                    <span className="user-realtime-status-circle" />
+                  </span>
+                )}
               </div>
               <div>Email: {user.email}</div>
               {user.phoneNumber && <div>Phone: {user.phoneNumber}</div>}
