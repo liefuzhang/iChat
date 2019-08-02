@@ -7,12 +7,12 @@
         public static readonly string DefaultIdenticonName = "Default.svg";
         public static readonly string EmailTemplatePath = "Data\\EmailTemplates";
 
-        public static readonly int RedisRecentConversationMaxNumber = 10;
+        public static readonly int CacheRecentConversationMaxNumber = 10;
 
-        public static readonly string RedisKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
-        public static readonly string RedisKeyRecentConversationPrefix = "RecentConversation";
-        public static readonly string RedisKeyRecentUnreadChannelPrefix = "UnreadChannel";
-        public static readonly string RedisKeyUserOnlinePrefix = "UserOnline";
+        public static readonly string CacheKeyActiveSidebarItemPrefix = "ActiveSidebarItem";
+        public static readonly string CacheKeyRecentConversationPrefix = "RecentConversation";
+        public static readonly string CacheKeyRecentUnreadChannelPrefix = "UnreadChannel";
+        public static readonly string CacheKeyUserOnlinePrefix = "UserOnline";
 
         public static readonly string AwsBucketWorkspaceFileFolderPrefix = "Workspace-";
 

@@ -76,11 +76,12 @@ namespace iChat.Api
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = "localhost";
-                options.InstanceName = "iChatInstance";
-            });
+            //services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.Configuration = "localhost";
+            //    options.InstanceName = "iChatInstance";
+            //});
+            services.AddDistributedMemoryCache();
 
             services.AddDbContext<iChatContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
