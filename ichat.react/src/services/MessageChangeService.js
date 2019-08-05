@@ -18,8 +18,8 @@ class MessageChangeService {
       return;
     }
 
-    let newerMessageDate = moment(newerMessage.timeString, "h:mm tt");
-    let olderMessageDate = moment(olderMessage.timeString, "h:mm tt");
+    let newerMessageDate = moment(newerMessage.timeString, "h:mm A");
+    let olderMessageDate = moment(olderMessage.timeString, "h:mm A");
     newerMessage.isConsecutiveMessage =
       newerMessageDate - olderMessageDate <= 3 * 60 * 1000;
   }

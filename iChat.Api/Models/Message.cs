@@ -36,13 +36,18 @@ namespace iChat.Api.Models
                 if (CreatedDate.AddDays(1).Date == DateTime.Now.Date)
                 {
                     return "Yesterday";
-                }
+                }                
 
-                return CreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
+                return ConvertToNzTimeZone(CreatedDate).ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
             }
         }
 
-        public string TimeString => CreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
+        public string TimeString => ConvertToNzTimeZone(CreatedDate).ToString("h:mm tt", CultureInfo.InvariantCulture);
+
+        private DateTime ConvertToNzTimeZone(DateTime dateTime) {
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
+            return TimeZoneInfo.ConvertTime(CreatedDate, TimeZoneInfo.Local, timeZone);
+        }
 
         public void UpdateContent(string content)
         {
