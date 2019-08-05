@@ -9,26 +9,15 @@ class Modal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onKeyup = this.onKeyup.bind(this);
-
     this.modalRoot = document.getElementById("modal-root");
     this.el = document.createElement("div");
   }
 
-  onKeyup(e) {
-    if (e.key === "Enter") {
-      let button = this.modalRoot.querySelector("button[type='submit']");
-      button && button.click();
-    }
-  }
-
   componentDidMount() {
     this.modalRoot.appendChild(this.el);
-    document.addEventListener("keyup", this.onKeyup);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keyup", this.onKeyup);
     this.modalRoot.removeChild(this.el);
   }
 

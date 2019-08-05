@@ -66,9 +66,9 @@ namespace iChat.Api
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://localhost:3000")
                             .AllowAnyHeader()
                             .AllowCredentials()
+                            .SetIsOriginAllowed((host) => true)
                             .AllowAnyMethod();
                     });
             });
@@ -132,15 +132,13 @@ namespace iChat.Api
                         // token from the query string when a WebSocket or 
                         // Server-Sent Events request comes in.
                         // ref https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-2.2#bearer-token-authentication
-                        OnMessageReceived = context =>
-                        {
+                        OnMessageReceived = context => {
                             var accessToken = context.Request.Query["access_token"];
 
                             // If the request is for signalR hub...
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments("/chatHub")))
-                            {
+                                (path.StartsWithSegments("/chatHub"))) {
                                 // Read the token out of the query string
                                 context.Token = accessToken;
                             }
@@ -175,7 +173,6 @@ namespace iChat.Api
             }
 
             app.UseCors(MyAllowSpecificOrigins);
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseSignalR(routes =>

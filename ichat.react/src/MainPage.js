@@ -16,7 +16,7 @@ class MainPage extends React.Component {
 
     this.connection = new signalR.HubConnectionBuilder()
       // TODO use config here?
-      .withUrl("https://localhost:44389/chatHub/", {
+      .withUrl(`http://ichat.liefuzhang.com:58314/chatHub/`, {
         accessTokenFactory: () => this.profileService.getToken()
       })
       .build();

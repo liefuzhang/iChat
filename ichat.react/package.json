@@ -2,7 +2,6 @@
   "name": "ichat.react",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:58314",
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "emoji-js": "^3.4.1",
