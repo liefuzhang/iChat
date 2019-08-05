@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Contents\Identicons\**" />
+    <Content Remove="wwwroot\Contents\Identicons\**" />
+    <EmbeddedResource Remove="wwwroot\Contents\Identicons\**" />
+    <None Remove="wwwroot\Contents\Identicons\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.cs" />
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.Designer.cs" />
     <Compile Remove="Migrations\20190511222647_RenameWorkSpaceToWorkspace.cs" />
@@ -37,13 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Contents\Identicons\2f803a21-15aa-4693-ad45-2ae6a42f97c9.svg" />
-    <None Include="wwwroot\Contents\Identicons\5ca97f24-5036-4a8e-9b3a-f27c7b23315c.svg" />
-    <None Include="wwwroot\Contents\Identicons\60fa9f64-7de9-4789-bbc6-44b953a31285.svg" />
-    <None Include="wwwroot\Contents\Identicons\64fb2e11-071a-4a47-9fe4-0bd067c58611.svg" />
-    <None Include="wwwroot\Contents\Identicons\9bf68cdc-f2bb-4a00-ab0f-5fb05a26488c.svg" />
-    <None Include="wwwroot\Contents\Identicons\9d2dc4ab-2763-416c-92c7-5f0bdf5932bd.svg" />
-    <None Include="wwwroot\Contents\Identicons\c24b6aec-18ae-4f39-90a9-6d86c5d2ab33.svg" />
+    <Folder Include="wwwroot\Contents\" />
   </ItemGroup>
 
 </Project>
