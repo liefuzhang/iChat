@@ -19,9 +19,9 @@ namespace iChat.Api.Helpers {
             CreateMap<Conversation, ConversationDto>();
             CreateMap<ConversationDto, Conversation>();
             CreateMap<Channel, ChannelDto>()
-                .ForMember(dest => dest.Name, m => m.MapFrom(src => "# " + src.Name));
+                .ForMember(dest => dest.Name, m => m.MapFrom(src => "& " + src.Name));
             CreateMap<ChannelDto, Channel>()
-                .ForMember(dest => dest.Name, m => m.MapFrom(src => src.Name.StartsWith("# ") ? src.Name.Substring(2, src.Name.Length - 2) : src.Name));
+                .ForMember(dest => dest.Name, m => m.MapFrom(src => src.Name.StartsWith("& ") ? src.Name.Substring(2, src.Name.Length - 2) : src.Name));
             CreateMap<File, FileDto>();
             CreateMap<FileDto, File>();
         }

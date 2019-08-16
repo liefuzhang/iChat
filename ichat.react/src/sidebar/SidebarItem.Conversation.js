@@ -5,7 +5,7 @@ import { Icon, Popup } from "semantic-ui-react";
 import UserStatusService from "services/UserStatusService";
 
 function SidebarItemConversation(props) {
-  let truncateNameThreshold = 16;
+  let truncateNameThreshold = 18;
   let conversation = props.conversation;
   let userStatusService = new UserStatusService();
 

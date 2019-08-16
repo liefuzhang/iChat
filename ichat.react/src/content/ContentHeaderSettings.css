@@ -1,0 +1,12 @@
+.content-header-settings-container .icon {
+  font-size: 0.9em;
+}
+
+.content-header-settings-container:hover {
+  cursor: pointer;
+}
+
+.setting-dropdown.dropdown-container {
+  left: 255px;
+  top: 34px;
+}

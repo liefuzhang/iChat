@@ -3,7 +3,6 @@ import "./Sidebar.css";
 import SidebarItemConversation from "./SidebarItem.Conversation";
 import SidebarItemChannel from "./SidebarItem.Channel";
 import SidebarItemJoinChannel from "./SidebarItem.JoinChannel";
-import SidebarHeader from "./SidebarHeader";
 import Modal from "modals/Modal";
 import CreateChannelForm from "modalForms/CreateChannelForm";
 import StartConversationForm from "modalForms/StartConversationForm";
@@ -127,9 +126,6 @@ class Sidebar extends React.Component {
             <Image src="https://react.semantic-ui.com/images/wireframe/short-paragraph.png" />
           </Segment>
         )}
-        <section className="sidebar-header">
-          <SidebarHeader {...this.props} />
-        </section>
         <SimpleBar className="sidebar-scrollable">
           <section>
             <div className="section-title">
@@ -144,7 +140,7 @@ class Sidebar extends React.Component {
                 }
                 content="Create a channel"
                 inverted
-                position="top center"
+                position="bottom center"
                 size="tiny"
               />
             </div>
