@@ -94,16 +94,18 @@ class ContentFooter extends React.Component {
           </div>
         )}
         <div className="message-prompt">
-          <span>
-            <b>*bold*</b>
-          </span>
-          <span className="grey-background">`code`</span>
-          <span className="grey-background">```preformatted```</span>
-          <span>
-            <i>_italics_</i>
-          </span>
-          <span>~strike~</span>
-          <span>>quote</span>
+          <div>
+            <span>
+              <b>*bold*</b>
+            </span>
+            <span className="grey-background">`code`</span>
+            <span className="grey-background">```preformatted```</span>
+            <span>
+              <i>_italics_</i>
+            </span>
+            <span>~strike~</span>
+            <span>>quote</span>
+          </div>
         </div>
       </div>
     );

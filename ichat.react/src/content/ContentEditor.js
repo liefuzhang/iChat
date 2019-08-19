@@ -119,6 +119,7 @@ class ContentEditor extends React.Component {
       ".user-mention-container"
     );
     if (event && mentionContainer.contains(event.target)) return;
+    this.initMention();
     this.setState({ isMentionOpen: false }, () => {
       document.removeEventListener("click", this.closeMention);
     });
@@ -139,7 +140,8 @@ class ContentEditor extends React.Component {
     while ((groups = this.mention.mentionRegex.exec(message)) !== null) {
       mentionUserIds.push(+groups[1]);
     }
-
+    
+    this.closeMention();
     this.isSendingTypingMessage = false;
 
     let url = this.props.isEditing
@@ -294,7 +296,6 @@ class ContentEditor extends React.Component {
   }
 
   onMentionFinish() {
-    this.initMention();
     this.closeMention();
     this.focusOnEditor();
   }

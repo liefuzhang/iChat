@@ -1,5 +1,5 @@
 import React from "react";
-import "./SidebarHeader.css";
+import "./ContentHeaderUserInfo.css";
 import { Icon, Popup } from "semantic-ui-react";
 import Modal from "modals/Modal";
 import DropdownModal from "modals/DropdownModal";
@@ -11,7 +11,7 @@ import UserStatusService from "services/UserStatusService";
 import { toast } from "react-toastify";
 import ApiService from "services/ApiService";
 
-class SidebarHeader extends React.Component {
+class ContentHeaderUserInfo extends React.Component {
   constructor(props) {
     super(props);
 
@@ -111,15 +111,18 @@ class SidebarHeader extends React.Component {
   render() {
     return (
       <div>
-        <div className="sidebar-header">
-          <div className="sidebar-header-container" onClick={this.onHeaderClick}>
+        <div className="header-user-info">
+          <div
+            className="header-user-info-container"
+            onClick={this.onHeaderClick}
+          >
             <div>
-              <span className="sidebar-header-workspace-name">
+              <Icon name="chevron down" />
+              <span className="header-user-info-workspace-name">
                 {this.props.userProfile.workspaceName}
               </span>
-              <Icon name="chevron down" />
             </div>
-            <div className="sidebar-header-user-name">
+            <div className="header-user-info-user-name">
               {this.props.userProfile.displayName}
               {(() => {
                 if (this.userStatusService.isNotActive(this.props.userStatus)) {
@@ -131,7 +134,7 @@ class SidebarHeader extends React.Component {
                       trigger={<Icon name="flag" className="status-icon" />}
                       content={statusName}
                       inverted
-                      position="right center"
+                      position="top right"
                       size="tiny"
                     />
                   );
@@ -141,7 +144,7 @@ class SidebarHeader extends React.Component {
           </div>
           {this.state.isDropdownModalOpen && (
             <DropdownModal onClose={this.onCloseDropdown}>
-              <div className="sidebar-header-dropdown dropdown-container panel">
+              <div className="header-user-info-dropdown dropdown-container panel">
                 <section className="dropdown-section">
                   <div className="dropdown-section-header">
                     <img
@@ -213,4 +216,4 @@ class SidebarHeader extends React.Component {
   }
 }
 
-export default SidebarHeader;
+export default ContentHeaderUserInfo;

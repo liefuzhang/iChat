@@ -19,28 +19,12 @@
   flex: 1 1 auto;
 }
 
-.content-header-toolbar {
-  flex: 0 0 auto;
+.content-header-settings {
+  display: inline-block;
   margin-left: 10px;
-  margin-right: 5px;
+  color: #666;
 }
 
-.content-header-toolbar-item {
-  margin-right: 10px;
-  box-sizing: border-box;
-  width: 24px;
-}
-
-.content-header-toolbar-item:hover {
+.content-header-settings:hover {
   color: #297fa3;
-  cursor: pointer;
-}
-
-.content-header-toolbar-item i.icon {
-  font-size: 1.2rem;
-}
-
-.setting-dropdown.dropdown-container {
-  right: 38px;
-  top: 46px;
 }

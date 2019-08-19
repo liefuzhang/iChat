@@ -1,5 +1,5 @@
 #sidebar {
-  width: 220px;
+  width: 240px;
   background: #206890;
   color: #ddd;
   min-height: 100vh;
@@ -61,7 +61,7 @@
   background: white;
 }
 
-.sidebar-header {
+.header-user-info {
   flex: 0 0 auto;
 }
 
@@ -72,4 +72,8 @@
 
 .sidebar-scrollable section {
   margin: 25px 0 5px;
+}
+
+.sidebar-scrollable section:first-of-type{
+  margin-top: 0;
 }

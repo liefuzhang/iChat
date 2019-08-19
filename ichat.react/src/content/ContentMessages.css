@@ -44,9 +44,9 @@
   .message-group-header {
   position: fixed;
   top: 48px;
-  left: 220px;
+  left: 240px;
   z-index: 1000;
-  width: calc(100% - 220px);
+  width: calc(100% - 240px);
   min-width: 540px;
   padding: 0;
 }

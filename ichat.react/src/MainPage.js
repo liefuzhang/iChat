@@ -98,10 +98,6 @@ class MainPage extends React.Component {
             <Sidebar
               isChannel={isChannel}
               id={id}
-              userProfile={this.state.userProfile}
-              userStatus={this.state.userStatus}
-              onUserSessionDataChange={this.onUserSessionDataChange}
-              onProfileUpdated={this.onProfileUpdated}
               hubConnection={this.connection}
               {...this.props}
             />
@@ -110,7 +106,10 @@ class MainPage extends React.Component {
               id={id}
               section={section}
               hubConnection={this.connection}
+              onProfileUpdated={this.onProfileUpdated}
+              onUserSessionDataChange={this.onUserSessionDataChange}
               userProfile={this.state.userProfile}
+              userStatus={this.state.userStatus}
               {...this.props}
             />
           </div>

@@ -85,7 +85,8 @@
   position: absolute;
   color: #666;
   bottom: -18px;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .message-prompt span {
   margin: 0 3px;

@@ -1,0 +1,33 @@
+.header-user-info {
+  position: relative;
+}
+
+.header-user-info-container {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.header-user-info-user-name {
+  text-align: right;
+}
+
+.header-user-info-user-name .status-icon {
+  margin-left: 5px;
+}
+
+.header-user-info-workspace-name {
+  font-weight: 600;
+  color: #666;
+  font-size: 1.2rem;
+  margin-left: 5px;
+}
+
+.header-user-info-container:hover,
+.header-user-info-container:hover .header-user-info-workspace-name {
+  color: #297fa3;
+}
+
+.header-user-info-dropdown.dropdown-container {
+  right: 24px;
+  top: 34px;
+}
