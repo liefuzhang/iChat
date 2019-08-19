@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iChat.Api.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -30,6 +31,6 @@ namespace iChat.Api.Models {
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelMessage> ChannelMessages { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
-        public string CreatedDateString => CreatedDate.ToString("MMM dd", CultureInfo.InvariantCulture);
+        public string CreatedDateString => CreatedDate.ConvertToNzTimeZone().ToString("MMM dd", CultureInfo.InvariantCulture);
     }
 }

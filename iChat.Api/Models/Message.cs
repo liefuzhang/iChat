@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using iChat.Api.Extensions;
 
 namespace iChat.Api.Models
 {
@@ -38,17 +39,12 @@ namespace iChat.Api.Models
                     return "Yesterday";
                 }                
 
-                return ConvertToNzTimeZone(CreatedDate).ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
+                return CreatedDate.ConvertToNzTimeZone().ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
             }
         }
 
-        public string TimeString => ConvertToNzTimeZone(CreatedDate).ToString("h:mm tt", CultureInfo.InvariantCulture);
-
-        private DateTime ConvertToNzTimeZone(DateTime dateTime) {
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-            return TimeZoneInfo.ConvertTime(CreatedDate, TimeZoneInfo.Local, timeZone);
-        }
-
+        public string TimeString => CreatedDate.ConvertToNzTimeZone().ToString("h:mm tt", CultureInfo.InvariantCulture);
+            
         public void UpdateContent(string content)
         {
             if (string.IsNullOrWhiteSpace(content))
