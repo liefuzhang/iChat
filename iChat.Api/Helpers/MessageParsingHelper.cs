@@ -56,7 +56,6 @@ namespace iChat.Api.Helpers
                     case '`':
                         ParseChar(stagedTokens, input, i, markedChanges, "<code>", "</code>");
                         break;
-                    case ' ':
                     case '<':
                     case '>':
                         stagedTokens.Clear();
