@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace iChat.UnitTests.Services {
     [TestClass]
