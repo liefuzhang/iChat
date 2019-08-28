@@ -177,7 +177,7 @@ namespace iChat.Api.Helpers
 
         private string StringifyTag(string html, string openTag, string closeTag, char replacingChar)
         {
-            var pattern = $@"({openTag})((?:\S)+?)({closeTag})";
+            var pattern = $@"({openTag})((?:.)+?)({closeTag})";
             html = Regex.Replace(html, pattern, $"{replacingChar}$2{replacingChar}");
 
             return html;
