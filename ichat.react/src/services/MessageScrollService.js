@@ -85,6 +85,18 @@ class MessageScrollService {
       ));
     this.scrollableElement.scrollTop = this.scrollableElement.scrollHeight;
   }
+
+  isCloseToBottom() {
+    this.scrollableElement ||
+      (this.scrollableElement = document.querySelector(
+        this.params.scrollableElementSelector
+      ));
+    let buffer = 80;
+    return (
+      this.scrollableElement.scrollTop + window.innerHeight >
+      this.scrollableElement.scrollHeight + buffer
+    );
+  }
 }
 
 export default MessageScrollService;

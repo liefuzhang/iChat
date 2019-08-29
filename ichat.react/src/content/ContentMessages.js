@@ -149,7 +149,7 @@ class ContentMessages extends React.Component {
             [messageGroupDto]
           );
           this.updateMessageGroups(updatedMessageGroups, () => {
-            if (newMessage.senderId === this.props.userProfile.id)
+            if (this.messageScrollService.isCloseToBottom())
               this.messageScrollService.scrollToBottom();
           });
         }
@@ -267,7 +267,7 @@ class ContentMessages extends React.Component {
       imagesLoadedCallbacks: []
     };
   }
-  
+
   onMentionedUserClick(event) {
     if (event.target && event.target.classList.contains("mentioned-user")) {
       let userId = event.target.getAttribute("data-user-id");
