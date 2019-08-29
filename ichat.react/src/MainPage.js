@@ -99,6 +99,7 @@ class MainPage extends React.Component {
               isChannel={isChannel}
               id={id}
               hubConnection={this.connection}
+              userProfile={this.state.userProfile}
               {...this.props}
             />
             <Content
