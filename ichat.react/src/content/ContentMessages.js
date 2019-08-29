@@ -148,8 +148,9 @@ class ContentMessages extends React.Component {
             this.state.messageGroups,
             [messageGroupDto]
           );
+          let isCloseToBottom = this.messageScrollService.isCloseToBottom();
           this.updateMessageGroups(updatedMessageGroups, () => {
-            if (this.messageScrollService.isCloseToBottom())
+            if (isCloseToBottom)
               this.messageScrollService.scrollToBottom();
           });
         }
