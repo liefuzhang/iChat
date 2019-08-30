@@ -156,11 +156,11 @@ namespace iChat.Api.Services {
             await AddOpenGraphDataToMessagesAsync(messageDtos);
         }
 
-        private async Task<List<MessageGroupDto>> GetMessageGroupsAsync(IQueryable<Message> baseQuery, int currentPage) {
+        private async Task<List<MessageGroupDto>> GetMessageGroupsAsync(IQueryable<Message> baseQuery, int? currentMessageId) {
             var messages = await baseQuery
                 .Include(m => m.MessageReactions)
+                .Where(m => m.Id < (currentMessageId ?? int.MaxValue))
                 .OrderByDescending(m => m.CreatedDate)
-                .Skip((currentPage - 1) * iChatConstants.DefaultMessagePageSize)
                 .Take(iChatConstants.DefaultMessagePageSize)
                 .ToListAsync();
 
@@ -183,12 +183,15 @@ namespace iChat.Api.Services {
             return groups;
         }
 
-        private async Task<MessageLoadDto> GetMessageLoadAsync(IQueryable<Message> baseQuery, int currentPage) {
-            var messageGroups = await GetMessageGroupsAsync(baseQuery, currentPage);
+        private async Task<MessageLoadDto> GetMessageLoadAsync(IQueryable<Message> baseQuery, int? currentMessageId) {
+            var messageGroups = await GetMessageGroupsAsync(baseQuery, currentMessageId);
             var totalPage = (baseQuery.Count() - 1) / iChatConstants.DefaultMessagePageSize + 1;
+            var firstMessageId = baseQuery.OrderBy(m => m.Id).Select(m => m.Id).FirstOrDefault();
+            var allMessagesLoaded = messageGroups.Count() == 0
+                || messageGroups.First().Messages.First().Id == firstMessageId;
 
             return new MessageLoadDto {
-                TotalPage = totalPage,
+                AllMessagesLoaded = allMessagesLoaded,
                 MessageGroupDtos = messageGroups
             };
         }
@@ -203,7 +206,7 @@ namespace iChat.Api.Services {
             };
         }
 
-        public async Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int currentPage) {
+        public async Task<MessageLoadDto> GetMessagesForChannelAsync(int channelId, int userId, int workspaceId, int? currentMessageId) {
             if (!_channelQueryService.IsUserSubscribedToChannel(channelId, userId)) {
                 throw new ArgumentException($"User is not subsribed to channel.");
             }
@@ -211,7 +214,7 @@ namespace iChat.Api.Services {
             var messageGroupsBaseQuery = _context.ChannelMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ChannelId == channelId && m.WorkspaceId == workspaceId);
-            var messageLoad = await GetMessageLoadAsync(messageGroupsBaseQuery, currentPage);
+            var messageLoad = await GetMessageLoadAsync(messageGroupsBaseQuery, currentMessageId);
             await AddMessageChannelDescriptionForChannel(messageLoad, channelId, workspaceId);
 
             return messageLoad;
@@ -228,7 +231,7 @@ namespace iChat.Api.Services {
             };
         }
 
-        public async Task<MessageLoadDto> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId, int currentPage) {
+        public async Task<MessageLoadDto> GetMessagesForConversationAsync(int conversationId, int userId, int workspaceId, int? currentMessageId) {
             if (!_conversationQueryService.IsUserInConversation(conversationId, userId)) {
                 throw new ArgumentException($"User is not in conversation.");
             }
@@ -236,7 +239,7 @@ namespace iChat.Api.Services {
             var messageGroupsBaseQuery = _context.ConversationMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ConversationId == conversationId && m.WorkspaceId == workspaceId);
-            var messageLoad = await GetMessageLoadAsync(messageGroupsBaseQuery, currentPage);
+            var messageLoad = await GetMessageLoadAsync(messageGroupsBaseQuery, currentMessageId);
             await AddMessageChannelDescriptionForConversation(messageLoad, conversationId, userId, workspaceId);
 
             return messageLoad;
