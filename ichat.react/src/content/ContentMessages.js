@@ -64,7 +64,6 @@ class ContentMessages extends React.Component {
   }
 
   resetMessage() {
-    this.currentPage = 0;
     this.areAllPagesLoaded = false;
     this.isFetchingHistory = false;
     this.isFetchingSingleMessage = false;
@@ -77,19 +76,26 @@ class ContentMessages extends React.Component {
 
   fetchHistory(isLoadingMore) {
     this.isFetchingHistory = true;
-    this.currentPage++;
     let section = this.props.section;
     let id = this.props.id;
 
+    let url;
+    if (this.state.messageGroups.length > 0) {
+      let currentMessageId = this.state.messageGroups[0].messages[0].id;
+      url = `/api/messages/${section}/${id}/${currentMessageId}`;
+    } else {
+      url = `/api/messages/${section}/${id}`;
+    }
+
     return this.apiService
-      .fetch(`/api/messages/${section}/${id}/${this.currentPage}`)
+      .fetch(url)
       .then(messageLoad => {
         if (
           this.isFetchingHistory &&
           section === this.props.section &&
           id === this.props.id
         ) {
-          this.areAllPagesLoaded = messageLoad.totalPage === this.currentPage;
+          this.areAllPagesLoaded = messageLoad.allMessagesLoaded;
           this.setNewImageFileCount(messageLoad.messageGroupDtos);
           let updatedMessageGroups = this.mesageChangeService.mergeMessageGroups(
             messageLoad.messageGroupDtos,
@@ -107,9 +113,6 @@ class ContentMessages extends React.Component {
           });
         }
       })
-      .catch(() => {
-        this.currentPage--;
-      })
       .finally(() => {
         this.isFetchingHistory = false;
       });
@@ -117,9 +120,7 @@ class ContentMessages extends React.Component {
 
   fetchSingleMessage(messageId) {
     return this.apiService.fetch(
-      `/api/messages/${this.props.section}/${
-        this.props.id
-      }/singleMessage/${messageId}`
+      `/api/messages/${this.props.section}/${this.props.id}/singleMessage/${messageId}`
     );
   }
 
@@ -267,7 +268,7 @@ class ContentMessages extends React.Component {
       imagesLoadedCallbacks: []
     };
   }
-  
+
   onMentionedUserClick(event) {
     if (event.target && event.target.classList.contains("mentioned-user")) {
       let userId = event.target.getAttribute("data-user-id");
