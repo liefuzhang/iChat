@@ -177,6 +177,11 @@ class Login extends React.Component {
                     minLength="6"
                     required
                   />
+                  <p className="demo-user">
+                    Demo User: ichat.test.user@gmail.com
+                    <br />
+                    Password: ichattest
+                  </p>
                   <button type="submit" className="btn form-control">
                     Log in
                   </button>

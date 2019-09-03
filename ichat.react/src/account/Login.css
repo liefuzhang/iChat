@@ -37,3 +37,7 @@
 .login-page .login-container .horizontal-divider {
   width: 300px;
 }
+
+.login-page .demo-user{
+  font-size: 0.9em;
+}
