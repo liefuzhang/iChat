@@ -26,7 +26,7 @@ class UploadFileForm extends React.Component {
     event.preventDefault();
     if (this.files.length === 0) return;
 
-     let button = event.currentTarget.querySelector("button[type='submit']");
+    let button = event.currentTarget.querySelector("button[type='submit']");
     button.classList.add("disabled-button");
 
     this.setState({
@@ -70,8 +70,8 @@ class UploadFileForm extends React.Component {
           onSubmit={this.onUploadFileFormSubmit}
         >
           <p className="form-description warning-text">
-            There is some limitation on how many files you can upload. If you need to upload
-            more files, please contact liefuzhangnz@gmail.com
+            There are some limitations on how many files you can upload. If you
+            need to upload more files, please contact liefuzhangnz@gmail.com
           </p>
           <div className="file-container">
             {this.files.map(file => (
