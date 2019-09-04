@@ -53,6 +53,9 @@ class UploadFileForm extends React.Component {
       })
       .catch(error => {
         toast.error(`Upload file failed: ${error}`);
+        this.setState({
+          showUploadingBar: false
+        });
         button.classList.remove("disabled-button");
       });
   }
