@@ -25,11 +25,22 @@ namespace iChat.Api.Helpers
 
         public async Task<string> UploadFileAsync(IFormFile file, int workspaceId)
         {
+            if (file.Length > 10 * 1024 * 1024) {
+                throw new Exception("Max file size 10MB.");
+            }
+
             var uploadToSubFolder = iChatConstants.AwsBucketWorkspaceFileFolderPrefix + workspaceId;
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
-            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2))
-            {
+            using (var client = new AmazonS3Client(_appSettings.AwsAccessKeyId, _appSettings.AwsSecretAccessKey, RegionEndpoint.APSoutheast2)) {
+                const int maxFileCount = 500;
+                var listObjectsRequest = new ListObjectsRequest();
+                listObjectsRequest.BucketName = _appSettings.AwsFileBucketName;
+                var listObjectsResponse = await client.ListObjectsAsync(listObjectsRequest);
+                if (listObjectsResponse.S3Objects.Count > maxFileCount) {
+                    throw new Exception("Max file count reached.");
+                }
+
                 using (var memoryStream = new MemoryStream())
                 {
                     file.CopyTo(memoryStream);
@@ -39,7 +50,7 @@ namespace iChat.Api.Helpers
                         InputStream = memoryStream,
                         Key = fileName,
                         BucketName = $"{_appSettings.AwsFileBucketName}/{uploadToSubFolder}",
-                        CannedACL = S3CannedACL.PublicRead // TODO change to private
+                        CannedACL = S3CannedACL.Private
                     };
 
                     var fileTransferUtility = new TransferUtility(client);

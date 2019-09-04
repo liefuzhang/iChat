@@ -67,7 +67,7 @@ class UploadFileForm extends React.Component {
           onSubmit={this.onUploadFileFormSubmit}
         >
           <p className="form-description warning-text">
-            Your workspace is limited to 1 GB of files. If you need to upload
+            There is some limitation on how many files you can upload. If you need to upload
             more files, please contact liefuzhangnz@gmail.com
           </p>
           <div className="file-container">
