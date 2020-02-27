@@ -25,25 +25,27 @@ namespace iChat.Api.Models
         public ICollection<MessageFileAttachment> MessageFileAttachments { get; protected set; }
         public ICollection<MessageReaction> MessageReactions { get; protected set; }
 
+        public DateTime LocalizedCreatedDate => CreatedDate.ConvertToNzTimeZone();
+
         public string DateString
         {
             get
             {
-                if (CreatedDate.Date == DateTime.Now.Date)
+                if (LocalizedCreatedDate.Date == DateTime.Now.ConvertToNzTimeZone().Date)
                 {
                     return "Today";
                 }
 
-                if (CreatedDate.AddDays(1).Date == DateTime.Now.Date)
+                if (LocalizedCreatedDate.AddDays(1).Date == DateTime.Now.ConvertToNzTimeZone().Date)
                 {
                     return "Yesterday";
                 }                
 
-                return CreatedDate.ConvertToNzTimeZone().ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
+                return LocalizedCreatedDate.ToString("dddd, MMM dd", CultureInfo.InvariantCulture);
             }
         }
 
-        public string TimeString => CreatedDate.ConvertToNzTimeZone().ToString("h:mm tt", CultureInfo.InvariantCulture);
+        public string TimeString => LocalizedCreatedDate.ToString("h:mm tt", CultureInfo.InvariantCulture);
             
         public void UpdateContent(string content)
         {
