@@ -53,7 +53,7 @@ namespace iChat.Api.Helpers {
         }
 
         private string ConstructUserInvitationEmailBody(UserInvitationData data) {
-            var emailTemplatePath = Path.Combine(iChatConstants.EmailTemplatePath, "UserInvitationEmail.htm");
+            var emailTemplatePath = Path.Combine(_hostingEnvironment.ContentRootPath, iChatConstants.EmailTemplatePath, "UserInvitationEmail.htm");
             var joinUrl = $"{_appSettings.FrontEndUrl}/user/acceptinvitation" +
                 $"?email={data.ReceiverAddress}&code={data.InvitationCode}" +
                 $"&workspaceName={data.WorkspaceName}";
@@ -81,7 +81,7 @@ namespace iChat.Api.Helpers {
         }
 
         private string ConstructResetPasswordEmailBody(string email, Guid resetCode) {
-            var emailTemplatePath = Path.Combine(iChatConstants.EmailTemplatePath, "ResetPasswordEmail.htm");
+            var emailTemplatePath = Path.Combine(_hostingEnvironment.ContentRootPath, iChatConstants.EmailTemplatePath, "ResetPasswordEmail.htm");
             var resetUrl = $"{_appSettings.FrontEndUrl}/user/resetPassword" +
                 $"?email={email}&code={resetCode}";
 
