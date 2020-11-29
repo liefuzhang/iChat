@@ -160,13 +160,13 @@ namespace iChat.Api.Services {
             var messages = await baseQuery
                 .Include(m => m.MessageReactions)
                 .Where(m => m.Id < (currentMessageId ?? int.MaxValue))
-                .OrderByDescending(m => m.CreatedDate)
+                .OrderByDescending(m => m.LocalizedCreatedDate)
                 .Take(iChatConstants.DefaultMessagePageSize)
                 .ToListAsync();
 
             var groups = messages
-                .OrderBy(m => m.CreatedDate)
-                .GroupBy(m => m.CreatedDate.Date)
+                .OrderBy(m => m.LocalizedCreatedDate)
+                .GroupBy(m => m.LocalizedCreatedDate.Date)
                 .OrderBy(group => group.Key)
                 .Select(group =>
                     new MessageGroupDto {
