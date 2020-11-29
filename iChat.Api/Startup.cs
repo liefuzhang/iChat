@@ -20,6 +20,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
 
 namespace iChat.Api
 {
@@ -84,7 +85,7 @@ namespace iChat.Api
             services.AddDistributedMemoryCache();
 
             services.AddDbContext<iChatContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
+                options.UseNpgsql(GetConnectString(Configuration.GetConnectionString("iChatContext"))));
 
             services.AddSignalR();
 
@@ -191,6 +192,33 @@ namespace iChat.Api
             }));
 
             app.UseMvc();
+        }
+
+        private static string GetConnectString(string connectionStringInConfig)
+        {
+            string connectionString;
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            if (string.IsNullOrEmpty(databaseUrl))
+            {
+                connectionString = connectionStringInConfig;
+            }
+            else
+            {
+                var databaseUri = new Uri(databaseUrl);
+                var userInfo = databaseUri.UserInfo.Split(':');
+
+                var builder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = databaseUri.Host,
+                    Port = databaseUri.Port,
+                    Username = userInfo[0],
+                    Password = userInfo[1],
+                    Database = databaseUri.LocalPath.TrimStart('/')
+                };
+                connectionString = builder.ToString();
+            }
+
+            return connectionString;
         }
     }
 }
