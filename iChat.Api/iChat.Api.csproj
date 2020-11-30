@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -10,13 +10,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="wwwroot\Contents\Identicons\**" />
-    <Content Remove="wwwroot\Contents\Identicons\**" />
-    <EmbeddedResource Remove="wwwroot\Contents\Identicons\**" />
-    <None Remove="wwwroot\Contents\Identicons\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Migrations\20190511004514_AddWorkSpaceModel.cs" />
@@ -49,7 +42,113 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Contents\" />
+    <None Include="wwwroot\Contents\Identicons\074f636e-1949-4ce1-a92b-2ef4c1861b02.svg" />
+    <None Include="wwwroot\Contents\Identicons\08e58191-89fd-4f27-82bd-ef7ce1d3b796.svg" />
+    <None Include="wwwroot\Contents\Identicons\09c35947-b5a3-4534-9439-564288ccaf81.svg" />
+    <None Include="wwwroot\Contents\Identicons\0a198494-7785-45bd-86fe-c64aae8b232e.svg" />
+    <None Include="wwwroot\Contents\Identicons\0e013e40-56f3-4f44-a318-3e649b421bb6.svg" />
+    <None Include="wwwroot\Contents\Identicons\100be4a6-f5cf-45b7-b91a-1cc83fca3b83.svg" />
+    <None Include="wwwroot\Contents\Identicons\10b6a00b-0e5c-451b-b116-8d66539cf62c.svg" />
+    <None Include="wwwroot\Contents\Identicons\1242aaa2-a863-4c97-8ebb-7acd2d44edb7.svg" />
+    <None Include="wwwroot\Contents\Identicons\1304c253-16d1-4707-89be-55cb24505a94.svg" />
+    <None Include="wwwroot\Contents\Identicons\161af6fb-d0b7-4b21-8112-97a9d7a7433e.svg" />
+    <None Include="wwwroot\Contents\Identicons\16d27958-f7fd-4b5a-8acf-d57c2171cdfc.svg" />
+    <None Include="wwwroot\Contents\Identicons\174927c0-3832-446b-91af-9336697d0d56.svg" />
+    <None Include="wwwroot\Contents\Identicons\183c0b19-84c6-4d8c-948a-924c509f2a07.svg" />
+    <None Include="wwwroot\Contents\Identicons\1b35eff1-e2f8-4adc-8085-5de9b95fe8ca.svg" />
+    <None Include="wwwroot\Contents\Identicons\1c865ed4-c13d-4b84-8e32-1a90a69e8ea4.svg" />
+    <None Include="wwwroot\Contents\Identicons\21955d2f-7286-443f-9a5a-8cceebae729f.svg" />
+    <None Include="wwwroot\Contents\Identicons\22baa23b-32a8-4874-86c3-b8e36e453f63.svg" />
+    <None Include="wwwroot\Contents\Identicons\237475fd-9c98-4a51-9ad0-987d86767800.svg" />
+    <None Include="wwwroot\Contents\Identicons\2b0adb05-94f1-47ba-bdfa-f694877e5aa9.svg" />
+    <None Include="wwwroot\Contents\Identicons\2c8ae7a1-3120-47a9-b6e5-1edbac5683fa.svg" />
+    <None Include="wwwroot\Contents\Identicons\2f803a21-15aa-4693-ad45-2ae6a42f97c9.svg" />
+    <None Include="wwwroot\Contents\Identicons\372f112f-5a26-40fd-8050-8b4903a4d3d8.svg" />
+    <None Include="wwwroot\Contents\Identicons\3890d878-0a68-4ae9-a7b5-0745a4131d79.svg" />
+    <None Include="wwwroot\Contents\Identicons\3ff38edd-3381-40f8-9bda-78e041dd4040.svg" />
+    <None Include="wwwroot\Contents\Identicons\414f5821-243d-4aa0-936d-c901aa01657e.svg" />
+    <None Include="wwwroot\Contents\Identicons\43b3bb25-79f0-4bb0-87f1-09344f16ed38.svg" />
+    <None Include="wwwroot\Contents\Identicons\46b013ff-bf58-4a23-99a4-c4f6ff962ab6.svg" />
+    <None Include="wwwroot\Contents\Identicons\4791d975-ca20-4e9c-91e9-8a7c495ea88f.svg" />
+    <None Include="wwwroot\Contents\Identicons\4977fcc0-64f4-4105-9a42-4c9f0dcde564.svg" />
+    <None Include="wwwroot\Contents\Identicons\4a57f849-1f7e-487a-9f51-74fab542f6a2.svg" />
+    <None Include="wwwroot\Contents\Identicons\4d4b41a7-5cac-4d63-aece-eb683465e32c.svg" />
+    <None Include="wwwroot\Contents\Identicons\4e013e12-4774-49b7-bfde-4272ac7de9c6.svg" />
+    <None Include="wwwroot\Contents\Identicons\51cbfae5-94b1-4c6b-a783-c82906b71f4d.svg" />
+    <None Include="wwwroot\Contents\Identicons\5263b193-ae03-45c3-b24a-d4a38c11d672.svg" />
+    <None Include="wwwroot\Contents\Identicons\531ac173-77f5-4d9a-834e-90c8444b66b8.svg" />
+    <None Include="wwwroot\Contents\Identicons\54e4528d-858f-4f4e-a9b5-8996757036fd.svg" />
+    <None Include="wwwroot\Contents\Identicons\578b8ff8-505d-4eea-a8b1-d0fa257235d6.svg" />
+    <None Include="wwwroot\Contents\Identicons\5b48d2ea-18bb-49dd-8f56-a6263d0c09b0.svg" />
+    <None Include="wwwroot\Contents\Identicons\5ca97f24-5036-4a8e-9b3a-f27c7b23315c.svg" />
+    <None Include="wwwroot\Contents\Identicons\5e8f2f6f-28d8-4178-8772-eeb684da2c8b.svg" />
+    <None Include="wwwroot\Contents\Identicons\60fa9f64-7de9-4789-bbc6-44b953a31285.svg" />
+    <None Include="wwwroot\Contents\Identicons\633405e5-17c5-410e-9846-7c1d4a26dd40.svg" />
+    <None Include="wwwroot\Contents\Identicons\6379c901-b277-41e7-bb86-c98a0f5f0ce1.svg" />
+    <None Include="wwwroot\Contents\Identicons\63f8041a-a6b6-452c-b06a-248315065e69.svg" />
+    <None Include="wwwroot\Contents\Identicons\64fb2e11-071a-4a47-9fe4-0bd067c58611.svg" />
+    <None Include="wwwroot\Contents\Identicons\656ce98c-a405-40c6-a88a-604a6415da63.svg" />
+    <None Include="wwwroot\Contents\Identicons\664a1d4c-f3d5-4b6c-9642-697662d06d51.svg" />
+    <None Include="wwwroot\Contents\Identicons\69a14ef8-8bf1-423a-b90c-808f5020cb00.svg" />
+    <None Include="wwwroot\Contents\Identicons\7150ce99-8a2f-4a6f-8328-25ab250efc73.svg" />
+    <None Include="wwwroot\Contents\Identicons\751b3591-3341-42ea-a133-3f9ccccfc81b.svg" />
+    <None Include="wwwroot\Contents\Identicons\785d7cc2-53f6-4678-8822-ecfcca4d5e0e.svg" />
+    <None Include="wwwroot\Contents\Identicons\79c4c523-f257-4766-8f60-2f22d61b9784.svg" />
+    <None Include="wwwroot\Contents\Identicons\7c1b6682-e0bb-4aae-94b2-05b7dceeae86.svg" />
+    <None Include="wwwroot\Contents\Identicons\81f045dc-5e07-4a80-b22f-e0d65158c7af.svg" />
+    <None Include="wwwroot\Contents\Identicons\84a1c341-94ac-4e51-9c89-572a5b7febfb.svg" />
+    <None Include="wwwroot\Contents\Identicons\8568f3f6-601b-4bef-9996-7caa1f101e00.svg" />
+    <None Include="wwwroot\Contents\Identicons\87d63f4e-e17e-4b9a-9233-fe21d4f61704.svg" />
+    <None Include="wwwroot\Contents\Identicons\87d77d52-b482-45b6-9bc0-08aeb1850f7c.svg" />
+    <None Include="wwwroot\Contents\Identicons\8f16da27-f3c1-450d-905b-19ac3b715d82.svg" />
+    <None Include="wwwroot\Contents\Identicons\9096bfa4-b76a-463b-adf9-2cfbc7571aea.svg" />
+    <None Include="wwwroot\Contents\Identicons\941e8c99-a296-42c8-a6fb-a62c7ac08863.svg" />
+    <None Include="wwwroot\Contents\Identicons\9462be58-5a4d-408f-a49e-8974fd030551.svg" />
+    <None Include="wwwroot\Contents\Identicons\9483f951-9a82-48e9-947d-75ff3238c19f.svg" />
+    <None Include="wwwroot\Contents\Identicons\9933debf-7624-4086-9640-6c438b1ecf76.svg" />
+    <None Include="wwwroot\Contents\Identicons\9bf68cdc-f2bb-4a00-ab0f-5fb05a26488c.svg" />
+    <None Include="wwwroot\Contents\Identicons\9ce21317-5584-4edc-ab54-2214a50e750a.svg" />
+    <None Include="wwwroot\Contents\Identicons\9d2dc4ab-2763-416c-92c7-5f0bdf5932bd.svg" />
+    <None Include="wwwroot\Contents\Identicons\a3ce9cde-bb4e-467c-94d2-d86faa2be495.svg" />
+    <None Include="wwwroot\Contents\Identicons\a5d7f8cf-f9c7-4f3d-9773-293416dae75d.svg" />
+    <None Include="wwwroot\Contents\Identicons\aa1e53db-a704-402f-8d7f-a2e27a0d13d9.svg" />
+    <None Include="wwwroot\Contents\Identicons\aba9699b-3dba-43c7-8f08-e7872262f697.svg" />
+    <None Include="wwwroot\Contents\Identicons\acf42171-f1a2-40e4-b53f-74dfa8d98365.svg" />
+    <None Include="wwwroot\Contents\Identicons\b08fecfa-db16-4a4f-a5a7-6666f3247610.svg" />
+    <None Include="wwwroot\Contents\Identicons\b1e987ad-26ee-4da6-8e95-f15b449a9c34.svg" />
+    <None Include="wwwroot\Contents\Identicons\b495974a-7c5b-42e3-86f1-9c9b547924a7.svg" />
+    <None Include="wwwroot\Contents\Identicons\b4e4e279-b66f-4d9c-ab6b-9536061563cf.svg" />
+    <None Include="wwwroot\Contents\Identicons\b4eed7bd-1040-47b7-9fbc-22c446e39a80.svg" />
+    <None Include="wwwroot\Contents\Identicons\b588df66-54f6-4695-80d2-ea74b1278c3c.svg" />
+    <None Include="wwwroot\Contents\Identicons\b5c8aeb2-165c-4f7c-974d-90909bf12ed3.svg" />
+    <None Include="wwwroot\Contents\Identicons\b8e344ba-8d2a-413a-bf01-6898de0551f1.svg" />
+    <None Include="wwwroot\Contents\Identicons\bb7edfc4-4492-4a3e-9ea9-afa42ef24026.svg" />
+    <None Include="wwwroot\Contents\Identicons\c001fd22-6185-43a4-ad67-c2ebf5696bd9.svg" />
+    <None Include="wwwroot\Contents\Identicons\c24b6aec-18ae-4f39-90a9-6d86c5d2ab33.svg" />
+    <None Include="wwwroot\Contents\Identicons\c8003892-25e5-4790-ba33-a2575ddebf46.svg" />
+    <None Include="wwwroot\Contents\Identicons\ca2f72c8-1ab5-41fa-b7e8-1eb31b5be1f5.svg" />
+    <None Include="wwwroot\Contents\Identicons\caa0dcdf-9b7f-4262-909d-517ccb8a7ea0.svg" />
+    <None Include="wwwroot\Contents\Identicons\cbc58975-f062-4f20-8635-3c9e8abff844.svg" />
+    <None Include="wwwroot\Contents\Identicons\d0ca3b42-80b2-424f-acb8-45c796bba674.svg" />
+    <None Include="wwwroot\Contents\Identicons\d1d345f6-8247-4c36-ada1-6c3f7da8e1b3.svg" />
+    <None Include="wwwroot\Contents\Identicons\d395a9ae-527e-4107-a3bc-9789d9ef5dd4.svg" />
+    <None Include="wwwroot\Contents\Identicons\d3e45140-64ae-48a6-b80f-fb399aab2b2a.svg" />
+    <None Include="wwwroot\Contents\Identicons\dee227c4-be34-4655-9573-c1a61ac9eb0d.svg" />
+    <None Include="wwwroot\Contents\Identicons\default.svg" />
+    <None Include="wwwroot\Contents\Identicons\df32054e-4454-445c-b8b5-3200c0c3ca1b.svg" />
+    <None Include="wwwroot\Contents\Identicons\e008309b-59ba-44a4-b8fd-5dd3e290a82a.svg" />
+    <None Include="wwwroot\Contents\Identicons\e67b2834-4559-4a7d-90ed-8d666a2b4a07.svg" />
+    <None Include="wwwroot\Contents\Identicons\e69f130d-bd2a-4b8a-85c2-c44a6558efc4.svg" />
+    <None Include="wwwroot\Contents\Identicons\e809118a-fbbf-41a1-8d17-382a54d3d9e8.svg" />
+    <None Include="wwwroot\Contents\Identicons\ea1f1c69-7962-4464-bcdf-e65e6b922d51.svg" />
+    <None Include="wwwroot\Contents\Identicons\ebef667b-ef06-4ff9-ac8f-58b89b946872.svg" />
+    <None Include="wwwroot\Contents\Identicons\ed497c0e-1138-4ed9-8e4b-5d405411f54c.svg" />
+    <None Include="wwwroot\Contents\Identicons\f06caf8d-15a9-45fd-a590-30cc567fa867.svg" />
+    <None Include="wwwroot\Contents\Identicons\f7023e49-7f9d-4da1-a54f-d494189a861c.svg" />
+    <None Include="wwwroot\Contents\Identicons\f71b1f2e-e696-4747-84a8-dba1b2adcd2b.svg" />
+    <None Include="wwwroot\Contents\Identicons\fd1e6995-afcf-480b-89f6-ce4dedfb37e7.svg" />
+    <None Include="wwwroot\Contents\Identicons\ff6af00b-496f-42f5-928d-8d7d4bfe0d6f.svg" />
+    <None Include="wwwroot\Contents\Identicons\ffe836ca-64a8-4b7d-a49a-90f8ec514107.svg" />
   </ItemGroup>
 
 </Project>

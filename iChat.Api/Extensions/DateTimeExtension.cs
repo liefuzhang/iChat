@@ -8,8 +8,9 @@ namespace iChat.Api.Extensions
     public static class DateTimeExtension
     {
         public static DateTime ConvertToNzTimeZone(this DateTime dateTime) {
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-            return TimeZoneInfo.ConvertTime(dateTime, TimeZoneInfo.Local, timeZone);
+            //var timeZone = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
+            return dateTime;
+            //return TimeZoneInfo.ConvertTime(dateTime, TimeZoneInfo.Local, TimeZoneInfo.Local);
         }
     }
 }
