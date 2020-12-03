@@ -165,6 +165,8 @@
 
 .message-content p {
   line-height: 1.6;
+  display: flex;
+  white-space: pre-wrap;
 }
 
 .ui.modal .content {
