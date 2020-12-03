@@ -31,12 +31,12 @@ namespace iChat.Api.Models
         {
             get
             {
-                if (LocalizedCreatedDate.Date == DateTime.Now.ConvertToNzTimeZone().Date)
+                if (LocalizedCreatedDate.Date == DateTime.UtcNow.ConvertToNzTimeZone().Date)
                 {
                     return "Today";
                 }
 
-                if (LocalizedCreatedDate.AddDays(1).Date == DateTime.Now.ConvertToNzTimeZone().Date)
+                if (LocalizedCreatedDate.AddDays(1).Date == DateTime.UtcNow.ConvertToNzTimeZone().Date)
                 {
                     return "Yesterday";
                 }                

@@ -22,7 +22,7 @@ namespace iChat.Api.Models
 
             MessageId = messageId;
             EmojiColons = emojiColons;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
         }
 
         public int Id { get; private set; }

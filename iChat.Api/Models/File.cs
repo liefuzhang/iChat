@@ -17,7 +17,7 @@ namespace iChat.Api.Models
             ContentType = contentType;
             UploadedByUserId = userId;
             WorkspaceId = workspaceId;
-            UploadedDate = DateTime.Now;
+            UploadedDate = DateTime.UtcNow;
         }
 
         protected File()

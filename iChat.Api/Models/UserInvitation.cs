@@ -20,7 +20,7 @@ namespace iChat.Api.Models {
             InvitedByUserId = invitedByUserId;
             WorkspaceId = workspaceId;
             UserEmail = userEmail;
-            InviteDate = DateTime.Now;
+            InviteDate = DateTime.UtcNow;
             InvitationCode = Guid.NewGuid();
         }
 

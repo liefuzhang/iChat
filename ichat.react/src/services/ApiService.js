@@ -59,7 +59,7 @@ class ApiService {
     noContentType || (options.headers["Content-Type"] = "application/json");
     noAuth || (options.headers["Authorization"] = bearer);
 
-      return fetch(`https://ichat-apis.herokuapp.com${url}`, options);
+    return fetch(`https://ichat-apis.herokuapp.com${url}`, options);
   }
 }
 

@@ -5,6 +5,9 @@ WORKDIR /app
 #EXPOSE 80
 #EXPOSE 443
 
+ENV TZ=Pacific/Auckland
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["iChat.Api/iChat.Api.csproj", "iChat.Api/"]

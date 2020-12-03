@@ -11,7 +11,7 @@ namespace iChat.Api.Models {
             }
 
             Name = name;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
         }
 
         public int Id { get; private set; }

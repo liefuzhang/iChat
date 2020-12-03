@@ -24,7 +24,7 @@ namespace iChat.Api.Models {
             WorkspaceId = workspaceId;
             HasFileAttachments = hasFileAttachments;
             IsSystemMessage = isSystemMessage;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
         }
         public int ChannelId { get; private set; }
         public Channel Channel { get; private set; }

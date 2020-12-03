@@ -18,7 +18,7 @@ namespace iChat.Api.Models
             WorkspaceId = workspaceId;
             IsPrivate = isPrivate;
             IsSelfConversation = isSelfConversation;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
         }
 
         protected Conversation()

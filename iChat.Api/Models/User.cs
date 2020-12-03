@@ -16,7 +16,7 @@ namespace iChat.Api.Models {
             Email = email;
             Status = UserStatus.Active;
             DisplayName = (string.IsNullOrWhiteSpace(displayName) ? email : displayName);
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             IdenticonGuid = identiconGuid;
             WorkspaceId = workspaceId;
 

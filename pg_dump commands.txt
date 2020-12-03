@@ -1,0 +1,6 @@
+pg_dump -U postgres ichat > ichat.sql
+
+replace 锘? with <
+
+cat ichat.sql | heroku pg:psql -a ichat-apis
+

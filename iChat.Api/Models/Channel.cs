@@ -14,7 +14,7 @@ namespace iChat.Api.Models {
             CreatedByUserId = userId;
             WorkspaceId = workspaceId;
             Topic = topic;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
         }
 
         protected Channel() {
