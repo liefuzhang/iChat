@@ -20,6 +20,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Npgsql;
 
 namespace iChat.Api
@@ -84,8 +85,7 @@ namespace iChat.Api
             //});
             services.AddDistributedMemoryCache();
 
-            services.AddDbContext<iChatContext>(options =>
-                options.UseNpgsql(GetConnectString(Configuration.GetConnectionString("iChatContext"))));
+            services.AddDbContext<iChatContext>(options => options.UseSqlServer(Configuration.GetConnectionString("iChatContext")));
 
             services.AddSignalR();
 
@@ -158,6 +158,11 @@ namespace iChat.Api
                         ValidateAudience = false
                     };
                 });
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -175,6 +180,7 @@ namespace iChat.Api
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseSignalR(routes =>
             {
@@ -192,33 +198,16 @@ namespace iChat.Api
             }));
 
             app.UseMvc();
-        }
 
-        private static string GetConnectString(string connectionStringInConfig)
-        {
-            string connectionString;
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            if (string.IsNullOrEmpty(databaseUrl))
+            app.UseSpa(spa =>
             {
-                connectionString = connectionStringInConfig;
-            }
-            else
-            {
-                var databaseUri = new Uri(databaseUrl);
-                var userInfo = databaseUri.UserInfo.Split(':');
+                spa.Options.SourcePath = "ClientApp";
 
-                var builder = new NpgsqlConnectionStringBuilder
+                if (env.IsDevelopment())
                 {
-                    Host = databaseUri.Host,
-                    Port = databaseUri.Port,
-                    Username = userInfo[0],
-                    Password = userInfo[1],
-                    Database = databaseUri.LocalPath.TrimStart('/')
-                };
-                connectionString = builder.ToString();
-            }
-
-            return connectionString;
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
         }
     }
 }

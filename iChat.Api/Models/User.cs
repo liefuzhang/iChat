@@ -36,8 +36,7 @@ namespace iChat.Api.Models {
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
         public ICollection<ConversationUser> ConversationUsers { get; private set; }
-        public string IdenticonPath => @"https://ichat-apis.herokuapp.com/" +
-            Path.Combine(iChatConstants.IdenticonPath, $"{IdenticonGuid}{iChatConstants.IdenticonExt}");
+        public string IdenticonPath => "/" + Path.Combine(iChatConstants.IdenticonPath, $"{IdenticonGuid}{iChatConstants.IdenticonExt}");
 
         public void SetPassword(string password) {
             if (string.IsNullOrWhiteSpace(password)) {

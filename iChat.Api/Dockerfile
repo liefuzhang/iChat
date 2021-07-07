@@ -2,13 +2,13 @@
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
-#EXPOSE 80
-#EXPOSE 443
-
-ENV TZ=Pacific/Auckland
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+EXPOSE 80
+RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
+RUN apt-get install -y nodejs
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
+RUN apt-get install -y nodejs
 WORKDIR /src
 COPY ["iChat.Api/iChat.Api.csproj", "iChat.Api/"]
 RUN dotnet restore "iChat.Api/iChat.Api.csproj"
@@ -22,4 +22,4 @@ RUN dotnet publish "iChat.Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet iChat.Api.dll
+ENTRYPOINT ["dotnet", "iChat.Api.dll"]

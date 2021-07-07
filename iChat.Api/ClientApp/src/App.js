@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
 import MainPage from "./MainPage";
-import Login from "account/Login";
+import Login from "./account/Login";
 import AcceptInvitation from "./account/AcceptInvitation";
 import ResetPassword from "./account/ResetPassword";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import PrivateRoute from "components/PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
