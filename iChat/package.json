@@ -12,7 +12,7 @@
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-uglify-es": "github:gruntjs/grunt-contrib-uglify#harmony",
     "grunt-sass": "^3.0.2",
-    "node-sass": "^4.12.0"
+    "node-sass": "^7.0.0"
   },
   "dependencies": {
     "jwt-decode": "^2.2.0"
