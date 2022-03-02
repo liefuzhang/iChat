@@ -16,11 +16,11 @@ class MainPage extends React.Component {
 
     this.connection = new signalR.HubConnectionBuilder()
       // TODO use config here?
-      .withUrl(`http://ichat.liefuzhang.com:58314/chatHub/`, {
+      .withUrl(`https://localhost:44389/chatHub/`, {
         accessTokenFactory: () => this.profileService.getToken()
       })
       .build();
-    this.connection.start().catch(function(err) {
+    this.connection.start().catch(function (err) {
       return console.error(err.toString());
     });
 
@@ -80,14 +80,14 @@ class MainPage extends React.Component {
     let section =
       params.section ||
       (this.state.savedActiveSidebarItem &&
-      !this.state.savedActiveSidebarItem.isChannel
+        !this.state.savedActiveSidebarItem.isChannel
         ? "conversation"
         : "channel");
     let isChannel = section === "channel";
     let id =
       +params.id ||
       (this.state.savedActiveSidebarItem &&
-      this.state.savedActiveSidebarItem.itemId
+        this.state.savedActiveSidebarItem.itemId
         ? this.state.savedActiveSidebarItem.itemId
         : this.state.userProfile.defaultChannelId);
 

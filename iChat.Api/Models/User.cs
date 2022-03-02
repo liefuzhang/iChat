@@ -36,8 +36,7 @@ namespace iChat.Api.Models {
         public Workspace Workspace { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
         public ICollection<ConversationUser> ConversationUsers { get; private set; }
-        public string IdenticonPath => @"http://www.ichat.liefuzhang.com:58314/" +
-            Path.Combine(iChatConstants.IdenticonPath, $"{IdenticonGuid}{iChatConstants.IdenticonExt}");
+        public string IdenticonPath => "https://localhost:44389/" + Path.Combine(iChatConstants.IdenticonPath, $"{IdenticonGuid}{iChatConstants.IdenticonExt}");
 
         public void SetPassword(string password) {
             if (string.IsNullOrWhiteSpace(password)) {

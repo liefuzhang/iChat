@@ -59,7 +59,7 @@ class ApiService {
     noContentType || (options.headers["Content-Type"] = "application/json");
     noAuth || (options.headers["Authorization"] = bearer);
 
-    return fetch(`http://ichat.liefuzhang.com:58314${url}`, options);
+    return fetch(`https://localhost:44389${url}`, options);
   }
 }
 
