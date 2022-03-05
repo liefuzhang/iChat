@@ -52,7 +52,10 @@ class Sidebar extends React.Component {
       channels: [],
       conversations: [],
       isCreateChannelModalOpen: false,
-      isPageLoading: true
+      isPageLoading: true,
+      unreadMessage: 0,
+      selectedChannel:{},
+      selectedConversation: {}
     };
   }
 
@@ -98,22 +101,62 @@ class Sidebar extends React.Component {
     this.fetchConversations();
   }
 
+  updatePageTitle() {
+    var unreadMessageText = "";
+    this.setState({unreadMessage:this.getUnreadMessageCount()});
+    if(this.state.unreadMessage > 0 &&this.state.unreadMessage != null)
+    {
+      unreadMessageText = " | " + this.state.unreadMessage + " new items"
+    }
+    this.fetchData(this.props)
+      .then(()=>
+      {document.title = "iChat | "+ (this.props.isChannel? this.state.selectedChannel.name + unreadMessageText :this.state.selectedConversation.name + unreadMessageText)});
+    
+  }
+
   fetchChannels() {
     return this.apiService
       .fetch("/api/channels/forUser")
-      .then(channels => this.setState({ channels }));
+      .then(channels => {
+        this.setState({ channels: channels });
+        this.updatePageTitle();
+      });
   }
 
   fetchConversations() {
     return this.apiService
       .fetch("/api/conversations/recent")
-      .then(conversations => this.setState({ conversations: conversations }));
+      .then(conversations => {
+        this.setState({ conversations: conversations })
+        this.updatePageTitle();
+      });
+  }
+
+  fetchData(props) {
+    if (props.isChannel) {
+      return this.apiService
+        .fetch(`/api/channels/${props.id}`)
+        .then(channel => this.setState({ selectedChannel: channel }));
+    } else {
+      return this.apiService
+        .fetch(`/api/conversations/${props.id}`)
+        .then(conversation =>
+          this.setState({ selectedConversation: conversation })
+        );
+    }
   }
 
   componentDidMount() {
     Promise.all([this.fetchChannels(), this.fetchConversations()]).then(() => {
       this.setState({ isPageLoading: false });
     });
+  }
+
+  getUnreadMessageCount() {
+    let unreadMessage = 0;
+    this.state.conversations.forEach(c=>unreadMessage+=c.unreadMessageCount)
+    this.state.channels.forEach(c=>unreadMessage+=c.unreadMentionCount)
+    return unreadMessage
   }
 
   render() {

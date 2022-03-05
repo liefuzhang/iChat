@@ -51,7 +51,7 @@ namespace iChat.Api.Controllers {
         }
 
         // GET api/messages/conversation/1/1
-        // GET api/messages/channel/1
+        // GET api/messages/conversation/1
         [HttpGet("conversation/{id}/{currentMessageId:int?}")]
         public async Task<ActionResult<MessageLoadDto>> GetMessagesForConversationAsync(int id, int? currentMessageId) {
             var messageLoadDto = await _messageQueryService.GetMessagesForConversationAsync(id, User.GetUserId(), User.GetWorkspaceId(), currentMessageId);
