@@ -52,10 +52,7 @@ class Sidebar extends React.Component {
       channels: [],
       conversations: [],
       isCreateChannelModalOpen: false,
-      isPageLoading: true,
-      unreadMessage: 0,
-      selectedChannel:{},
-      selectedConversation: {}
+      isPageLoading: true
     };
   }
 
@@ -102,16 +99,14 @@ class Sidebar extends React.Component {
   }
 
   updatePageTitle() {
-    var unreadMessageText = "";
-    this.setState({unreadMessage:this.getUnreadMessageCount()});
-    if(this.state.unreadMessage > 0 &&this.state.unreadMessage != null)
-    {
-      unreadMessageText = " | " + this.state.unreadMessage + " new items"
+    var unreadTextCount = this.getUnreadMessageCount()
+    var unreadMessageText = ""
+    if (unreadTextCount > 0 && unreadTextCount != null) {
+      unreadMessageText = " | " + unreadTextCount + " new items"
     }
     this.fetchData(this.props)
-      .then(()=>
-      {document.title = "iChat | "+ (this.props.isChannel? this.state.selectedChannel.name + unreadMessageText :this.state.selectedConversation.name + unreadMessageText)});
-    
+      .then(value => { document.title = "iChat | " + value.name + unreadMessageText });
+
   }
 
   fetchChannels() {
@@ -136,13 +131,9 @@ class Sidebar extends React.Component {
     if (props.isChannel) {
       return this.apiService
         .fetch(`/api/channels/${props.id}`)
-        .then(channel => this.setState({ selectedChannel: channel }));
     } else {
       return this.apiService
         .fetch(`/api/conversations/${props.id}`)
-        .then(conversation =>
-          this.setState({ selectedConversation: conversation })
-        );
     }
   }
 
@@ -154,8 +145,8 @@ class Sidebar extends React.Component {
 
   getUnreadMessageCount() {
     let unreadMessage = 0;
-    this.state.conversations.forEach(c=>unreadMessage+=c.unreadMessageCount)
-    this.state.channels.forEach(c=>unreadMessage+=c.unreadMentionCount)
+    this.state.conversations.forEach(c => unreadMessage += c.unreadMessageCount)
+    this.state.channels.forEach(c => unreadMessage += c.unreadMentionCount)
     return unreadMessage
   }
 
