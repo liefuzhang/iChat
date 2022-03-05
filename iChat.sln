@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.UnitTests", "iChat.UnitTests\iChat.UnitTests.csproj", "{DDADC48E-0409-4030-82BC-3900CA52416C}"
 EndProject
@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iChat.Api", "iChat.Api\iCha
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ichat.react", "ichat.react\", "{8EB6D89C-2723-4910-B2D2-3CFAF07818FB}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_62660"
 		Debug.AspNetCompiler.PhysicalPath = "ichat.react\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_62660\"

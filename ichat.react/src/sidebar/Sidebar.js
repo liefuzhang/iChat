@@ -98,22 +98,56 @@ class Sidebar extends React.Component {
     this.fetchConversations();
   }
 
+  updatePageTitle() {
+    var unreadTextCount = this.getUnreadMessageCount()
+    var unreadMessageText = ""
+    if (unreadTextCount > 0 && unreadTextCount != null) {
+      unreadMessageText = " | " + unreadTextCount + " new items"
+    }
+    this.fetchData(this.props)
+      .then(value => { document.title = "iChat | " + value.name + unreadMessageText });
+
+  }
+
   fetchChannels() {
     return this.apiService
       .fetch("/api/channels/forUser")
-      .then(channels => this.setState({ channels }));
+      .then(channels => {
+        this.setState({ channels: channels });
+        this.updatePageTitle();
+      });
   }
 
   fetchConversations() {
     return this.apiService
       .fetch("/api/conversations/recent")
-      .then(conversations => this.setState({ conversations: conversations }));
+      .then(conversations => {
+        this.setState({ conversations: conversations })
+        this.updatePageTitle();
+      });
+  }
+
+  fetchData(props) {
+    if (props.isChannel) {
+      return this.apiService
+        .fetch(`/api/channels/${props.id}`)
+    } else {
+      return this.apiService
+        .fetch(`/api/conversations/${props.id}`)
+    }
   }
 
   componentDidMount() {
     Promise.all([this.fetchChannels(), this.fetchConversations()]).then(() => {
       this.setState({ isPageLoading: false });
     });
+  }
+
+  getUnreadMessageCount() {
+    let unreadMessage = 0;
+    this.state.conversations.forEach(c => unreadMessage += c.unreadMessageCount)
+    this.state.channels.forEach(c => unreadMessage += c.unreadMentionCount)
+    return unreadMessage
   }
 
   render() {
