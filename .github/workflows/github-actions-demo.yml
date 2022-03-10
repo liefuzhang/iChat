@@ -1,20 +1,28 @@
-name: Context testing
+name: Build and deploy
 on: push
 
 jobs:
-  dump_contexts_to_log:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      build_id: ${{ steps.build_step.outputs.build_id }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        id: build_step
+        run: |
+          ./build
+          echo "::set-output name=build_id::$BUILD_ID" 
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
-        run: echo '${{ toJSON(github) }}'
-      - name: Dump job context
-        run: echo '${{ toJSON(job) }}'
-      - name: Dump steps context
-        run: echo '${{ toJSON(steps) }}'
-      - name: Dump runner context
-        run: echo '${{ toJSON(runner) }}'
-      - name: Dump strategy context
-        run: echo '${{ toJSON(strategy) }}'
-      - name: Dump matrix context
-        run: echo '${{ toJSON(matrix) }}'
+      - uses: actions/checkout@v2
+      - run: ./deploy --build ${{ needs.build.outputs.build_id }}
+  debug:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./debug
