@@ -79,7 +79,8 @@ namespace iChat.Api.Services {
         private int? GetConversationIdIfExists(List<int> userIds, int workspaceId) {
             var conversationUsers = _context.Conversations
                 .Where(c => c.WorkspaceId == workspaceId)
-                .SelectMany(c => c.ConversationUsers);
+                .SelectMany(c => c.ConversationUsers)
+                .ToList();
             var group = conversationUsers
                 .GroupBy(cu => cu.ConversationId)
                 .Where(g => g.Select(u => u.UserId).ToHashSet().SetEquals(userIds));

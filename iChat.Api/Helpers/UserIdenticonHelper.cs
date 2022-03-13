@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace iChat.Api.Helpers {
     public class UserIdenticonHelper : IUserIdenticonHelper {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IHttpClientFactory _clientFactory;
 
-        public UserIdenticonHelper(IHostingEnvironment hostingEnvironment, IHttpClientFactory clientFactory) {
+        public UserIdenticonHelper(IWebHostEnvironment hostingEnvironment, IHttpClientFactory clientFactory) {
             _hostingEnvironment = hostingEnvironment;
             _clientFactory = clientFactory;
         }

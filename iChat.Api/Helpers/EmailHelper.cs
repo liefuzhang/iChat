@@ -6,7 +6,6 @@ using iChat.Api.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -20,9 +19,9 @@ using System.Web;
 namespace iChat.Api.Helpers {
     public class EmailHelper : IEmailHelper {
         private readonly AppSettings _appSettings;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public EmailHelper(IOptions<AppSettings> appSettings, IHostingEnvironment hostingEnvironment) {
+        public EmailHelper(IOptions<AppSettings> appSettings, IWebHostEnvironment hostingEnvironment) {
             _appSettings = appSettings.Value;
             _hostingEnvironment = hostingEnvironment;
         }

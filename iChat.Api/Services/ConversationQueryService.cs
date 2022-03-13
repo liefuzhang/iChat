@@ -75,21 +75,23 @@ namespace iChat.Api.Services {
         public async Task<IEnumerable<ConversationDto>> GetRecentConversationsForUserAsync(int userId, int workspaceId) {
             var recentConversationItems = await _cacheService.GetRecentConversationItemsForUserAsync(userId, workspaceId);
             var recentConversationIds = recentConversationItems.Select(i => i.ConversationId);
-            var conversations = await _context.Conversations.AsNoTracking()
+            var conversations = await _context.Conversations
                 .Where(c => c.WorkspaceId == workspaceId &&
                     recentConversationIds.Contains(c.Id))
                 .ToListAsync();
 
             await AddSelfConversationToBeginningAsync(userId, workspaceId, conversations);
 
-            var conversationDtos = BuildConversationDtos(conversations, recentConversationItems, userId, workspaceId);
+            var conversationDtos = await BuildConversationDtos(conversations, recentConversationItems, userId, workspaceId);
 
-            return await Task.WhenAll(conversationDtos);
+            return conversationDtos;
         }
 
-        private IEnumerable<Task<ConversationDto>> BuildConversationDtos(List<Conversation> conversations,
+        private async Task<IEnumerable<ConversationDto>> BuildConversationDtos(List<Conversation> conversations,
             List<ConversationUnreadItem> recentConversationItems, int userId, int workspaceId) {
-            var conversationDtos = conversations.Select(async c => {
+            var result = new List<ConversationDto>();
+            foreach (var c in conversations)
+            {
                 var dto = _mapper.Map<ConversationDto>(c);
                 dto.Name = await GetConversationNameAsync(c.Id, userId, workspaceId);
                 dto.UnreadMessageCount =
@@ -103,10 +105,10 @@ namespace iChat.Api.Services {
                     dto.OtherUserStatus = await _userQueryService.GetUserStatus(otherUserId, workspaceId);
                 }
 
-                return dto;
-            });
+                result.Add(dto);
+            }
 
-            return conversationDtos;
+            return result;
         }
 
         private async Task AddSelfConversationToBeginningAsync(int userId, int workspaceId, List<Conversation> conversations) {
