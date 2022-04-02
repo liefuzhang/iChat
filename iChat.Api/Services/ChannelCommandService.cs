@@ -41,6 +41,20 @@ namespace iChat.Api.Services
 
             return channel.Id;
         }
+        public async Task DeleteChannelAsync(int channelId, int userId)
+        {
+
+            var channel = await _context.Channels.FindAsync(channelId);
+            
+            if (channel == null) {
+                throw new ArgumentException("Cannot channel");
+            }
+            if (channel.CreatedByUserId != userId)
+            {
+                throw new ArgumentException("Channel is not created by current user");
+            }
+            channel.IsDeleted = true;
+        }
 
         public async Task AddUserToChannelAsync(int channelId, int userId, int workspaceId)
         {

@@ -32,5 +32,6 @@ namespace iChat.Api.Models {
         public ICollection<ChannelMessage> ChannelMessages { get; private set; }
         public ICollection<ChannelSubscription> ChannelSubscriptions { get; private set; }
         public string CreatedDateString => CreatedDate.ConvertToNzTimeZone().ToString("MMM dd", CultureInfo.InvariantCulture);
+        public bool IsDeleted { get;  set; }
     }
 }

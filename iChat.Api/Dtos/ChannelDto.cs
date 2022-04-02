@@ -10,5 +10,6 @@ namespace iChat.Api.Models {
         public string CreatedDateString { get; set; }
         public bool HasUnreadMessage { get; set; }
         public int UnreadMentionCount { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

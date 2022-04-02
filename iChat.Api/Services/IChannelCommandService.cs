@@ -13,5 +13,6 @@ namespace iChat.Api.Services
         Task<int> CreateChannelAsync(string channelName, int userId, int workspaceId, string topic = "");
         Task NotifyTypingAsync(int channelId, int currentUserId, bool isFinished);
         Task InviteOtherMembersToChannelAsync(int id, List<int> userIds, int userId, int workspaceId);
+        Task DeleteChannelAsync(int channelId, int userId);
     }
 }

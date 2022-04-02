@@ -68,6 +68,15 @@ namespace iChat.Api.Controllers
             return Ok(id);
         }
 
+        // DELETE api/channels/1
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteChannelAsync(int channelId)
+        {
+            await _channelCommandService.DeleteChannelAsync(channelId, User.GetUserId());
+
+            return Ok();
+        }
+
         // POST api/channels/join
         [HttpPost("join")]
         public async Task<IActionResult> JoinChannelAsync([FromBody] int channelId)

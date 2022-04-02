@@ -44,7 +44,7 @@ class ContentHeader extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData(this.props);
+    this.fetchData(this.props);  
   }
 
   componentDidUpdate(prevProps) {
@@ -62,7 +62,7 @@ class ContentHeader extends React.Component {
         <div className="content-header-details">
           <div className="content-header-name">
             {this.props.isChannel
-              ? this.state.selectedChannel.name
+              ? this.state.selectedChannel.name  
               : this.state.selectedConversation.name}
             <div className="content-header-settings">
               <ContentHeaderSettings

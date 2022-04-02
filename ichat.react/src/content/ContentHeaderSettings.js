@@ -56,6 +56,21 @@ class ContentHeaderSettings extends React.Component {
       });
   }
 
+  deleteChannelClicked(){
+    let channelId = this.props.channelId;
+    this.apiService
+    .fetch(`/api/channels/${channelId}`, {
+      method: "DELETE",
+    })
+    .then(id => {
+      this.onCloseSettingDropdown();
+     
+    })
+    .catch(error => {
+      toast.error(`Delete channel failed: ${error}`);
+    });
+    
+  }
   onInviteOtherMembers() {
     this.setState({
       isInviteOtherMembersModalOpen: true,
@@ -97,9 +112,8 @@ class ContentHeaderSettings extends React.Component {
         <span onClick={this.onSettingButtonClicked}>
           <Popup
             trigger={<Icon name="setting" className="icon-setting" />}
-            content={`${
-              this.props.isChannel ? "Channel" : "Conversation"
-            } settings`}
+            content={`${this.props.isChannel ? "Channel" : "Conversation"
+              } settings`}
             inverted
             position="bottom center"
             size="tiny"
@@ -114,17 +128,22 @@ class ContentHeaderSettings extends React.Component {
                   {(this.props.isChannel ||
                     (!this.props.selectedConversation.isPrivate &&
                       !this.props.selectedConversation.isSelfConversation)) && (
-                    <li onClick={this.onInviteOtherMembers}>
-                      {this.props.isChannel
-                        ? `Invite people to ${this.props.selectedChannel.name}`
-                        : `Invite another member`}
-                    </li>
-                  )}
+                      <li onClick={this.onInviteOtherMembers}>
+                        {this.props.isChannel
+                          ? `Invite people to ${this.props.selectedChannel.name}`
+                          : `Invite another member`}
+                      </li>
+                    )}
                   {this.props.isChannel &&
                     this.props.id !==
-                      this.props.userProfile.defaultChannelId && (
-                      <li onClick={this.onLeaveChannelClicked}>{`Leave ${
-                        this.props.selectedChannel.name
+                    this.props.userProfile.defaultChannelId && (
+                      <li onClick={this.onLeaveChannelClicked}>{`Leave ${this.props.selectedChannel.name
+                        }`}</li>
+                    )}
+                  {this.props.isChannel &&
+                    this.props.userProfile.id ===
+                    this.props.selectedChannel.createdByUserId &&
+                    (<li onClick={this.deleteChannelClicked}>{`Delete ${this.props.selectedChannel.name
                       }`}</li>
                     )}
                 </ul>
