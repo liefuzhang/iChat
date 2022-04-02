@@ -5,21 +5,21 @@ using iChat.Api.Helpers;
 using iChat.Api.Hubs;
 using iChat.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace iChat.Api
 {
@@ -73,8 +73,7 @@ namespace iChat.Api
                     });
             });
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
 
             //services.AddStackExchangeRedisCache(options =>
             //{
@@ -160,25 +159,11 @@ namespace iChat.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
             app.UseCors(MyAllowSpecificOrigins);
             app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<ChatHub>("/chatHub");
-            });
 
             app.UseExceptionHandler(a => a.Run(async context =>
             {
@@ -190,7 +175,13 @@ namespace iChat.Api
                 await context.Response.WriteAsync(exception.Message);
             }));
 
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(opts =>
+            {
+                opts.MapControllers();
+                opts.MapHub<ChatHub>("/chatHub");
+            });
         }
     }
 }

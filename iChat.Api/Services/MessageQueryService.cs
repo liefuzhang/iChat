@@ -160,7 +160,7 @@ namespace iChat.Api.Services {
             var messages = await baseQuery
                 .Include(m => m.MessageReactions)
                 .Where(m => m.Id < (currentMessageId ?? int.MaxValue))
-                .OrderByDescending(m => m.LocalizedCreatedDate)
+                .OrderByDescending(m => m.CreatedDate)
                 .Take(iChatConstants.DefaultMessagePageSize)
                 .ToListAsync();
 

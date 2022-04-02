@@ -8,10 +8,10 @@ namespace iChat.UnitTests.Extensions {
     public static class SeedData {
         public static string TestUser1Email { get; } = "email1@test.com";
         public static string TestUser1Name { get; } = "user1";
-        public static int TestUser1Id { get; private set; }
+        public static int TestUser1Id { get; private set; } = 1;
         public static string TestUser2Email { get; } = "email2@test.com";
         public static string TestUser2Name { get; } = "user2";
-        public static int TestUser2Id { get; private set; }
+        public static int TestUser2Id { get; private set; } = 2;
 
         public static int TestWorkspaceId { get; } = 1;
 
